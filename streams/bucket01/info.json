@@ -1,0 +1,6 @@
+{
+  "name": "(System) DICOM-IN",
+  "description": "DICOM storescp service able to start other buckets.",
+  "version": "0.0.1",
+  "license": "This bucket is part of MagickBox."
+}

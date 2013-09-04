@@ -8,10 +8,19 @@ function removeThis( name ) {
 jQuery(document).ready(function() {
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
 	for (var i = 0; i < data.length; i++) {
-            jQuery('#installed-buckets').append("<li><a href='#'>" + data[i] + "</a></li>");
+            name = data[i]['name'];
+            desc = data[i]['description'];
+            jQuery('#installed-buckets').append("<li><a href='#' title=\"" + desc + "\">" + name + "</a></li>");
 	}
 	for (var i = 0; i < data.length; i++) {
-            jQuery('#installed-buckets-list-large').append("<li class=\"table-row\">AETitle: (unknown), Folder: " + data[i] + "</li>");
+            name = data[i]['name'];
+            desc = data[i]['description'];
+	    aetitle = data[i]['AETitle'];
+	    if (typeof aetitle == 'undefined')
+		aetitle = "NONE";
+            jQuery('#installed-buckets-list-large').append("<li class=\"table-row\">AETitle: \"" + aetitle + "\", Name: \"" 
+							   + name + "\"<br/><small>" + desc +
+							   "</small></li>");
 	}
     });
 
