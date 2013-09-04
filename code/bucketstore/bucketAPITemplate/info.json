@@ -1,0 +1,7 @@
+{
+  "name": "mypackage",
+  "description": "This processing step performs something.",
+  "AETitle": "mypackage",
+  "version": "0.0.1",
+  "license": "Closed License, do not re-distribute"
+}

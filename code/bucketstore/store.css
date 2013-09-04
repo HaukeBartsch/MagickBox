@@ -1,0 +1,21 @@
+
+.bucket {
+  display: inline-block;
+  background: url('/code/bucketstore/bucket.jpg') no-repeat center center;
+  background-size: 215px 200px;
+  height: 200px;
+  width: 270px;
+}
+
+.text {
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  background-color: rgb(1,1,1);
+  background-color: rgba(255,255,255,0.6);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+  -ms-filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+  line-height: 20px;
+  font-size: 12pt;
+}
