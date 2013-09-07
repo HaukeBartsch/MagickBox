@@ -1,5 +1,6 @@
 {
   "name": "promo",
-  "install": "promo.tgz",
-  "version": "0.1"
+  "description": "A short description explaining the service provided.",
+  "version": "0.1",
+  "license": "Open/Closed processing bucket"
 }
