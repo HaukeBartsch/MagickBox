@@ -25,6 +25,8 @@ echo "`date`: Process bucket01 received data for processing in $WORKINGDIR (movi
 
 # move the data away first
 mv $DIR ${WORKINGDIR}/INPUT/
+# files need to be deleted by apache later
+chmod -R gou+rwx ${WORKINGDIR}/INPUT
 
 # store the sender information as text
 (
@@ -58,6 +60,9 @@ then
 elif [ $AETitleCalled = \"RSIProsUCSD\" ]
 then
   /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT"
+elif [ $AETitleCalled = \"ProcTBIp01\" ]
+then
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT"
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
