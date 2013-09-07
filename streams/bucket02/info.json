@@ -1,0 +1,6 @@
+{
+  "name": "(System) DICOM-SEND",
+  "description": "DICOM storescu service reponsible for sending processed DICOM data to other systems.",
+  "version": "0.0.1",
+  "license": "This bucket is part of MagickBox."
+}
