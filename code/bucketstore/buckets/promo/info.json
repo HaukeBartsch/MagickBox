@@ -1,6 +1,7 @@
 {
   "name": "promo",
   "description": "A short description explaining the service provided.",
+  "AETitle": "ProcPromo",
   "version": "0.1",
   "license": "Open/Closed processing bucket"
 }
