@@ -13,8 +13,14 @@
        $c = file_get_contents($fn);
        if ( $c == FALSE )
           continue;
+       $cont = json_decode($c, TRUE);
+       // check if we have a valid processing folder here
+       if (!array_key_exists('CallerIP', $cont))
+          continue;
+
        // printf("try to read in %s %s\n", $fn, $c);
-       $ar[] = json_decode($c, TRUE);
+       $ar[] = $cont;
+
        $parts = explode("/",$fn);
        $ar[count($ar)-1]['scratchdir'] = $parts[count($parts)-2];
        // add the first directory in side INPUT
@@ -23,23 +29,6 @@
        $ar[count($ar)-1]['pid'] = $parts2[count($parts2)-1];
   }
 
-/*  if ($handle = opendir('/data/scratch/')) {
-    while (false !== ($entry = readdir($handle))) {
-       // printf("try to read: %s\n", "/data/scratch/".$entry."/info.json");
-       if ($entry == "." || $entry == "..")
-          continue;
-       $fn = "/data/scratch/".$entry."/info.json";
-       if (!is_readable($fn))
-          continue;
-       $c = file_get_contents($fn);
-       if ( $c == FALSE )
-          continue;
-       // printf("try to read in %s %s\n", $fn, $c);
-       $ar[] = json_decode($c, TRUE);
-       $ar[count($ar)-1]['scratchdir'] = $entry;
-    }
-  } */
-  
   echo json_encode($ar);
 
 ?>
