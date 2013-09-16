@@ -44,6 +44,13 @@
                   <li><a id="link-to-bucket-store" class="label-info" href="">Bucket Store</a></li>
                </ul>
             </li>
+            <li class="dropdown">
+               <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+	          Admin <span class="caret"></span></a>
+               <ul class="dropdown-menu" id="installed-buckets">
+                  <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
+               </ul>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>

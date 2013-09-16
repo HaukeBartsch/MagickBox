@@ -46,6 +46,12 @@ jQuery(document).ready(function() {
 	jQuery('#setup').attr('title', data);
     });
 
+    jQuery('#restart-services').click(function() {
+	jQuery.get('/code/php/restartServices.php?command=restart&value=storescp', function(data) {
+            // restart the storescp system service
+	});
+    });
+
     jQuery('#setupSaveChanges').click(function() {
 	var valid = true;
 	var IP = jQuery('#IP').val();
