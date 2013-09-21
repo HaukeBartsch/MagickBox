@@ -4,7 +4,7 @@
     <title>Processing Overview Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="/code/web/css/jquery-ui.min.css" />
     <link href="/code/web/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -89,8 +89,8 @@
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="/code/web/js/jquery-1.10.2.min.js"></script>
+    <script src="/code/web/js/jquery-ui.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/code/web/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/code/web/all.js"></script>
