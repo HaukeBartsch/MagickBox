@@ -3,6 +3,8 @@
 #
 # This script is called if DICOM data is send to the system (end of study).
 #
+. /data/code/bin/ticktick.sh
+
 if [ $# -eq 0 ]
 then
    echo "usage: process.sh <aetitle caller> <aetitle called> <caller IP> <dicom directory>"
@@ -71,3 +73,17 @@ fi
 echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
 /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
 echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
+
+# implement the routing functionality (using ticktick)
+ROUTING="routing = "`cat routing.json`
+tickParse "$ROUTING"
+numRoutes=``routing.routing.length()``
+for route in ``routing.routing.items()``; do
+  AETitleIn=``route.AETitleIn``
+  # does this match with our calling AETitle?
+  if [[ $AETitleIn =~ $AETitleCaller ]]
+  then
+     echo "found matching rule $AETitleIn, $AETitleCaller"
+  fi
+done
+

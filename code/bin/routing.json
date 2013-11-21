@@ -1,0 +1,26 @@
+{ "routing": [ 
+  { "AETitleIn": "ProcRSI",
+    "send": [
+       { "success": {
+           "IP": "192.168.0.1",
+           "PORT": "403",
+           "AETitleSender": "me",
+           "AETitleTo": "PACS"
+       	 }, 
+       	 "failed": {
+           "IP": "192.168.0.1",
+           "PORT": "403",
+           "AETitleSender": "me",
+           "AETitleTo": "PACS"
+         },
+       	 "partial": {
+           "IP": "192.168.0.1",
+           "PORT": "403",
+           "AETitleSender": "me",
+           "AETitleTo": "PACS"
+         }
+       }
+    ]
+  }
+ ]
+}
