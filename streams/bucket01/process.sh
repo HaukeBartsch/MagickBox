@@ -76,6 +76,7 @@ echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.lo
 
 # implement the routing functionality (using ticktick)
 ROUTING="routing = "`cat routing.json`
+echo "read routing information: $ROUTING" >> /data/logs/routing.log
 tickParse "$ROUTING"
 numRoutes=``routing.routing.length()``
 for route in ``routing.routing.items()``; do
@@ -83,7 +84,6 @@ for route in ``routing.routing.items()``; do
   # does this match with our calling AETitle?
   if [[ $AETitleIn =~ $AETitleCaller ]]
   then
-     echo "found matching rule $AETitleIn, $AETitleCaller"
+     echo "FOUND matching rule $AETitleIn, $AETitleCaller" >> /data/logs/routing.log
   fi
 done
-
