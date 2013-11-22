@@ -103,11 +103,10 @@
               <label for="PORT" style="width: 100px;">Port:</label>
               <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" />
              </fieldset>
-           </form>
+           </form><br/>
 
-           <p class="validateTips">Routing information:</p>
-           <div id="editor" style="height: 300px;">loading routing information<br/></div>
-
+           <h3>Routing information:</h3>
+           <div id="editor" style="height: 300px;">load routing information<br/></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
