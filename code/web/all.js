@@ -57,7 +57,7 @@ jQuery(document).ready(function() {
             }
             editor.setValue(data);
             editor.setTheme("ace/theme/monokai");
-            editor.getSession().setMode("ace/mode/plain_text");
+            editor.getSession().setMode("ace/mode/javascript");
         },
         cache: false
     });
