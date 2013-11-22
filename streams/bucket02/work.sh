@@ -14,7 +14,6 @@ fi
 
 # get the PARENTIP and PARENTPORT variables
 . /data/code/setup.sh
-#echo "we can read these from setup.sh: $PARENTIP $PARENTPORT" >> /data/logs/bucket02.log
 
 INP=$1
 INP=( $INP )
@@ -29,13 +28,24 @@ then
   PORT=${INP[2]}
 fi
 
-echo "`date`: send files to \"$SERVER\" \"$PORT\" ($DATA) start..." >> /data/logs/bucket02.log
+AETitleSender="Processing"
+AETitleTo="DCM4CHEE"
 
-/usr/bin/storescu -aet "Processing" -aec "DCM4CHEE" -nh +r +sd $SERVER $PORT $DATA >> /data/logs/bucket02.log
+if [ ${#INP[@]} -eq 5 ]
+then
+  SERVER=${INP[1]}
+  PORT=${INP[2]}
+  AETitleSender=${INP[3]}
+  AETitleTo=${INP[4]}
+fi
+
+echo "`date`: send files to \"$SERVER\" \"$PORT\" \"$AETitleTo\" ($DATA) start..." >> /data/logs/bucket02.log
+
+/usr/bin/storescu -aet $AETitleSender -aec $AETitleTo -nh +r +sd $SERVER $PORT $DATA >> /data/logs/bucket02.log
 if [ $? -ne 0 ]
 then
    echo "`date`: error on send \"$DATA\" to DCM4CHEE received" >> /data/logs/bucket02.log
-   logger "Error: could not send \"$DATA\" to DCM4CHEE"
+   logger "Error: could not send \"$DATA\" to \"$AETitleTo\""
 fi
 
 echo "`date`: send files to DCM4CHEE ($DATA) done" >> /data/logs/bucket02.log
