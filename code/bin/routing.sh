@@ -16,6 +16,9 @@ def main(argv):
   routingtable_data.close()
   pprint(routingtable)
 
+  for route in routingtable:
+    pprint(route)
+
   #try:
   #  idx = header.index(c)
   #except ValueError:
