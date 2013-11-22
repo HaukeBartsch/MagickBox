@@ -81,9 +81,16 @@ tickParse "$ROUTING"
 numRoutes=``routing.routing.length()``
 for route in ``routing.routing.items()``; do
   AETitleIn=``route.AETitleIn``
+  AETitleFrom=``route.AETitleFrom``
   # does this match with our calling AETitle?
-  if [[ $AETitleIn =~ $AETitleCaller ]]
+  echo "TRY to match $AETitleIn, $AETitleFrom to $AETitleCalled, $AETitleCaller" >> /data/logs/routing.log
+
+  if [[ $AETitleIn =~ $AETitleCalled ]]
   then
-     echo "FOUND matching rule $AETitleIn, $AETitleCaller" >> /data/logs/routing.log
+     echo "FOUND matching rule $AETitleIn, $AETitleCalled" >> /data/logs/routing.log
+  fi
+  if [[ $AETitleFrom =~ $AETitleCaller ]]
+  then
+     echo "FOUND matching rule $AETitleFrom, $AETitleCaller" >> /data/logs/routing.log
   fi
 done
