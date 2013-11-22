@@ -8,14 +8,14 @@ AETitleCalled=$4
 AETitleCaller=$5
 
 # File
+echo "read routing information: $DATA" >> /data/logs/routing.log
+
 DATA=`cat /data/code/bin/routing.json`
 
 tickParse "$DATA"
 
-echo ``routing[0][AETitleIn]``
+echo ``routing[0][AETitleIn]`` >> /data/logs/routing.log
 
-echo "read routing information: $DATA" >> /data/logs/routing.log
-tickParse "$DATA"
 numRoutes=``routing.length()``
 echo "number of routes $numRoutes" >> /data/logs/routing.log
 for route in ``routing.items()``; do
