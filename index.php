@@ -118,6 +118,7 @@
            </form>
 
            <p class="validateTips">Routing information:</p>
+           <div id="editor" style="height: 300px;">loading routing information<br/></div>
 
         </div>
         <div class="modal-footer">
