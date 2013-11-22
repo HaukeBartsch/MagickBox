@@ -73,4 +73,4 @@ echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PAR
 echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
 # implement routing functionality (using ticktick)
-/data/code/bin/routing.sh ${WORKINGDIR} $AETitleIn $AETitleFrom $AETitleCalled $AETitleCaller
+/data/code/bin/routing.sh ${WORKINGDIR} $AETitleCalled $AETitleCaller

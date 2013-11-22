@@ -1,11 +1,16 @@
 #!/bin/bash
 . ticktick.sh
 
+if [ $# -ne 3 ]
+then
+   echo "usage: routing.sh <processing directory> <aetitle called> <aetitle caller> "
+   exit 1
+fi
+
+
 WORKINGDIR=$1
-AETitleIn=$2
-AETitleFrom=$3
-AETitleCalled=$4
-AETitleCaller=$5
+AETitleCalled=$2
+AETitleCaller=$3
 
 # File
 DATA=`cat /data/code/bin/routing.json`
