@@ -16,14 +16,32 @@ def main(argv):
   AETitleCaller=sys.argv[3]
 
   # read in the proc.json files to find out what the status of processing was
+  # it depends on what the status was if routing will be performed
+  defaultRouting = False
   try:
 	proc_data = open(WORKINGDIR + '/proc.json')
   	proc = json.load(proc_data)
   	proc_data.close()
   except IOError:
     logging.warning("Could not read the proc file for " + WORKINGDIR + "/proc.json, only default routing is performed")
+    defaultRouting = True
 
-  # read in the routing table
+  # read in the routing table, something like this would work:
+  #  {u'AETitleFrom': u'HAUKETEST',
+  #   u'AETitleIn': u'ProcRSI',
+  #   u'send': [{u'failed': {u'AETitleSender': u'me',
+  #                      u'AETitleTo': u'PACS',
+  #                      u'IP': u'192.168.0.1',
+  #                      u'PORT': u'403'},
+  #          u'partial': {u'AETitleSender': u'me',
+  #                       u'AETitleTo': u'PACS',
+  #                       u'IP': u'192.168.0.1',
+  #                       u'PORT': u'403'},
+  #          u'success': {u'AETitleSender': u'ROUTING',
+  #                       u'AETitleTo': u'PACS',
+  #                       u'IP': u'137.110.172.43',
+  #                       u'PORT': u'11113'}}]}
+
   try:
   	routingtable_data = open('/data/code/bin/routing.json')
   	routingtable = json.load(routingtable_data)
@@ -34,7 +52,7 @@ def main(argv):
 
   reAETitleCalled = re.compile(AETitleCalled, re.IGNORECASE)
   reAETitleCaller = re.compile(AETitleCaller, re.IGNORECASE)
-  rePROCSUCCESS = re.compile(proc['success'], re.IGNORECASE)
+  rePROCSUCCESS   = re.compile(proc['success'], re.IGNORECASE)
   for route in range(len(routingtable['routing'])):
     #pprint(routingtable['routing'][route])
     send=False
@@ -70,25 +88,14 @@ def main(argv):
 					except KeyError:
 						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
 						continue
-					os.system("/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + 
-						WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\"")
+					workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
+					logging.info('ROUTE: ' + workstr)
+					os.system(workstr)
 		# break now if we are asked to
 		if BREAKHERE != 0:
 			break
 
   logging.info("routing finished")
-  #try:
-  #  idx = header.index(c)
-  #except ValueError:
-  #  print "Error: column does not exist"
-  #  sys.exit(-1)
-
-  #all = list( reader )
-  #try:
-  #  print all[s][idx]
-  #except IndexError:
-  #  print "Error: step does not exist"
-  #  sys.exit(-1)
 
 if __name__ == "__main__":
   main(sys.argv[1:])
