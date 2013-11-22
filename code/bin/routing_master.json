@@ -1,27 +1,48 @@
-{ "routing": [ 
-  { "AETitleIn": "ProcRSI",
+{ "routing": [
+  {
+	"name": "Default Rule",
+	"AETitleIn": ".*",
+  	"send": [
+  		{
+  			".*": {
+  				"IP": "$me",
+  				"PORT": "$port",
+  				"AETitleSender": "ProcDefault",
+  				"AETitleTo": "DCM4CHEE"
+  			}
+  		}
+  	],
+  	"break": 0
+  },
+  { 
+  	"name": "ProcRSI bucket routing of results",
+  	"AETitleIn": "ProcRSI",
     "AETitleFrom": "PACS",
     "send": [
-       { "success": {
+        { "success": {
            "IP": "192.168.0.1",
            "PORT": "403",
            "AETitleSender": "me",
-           "AETitleTo": "PACS"
+           "AETitleTo": "PACS",
+           "break": 1
        	 }, 
        	 "failed": {
            "IP": "192.168.0.1",
            "PORT": "403",
            "AETitleSender": "me",
-           "AETitleTo": "PACS"
+           "AETitleTo": "PACS",
+           "break": 1
          },
        	 "partial": {
            "IP": "192.168.0.1",
            "PORT": "403",
            "AETitleSender": "me",
-           "AETitleTo": "PACS"
+           "AETitleTo": "PACS",
+           "break": 1
          }
-       }
-    ]
+        }
+    ],
+    "break": 0
   }
  ]
 }

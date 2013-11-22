@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys, json, re
-from pprint import pprint
+#from pprint import pprint
 import logging
 import os
 
@@ -79,23 +79,57 @@ def main(argv):
         for endpoint in routingtable['routing'][route]['send']:
         	for key in endpoint.keys():
         		if rePROCSUCCESS.search(key):
-					logging.info("We found an endpoint \""+key+"\" that matches \""+proc['success'] + "\" now send data to that endpoint...")
+					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc['success'] + "\" now send data to that endpoint...")
 					try:
-						AETitleSender = endpoint[key]['AETitleSender']
-						AETitleTo = endpoint[key]['AETitleTo']
-						IP = endpoint[key]['IP']
-						PORT = endpoint[key]['PORT']
+						AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
+						AETitleTo     = replacePlaceholders( endpoint[key]['AETitleTo'] )
+						IP            = replacePlaceholders( endpoint[key]['IP'] )
+						PORT          = replacePlaceholders( endpoint[key]['PORT'] )
+						try:
+							BR        = endpoint[key]['break']
+						except KeyError:
+							BR = 0
 					except KeyError:
 						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
 						continue
+
 					workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
 					logging.info('ROUTE: ' + workstr)
 					os.system(workstr)
+					if BR == 0:
+						break
 		# break now if we are asked to
 		if BREAKHERE != 0:
 			break
+	logging.info("routing finished")
 
-  logging.info("routing finished")
+
+def replacePlaceholders( str ):
+	global PARENTIP
+	global PARENTPORT
+	if str == "$me":
+		return PARENTIP
+	if str == "$port":
+		return PARENTPORT
+	return str
+
+#
+# read in the machine's name and port and save as global variables
+#
+PARENTIP=""
+PARENTPORT=""
+myself = open('/data/code/setup.sh').read()
+close(myself)
+myself = myself.split(";")
+for keyvaluestr in myself:
+	keyvalue = keyvaluestr.split("=")
+	if len(keyvalue) == 2:
+		if keyvalue[0].strip() == "PARENTIP":
+			PARENTIP=keyvalue[0].strip()
+		if keyvalue[1].strip() == "PARENTPORT":
+			PARENTPORT=keyvalue[1].strip()
+	else:
+		logging.warning("Error: could not read the PARENTIP and PARENTPORT from /data/code/setup.sh")
 
 if __name__ == "__main__":
   main(sys.argv[1:])
