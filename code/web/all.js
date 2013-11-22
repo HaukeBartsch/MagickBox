@@ -5,23 +5,25 @@ function removeThis( name ) {
     });
 }
 
+var editor = null;
+
 jQuery(document).ready(function() {
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
-	for (var i = 0; i < data.length; i++) {
+	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
             desc = data[i]['description'];
             jQuery('#installed-buckets').append("<li><a href='#' title=\"" + desc + "\">" + name + "</a></li>");
-	}
-	for (var i = 0; i < data.length; i++) {
+	    }
+	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
             desc = data[i]['description'];
-	    aetitle = data[i]['AETitle'];
-	    if (typeof aetitle == 'undefined')
-		aetitle = "NONE";
+	        aetitle = data[i]['AETitle'];
+	        if (typeof aetitle == 'undefined')
+		        aetitle = "NONE";
             jQuery('#installed-buckets-list-large').append("<li class=\"table-row\">AETitle: \"" + aetitle + "\", Name: \"" 
 							   + name + "\"<br/><small>" + desc +
 							   "</small></li>");
-	}
+	    }
     });
 
     jQuery.get('/code/php/setup.php?command=get', function(data) {
@@ -40,10 +42,25 @@ jQuery(document).ready(function() {
                     if (jQuery.trim(str2[0]) == "PARENTPORT") {
                         jQuery('#PORT').val(jQuery.trim(str2[1]));
                     }
-                }
-	    });
         }
+	});
+
+    // get the routing information as well
+    jQuery.ajax({ 
+        url: '/code/bin/routing.json', 
+        success: function(data) {
+            if (editor == null) {
+                editor = ace.edit("editor");
+            }
+            editor.setValue(data);
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode("ace/mode/plain_text");
+        },
+        cache: false
+    });
+        
 	jQuery('#setup').attr('title', data);
+
     });
 
     jQuery('#restart-services').click(function() {
@@ -56,20 +73,19 @@ jQuery(document).ready(function() {
 	var valid = true;
 	var IP = jQuery('#IP').val();
 	var PORT = jQuery('#PORT').val();
-        var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
+    var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
 	jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
-		alert(data);
-            jQuery.get('/code/php/setup.php?command=get', function(data) {
-		    jQuery('#setup').text(data);
+		//alert(data);
+        jQuery.get('/code/php/setup.php?command=get', function(data) {
+		   jQuery('#setup').text(data);
 		});
-
 	});
 	jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
         jQuery('.number-of-studies').html(data.length);
-	jQuery.each(data, function(i,d) {
+	    jQuery.each(data, function(i,d) {
             jQuery('#projects').append("<hr><li><h4 title=\"Patient ID\">"
 				       +d['pid']
 				       +"</h4>"
@@ -86,17 +102,17 @@ jQuery(document).ready(function() {
 				       +"<br/>If output has been generated download here: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a> (.zip)"
 				       +"</li>");
             
-	});
+	    });
     });
 
     jQuery.getJSON('/code/php/getStatus.php', function(data) {
-	for ( var i = 0; i < data.length; i++) {
+	    for ( var i = 0; i < data.length; i++) {
             if (data[i].length < 3)
-		continue;
+		       continue;
             if (data[i][2] == 0)
-   	      jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
-	    else
-   	      jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
-	}
+   	           jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
+	        else
+   	           jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
+	    }
     });
 });

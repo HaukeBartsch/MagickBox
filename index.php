@@ -94,6 +94,7 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/code/web/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/code/web/all.js"></script>
+    <script src="/code/web/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
  
   </body>
 
@@ -115,6 +116,9 @@
               <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" />
              </fieldset>
            </form>
+
+           <p class="validateTips">Routing information:</p>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
