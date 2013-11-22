@@ -3,8 +3,6 @@
 #
 # This script is called if DICOM data is send to the system (end of study).
 #
-. ticktick.sh
-
 if [ $# -eq 0 ]
 then
    echo "usage: process.sh <aetitle caller> <aetitle called> <caller IP> <dicom directory>"
@@ -13,7 +11,7 @@ fi
 
 # get the PARENTIP and PARENTPORT variables
 . /data/code/setup.sh
-#echo "we can read these from setup.sh: $PARENTIP $PARENTPORT" >> /data/logs/bucket01.log
+# echo "we can read these from setup.sh: $PARENTIP $PARENTPORT" >> /data/logs/bucket01.log
 
 AETitleCaller=$1
 AETitleCalled=$2
@@ -74,24 +72,5 @@ echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PAR
 /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
 echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
-# implement the routing functionality (using ticktick)
-ROUTING=`cat /data/code/bin/routing.json`
-echo "read routing information: $ROUTING" >> /data/logs/routing.log
-tickParse "$ROUTING"
-numRoutes=``routing.length()``
-echo "number of routes $numRoutes" >> /data/logs/routing.log
-for route in ``routing.items()``; do
-  AETitleIn=``route.AETitleIn``
-  AETitleFrom=``route.AETitleFrom``
-  # does this match with our calling AETitle?
-  echo "TRY to match $AETitleIn, $AETitleFrom to $AETitleCalled, $AETitleCaller" >> /data/logs/routing.log
-
-  if [[ $AETitleIn =~ $AETitleCalled ]]
-  then
-     echo "FOUND matching rule $AETitleIn, $AETitleCalled" >> /data/logs/routing.log
-  fi
-  if [[ $AETitleFrom =~ $AETitleCaller ]]
-  then
-     echo "FOUND matching rule $AETitleFrom, $AETitleCaller" >> /data/logs/routing.log
-  fi
-done
+# implement routing functionality (using ticktick)
+/data/code/bin/routing.sh ${WORKINGDIR} $AETitleIn $AETitleFrom $AETitleCalled $AETitleCaller
