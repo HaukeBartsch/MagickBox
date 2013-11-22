@@ -59,22 +59,22 @@ def main(argv):
     if send == True:
         # now find out if the regular expression in proc['success'] matches any key in send
         for endpoint in routingtable['routing'][route]['send']:
-            for key in endpoint.keys():
+        for key in endpoint.keys():
         		if rePROCSUCCESS.search(key):
         			logging.info("We found an endpoint \""+key+"\" that matches \""+proc['success'] + "\" now send data to that endpoint...")
         			try:
-                    	AETitleSender = endpoint[key]['AETitleSender']
-                    	AETitleTo = endpoint[key]['AETitleTo']
-                    	IP = endpoint[key]['IP']
-                    	PORT = endpoint[key]['PORT']
-        			except KeyError:
-        			  logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
-        			  continue
-                    call(["/usr/bin/gearman", "-h", "127.0.0.1", "-p", "4730", "-f", "bucket02", "--", 
-                    	  "\""+ WORKINGDIR+"/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\""])
-    	# break now if we are asked to
-    	if BREAKHERE != 0:
-           break
+						AETitleSender = endpoint[key]['AETitleSender']
+						AETitleTo = endpoint[key]['AETitleTo']
+						IP = endpoint[key]['IP']
+						PORT = endpoint[key]['PORT']
+					except KeyError:
+						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
+						continue
+					call(["/usr/bin/gearman", "-h", "127.0.0.1", "-p", "4730", "-f", "bucket02", "--", 
+						"\""+ WORKINGDIR+"/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\""])
+		# break now if we are asked to
+		if BREAKHERE != 0:
+			break
 
   logging.info("routing finished")
   #try:
