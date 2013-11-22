@@ -31,19 +31,21 @@ jQuery(document).ready(function() {
         var str = data.split(';');
         if (str.length > 2) {
             str.forEach(function(element, index) {
-		var str2 = element.split('=');
-		if (str2.length > 1) {
-                    if (jQuery.trim(str2[0]) == "PARENTIP") {
-                        var ip = jQuery.trim(str2[1]);
-                        jQuery('#IP').val(ip);
-                        jQuery('#pacs-link').attr('href', 'http://' + ip + ':1234/dcm4chee-web3/');
-                        jQuery('#link-to-bucket-store').attr('href', 'http://' + ip + ':2813/code/bucketstore/index.php');
-                    }
-                    if (jQuery.trim(str2[0]) == "PARENTPORT") {
-                        jQuery('#PORT').val(jQuery.trim(str2[1]));
-                    }
+		                   var str2 = element.split('=');
+		                   if (str2.length > 1) {
+                              if (jQuery.trim(str2[0]) == "PARENTIP") {
+                                  var ip = jQuery.trim(str2[1]);
+                                  jQuery('#IP').val(ip);
+                                  jQuery('#pacs-link').attr('href', 'http://' + ip + ':1234/dcm4chee-web3/');
+                                  jQuery('#link-to-bucket-store').attr('href', 'http://' + ip + ':2813/code/bucketstore/index.php');
+                              }
+                              if (jQuery.trim(str2[0]) == "PARENTPORT") {
+                                  jQuery('#PORT').val(jQuery.trim(str2[1]));
+                              }
+                           }
+	        });
         }
-	});
+    });
 
     // get the routing information as well
     jQuery.ajax({ 
