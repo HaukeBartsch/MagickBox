@@ -121,7 +121,8 @@
 
     <script src="/code/web/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/code/web/js/jquery-1.10.2.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <!-- <script src="/code/web/js/jquery-1.10.2.min.js"></script> -->
     <script src="/code/web/js/jquery-ui.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/code/web/js/bootstrap.min.js"></script>
