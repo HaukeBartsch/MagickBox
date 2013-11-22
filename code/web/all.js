@@ -50,6 +50,7 @@ jQuery(document).ready(function() {
     // get the routing information as well
     jQuery.ajax({ 
         url: '/code/bin/routing.json', 
+        dataType: 'html',  // we want to show this as text not interprete
         success: function(data) {
             if (editor == null) {
                 editor = ace.edit("editor");
