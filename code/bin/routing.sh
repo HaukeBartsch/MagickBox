@@ -59,10 +59,10 @@ def main(argv):
     if send == True:
         # now find out if the regular expression in proc['success'] matches any key in send
         for endpoint in routingtable['routing'][route]['send']:
-        for key in endpoint.keys():
+        	for key in endpoint.keys():
         		if rePROCSUCCESS.search(key):
-        			logging.info("We found an endpoint \""+key+"\" that matches \""+proc['success'] + "\" now send data to that endpoint...")
-        			try:
+					logging.info("We found an endpoint \""+key+"\" that matches \""+proc['success'] + "\" now send data to that endpoint...")
+					try:
 						AETitleSender = endpoint[key]['AETitleSender']
 						AETitleTo = endpoint[key]['AETitleTo']
 						IP = endpoint[key]['IP']
