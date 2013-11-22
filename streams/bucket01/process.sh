@@ -3,7 +3,7 @@
 #
 # This script is called if DICOM data is send to the system (end of study).
 #
-. /data/code/bin/ticktick.sh
+. ticktick.sh
 
 if [ $# -eq 0 ]
 then
@@ -75,12 +75,12 @@ echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PAR
 echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
 # implement the routing functionality (using ticktick)
-ROUTING="routing = "`cat /data/code/bin/routing.json`
+ROUTING=`cat /data/code/bin/routing.json`
 echo "read routing information: $ROUTING" >> /data/logs/routing.log
 tickParse "$ROUTING"
-numRoutes=``routing.routing.length()``
+numRoutes=``routing.length()``
 echo "number of routes $numRoutes" >> /data/logs/routing.log
-for route in ``routing.routing.items()``; do
+for route in ``routing.items()``; do
   AETitleIn=``route.AETitleIn``
   AETitleFrom=``route.AETitleFrom``
   # does this match with our calling AETitle?
