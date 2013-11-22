@@ -1,5 +1,6 @@
 { "routing": [ 
   { "AETitleIn": "ProcRSI",
+    "AETitleFrom": "PACS",
     "send": [
        { "success": {
            "IP": "192.168.0.1",

@@ -79,6 +79,7 @@ ROUTING="routing = "`cat /data/code/bin/routing.json`
 echo "read routing information: $ROUTING" >> /data/logs/routing.log
 tickParse "$ROUTING"
 numRoutes=``routing.routing.length()``
+echo "number of routes $numRoutes" >> /data/logs/routing.log
 for route in ``routing.routing.items()``; do
   AETitleIn=``route.AETitleIn``
   AETitleFrom=``route.AETitleFrom``
