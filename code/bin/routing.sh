@@ -70,7 +70,7 @@ def main(argv):
 					except KeyError:
 						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
 						continue
-					os.system("/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 --\" " + 
+					os.system("/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + 
 						WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\"")
 		# break now if we are asked to
 		if BREAKHERE != 0:
