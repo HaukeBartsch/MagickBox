@@ -59,28 +59,26 @@ jQuery(document).ready(function() {
         cache: false
     });
         
-	jQuery('#setup').attr('title', data);
-
-    });
+	//jQuery('#setup').attr('title', data);
 
     jQuery('#restart-services').click(function() {
-	jQuery.get('/code/php/restartServices.php?command=restart&value=storescp', function(data) {
+	    jQuery.get('/code/php/restartServices.php?command=restart&value=storescp', function(data) {
             // restart the storescp system service
-	});
+	    });
     });
 
     jQuery('#setupSaveChanges').click(function() {
-	var valid = true;
-	var IP = jQuery('#IP').val();
-	var PORT = jQuery('#PORT').val();
-    var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
-	jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
-		//alert(data);
-        jQuery.get('/code/php/setup.php?command=get', function(data) {
-		   jQuery('#setup').text(data);
-		});
-	});
-	jQuery('#changeSetup').dialog( "close" );
+	    var valid = true;
+	    var IP = jQuery('#IP').val();
+	    var PORT = jQuery('#PORT').val();
+        var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
+	    jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
+  		    //alert(data);
+            jQuery.get('/code/php/setup.php?command=get', function(data) {
+		       jQuery('#setup').text(data);
+		    });
+	    });
+	    jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
