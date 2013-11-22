@@ -87,18 +87,6 @@
       </div>
     </div>
 
-
-    <script src="/code/web/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/code/web/js/jquery-1.10.2.min.js"></script>
-    <script src="/code/web/js/jquery-ui.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/code/web/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/code/web/all.js"></script>
- 
-  </body>
-
-
   <div id="changeSetup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
      <div class="modal-dialog">
         <div class="modal-content">
@@ -128,4 +116,18 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+
+
+
+    <script src="/code/web/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/code/web/js/jquery-1.10.2.min.js"></script>
+    <script src="/code/web/js/jquery-ui.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/code/web/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/code/web/all.js"></script>
+ 
+  </body>
+
+
 </html>
