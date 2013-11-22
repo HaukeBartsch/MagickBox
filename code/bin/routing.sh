@@ -17,14 +17,12 @@ def main(argv):
 
   # read in the proc.json files to find out what the status of processing was
   # it depends on what the status was if routing will be performed
-  defaultRouting = False
   try:
 	proc_data = open(WORKINGDIR + '/proc.json')
   	proc = json.load(proc_data)
   	proc_data.close()
   except IOError:
     logging.warning("Could not read the proc file for " + WORKINGDIR + "/proc.json, only default routing is performed")
-    defaultRouting = True
 
   # read in the routing table, something like this would work:
   #  {u'AETitleFrom': u'HAUKETEST',
