@@ -82,7 +82,7 @@
       <hr>
       <div class="row-fluid">
         <footer>
-            <p>&copy; Multi-modal imaging laboratory, 2013</p>
+            <p>&copy; Multi-Modal Imaging Laboratory, 2013</p>
         </footer>
       </div>
     </div>
