@@ -16,8 +16,8 @@ def main(argv):
   routingtable_data.close()
   #pprint(routingtable)
 
-  for route in range(len(routingtable)):
-    pprint(routingtable[route])
+  for route in range(len(routingtable.routing)):
+    pprint(routingtable[routing][route])
 
   #try:
   #  idx = header.index(c)
