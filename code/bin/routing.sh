@@ -14,10 +14,10 @@ def main(argv):
   routingtable_data = open('/data/code/bin/routing.json')
   routingtable = json.load(routingtable_data)
   routingtable_data.close()
-  pprint(routingtable)
+  #pprint(routingtable)
 
-  for route in routingtable:
-    pprint(route)
+  for route in range(len(routingtable)):
+    pprint(routingtable[route])
 
   #try:
   #  idx = header.index(c)
