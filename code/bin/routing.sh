@@ -118,7 +118,7 @@ PARENTIP=""
 PARENTPORT=""
 myself_file = open('/data/code/setup.sh')
 myself = myself_file.read()
-close(myself_file)
+myself_file.close()
 myself = myself.split(";")
 for keyvaluestr in myself:
 	keyvalue = keyvaluestr.split("=")
