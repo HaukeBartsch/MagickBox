@@ -92,7 +92,7 @@ jQuery(document).ready(function() {
                     alert('Error: ' + data);
             }
         });
-	    jQuery('#changeSetup').dialog( "close" );
+	    // jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
