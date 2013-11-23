@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 import sys, json, re
-#from pprint import pprint
 import logging
 import os
 
+logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
+logging.info("Routing called")
+
 def main(argv):
-  logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
-  logging.info("Routing called")
   if len(sys.argv) != 4:
      print "usage: <processing directory> <aetitle called> <aetitle caller>"
-     logging.error("Error: input parameters don't work, see usage..." + len(sys.argv))
+     logging.error("Error: input parameters don't work, see usage... \"" + sys.argv + "\"")
      sys.exit()
   WORKINGDIR=sys.argv[1]
   AETitleCalled=sys.argv[2]
