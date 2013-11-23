@@ -8,6 +8,7 @@ function removeThis( name ) {
 var editor = null;
 
 jQuery(document).ready(function() {
+    jQuery('#changeSetup').dialog();
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
 	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
@@ -48,7 +49,7 @@ jQuery(document).ready(function() {
     });
 
     // get the routing information as well
-    jQuery.ajax({ 
+    jQuery.ajax({
         url: '/code/bin/routing.json', 
         dataType: 'html',  // we want to show this as text not interprete
         success: function(data) {
@@ -80,7 +81,6 @@ jQuery(document).ready(function() {
             jQuery.get('/code/php/setup.php?command=get', function(data) {
 		       jQuery('#setup').text(data);
 		    });
-            jQuery('#changeSetup').dialog( "close" );
 	    });
 
         // also store the routing information again
@@ -93,6 +93,8 @@ jQuery(document).ready(function() {
                     alert('Error: ' + data);
             }
         });
+
+        jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
