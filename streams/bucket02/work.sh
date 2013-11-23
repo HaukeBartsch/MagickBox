@@ -39,7 +39,7 @@ then
   AETitleTo=${INP[4]}
 fi
 
-echo "`date`: send files to \"$SERVER\" \"$PORT\" \"$AETitleTo\" ($DATA) start..." >> /data/logs/bucket02.log
+echo "`date`: send files to \"$SERVER\" \"$PORT\" \"$AETitleTo\" \"$AETitleSender\" ($DATA) start..." >> /data/logs/bucket02.log
 
 /usr/bin/storescu -aet $AETitleSender -aec $AETitleTo -nh +r +sd $SERVER $PORT $DATA >> /data/logs/bucket02.log
 if [ $? -ne 0 ]

@@ -72,5 +72,7 @@ echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PAR
 /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
 echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
-# implement routing functionality (using ticktick)
+# implement routing
+echo "`date`: Process bucket01 (starts routing)..." >> /data/logs/bucket01.log
 /data/code/bin/routing.sh ${WORKINGDIR} $AETitleCalled $AETitleCaller
+echo "`date`: Process bucket01 (routing is being performed)..." >> /data/logs/bucket01.log
