@@ -103,9 +103,11 @@
               <label for="PORT" style="width: 100px;">Port:</label>
               <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" />
              </fieldset>
-           </form><br/>
+           </form>
+           <hr/>
 
            <h3>Routing information:</h3>
+           <p>Routing is sending data out after processing. Where DICOM files end up might depend on the success or failure of the processing step.</p>
            <div id="editor" style="height: 300px;">load routing information<br/></div>
         </div>
         <div class="modal-footer">

@@ -81,6 +81,12 @@ jQuery(document).ready(function() {
 		       jQuery('#setup').text(data);
 		    });
 	    });
+
+        // also store the routing information again
+        jQuery.get('/code/php/saveRouting.php?text='+editor.getValue(), function(data){
+            if (data.length > 0)
+                alert('Error: ' + data);
+        });
 	    jQuery('#changeSetup').dialog( "close" );
     });
 
