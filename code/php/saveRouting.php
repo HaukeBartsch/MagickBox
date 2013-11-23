@@ -5,7 +5,7 @@
   	if ($objs == null) {
   		echo "Error: could not parse this json file";
   	} else {
-  	    file_put_contents('/data/code/bin/routing.json', json_encode($objs));
+  	    file_put_contents('/data/code/bin/routing.json', $_POST['text']);
   	}
   }
 ?>
