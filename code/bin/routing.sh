@@ -127,8 +127,11 @@ for keyvaluestr in myself:
 			PARENTIP=keyvalue[0].strip()
 		if keyvalue[1].strip() == "PARENTPORT":
 			PARENTPORT=keyvalue[1].strip()
-	else:
-		logging.warning("Error: could not read the PARENTIP and PARENTPORT from /data/code/setup.sh")
+
+if PARENTIP == "":
+  logging.info("Warning: could not read the machine's IP")
+if PARENTPORT == "":
+  logging.info("Warning: could not read the machine's PORT")
 
 if __name__ == "__main__":
   main(sys.argv[1:])
