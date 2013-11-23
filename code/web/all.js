@@ -80,6 +80,7 @@ jQuery(document).ready(function() {
             jQuery.get('/code/php/setup.php?command=get', function(data) {
 		       jQuery('#setup').text(data);
 		    });
+            jQuery('#changeSetup').dialog( "close" );
 	    });
 
         // also store the routing information again
@@ -92,7 +93,6 @@ jQuery(document).ready(function() {
                     alert('Error: ' + data);
             }
         });
-	    // jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
