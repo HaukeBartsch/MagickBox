@@ -53,7 +53,7 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a id="setup" href="#changeSetup">Setup</a></li>
+            <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -112,7 +112,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button id="setupSaveChanges" type="button" class="btn btn-primary">Save changes</button>
+          <button id="setupSaveChanges" type="button" data-dismiss="modal" class="btn btn-primary">Save changes</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

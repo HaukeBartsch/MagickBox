@@ -8,10 +8,10 @@ function removeThis( name ) {
 var editor = null;
 
 jQuery(document).ready(function() {
-    jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
-    jQuery('#setup').click(function() {
-        jQuery('#changeSetup').dialog( "open" );
-    });
+    //jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
+    //jQuery('#setup').click(function() {
+    //    jQuery('#changeSetup').dialog( "open" );
+    //});
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
 	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
@@ -97,7 +97,7 @@ jQuery(document).ready(function() {
             }
         });
 
-        jQuery('#changeSetup').dialog( "close" );
+        //jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
