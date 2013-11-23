@@ -53,7 +53,7 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
+            <li><a id="setup" href="#changeSetup">Setup</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
