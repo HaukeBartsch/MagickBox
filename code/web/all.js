@@ -8,7 +8,7 @@ function removeThis( name ) {
 var editor = null;
 
 jQuery(document).ready(function() {
-    jQuery('#changeSetup').dialog();
+    jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
 	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
