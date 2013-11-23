@@ -51,9 +51,6 @@ def main(argv):
   	logging.warning("Error: Could not read /data/code/bin/routing.json, no routing is performed")
   	sys.exit()
 
-  reAETitleCalled = re.compile(AETitleCalled, re.IGNORECASE)
-  reAETitleCaller = re.compile(AETitleCaller, re.IGNORECASE)
-  rePROCSUCCESS   = re.compile(proc['success'], re.IGNORECASE)
   for route in range(len(routingtable['routing'])):
     #pprint(routingtable['routing'][route])
     send=False
@@ -69,17 +66,26 @@ def main(argv):
         BREAKHERE = routingtable['routing'][route]['break']
     except KeyError:
         BREAKHERE = 0 # no match
-    if AETitleFrom != -1 and reAETitleCalled.search(routingtable['routing'][route]['AETitleFrom']):
-    	logging.info("routing matches: " + routingtable['routing'][route]['AETitleFrom'])
-    	send = True
-    elif AETitleIn != -1 and reAETitleCaller.search(routingtable['routing'][route]['AETitleIn']):
-    	logging.info("routing matches: " + routingtable['routing'][route]['AETitleIn'])
-    	send = True
+
+    try:
+        reAETitleCalled = re.compile(routingtable['routing'][route]['AETitleFrom'], re.IGNORECASE)
+        logging.info("routing matches: " + routingtable['routing'][route]['AETitleFrom'])
+        send = True    
+    except KeyError:
+        logging.info("This entry does not have AETitleFrom")
+    try:
+        reAETitleCaller = re.compile(routingtable['routing'][route]['AETitleIn'], re.IGNORECASE)
+        logging.info("routing matches: " + routingtable['routing'][route]['AETitleIn'])
+        send = True
+    except KeyError:
+        logging.info("This entry does not have AETitleFrom")
+
     if send == True:
         # now find out if the regular expression in proc['success'] matches any key in send
         for endpoint in routingtable['routing'][route]['send']:
         	for key in endpoint.keys():
-        		if rePROCSUCCESS.search(key):
+        		rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
+        		if rePROCSUCCESS.search(proc['success']):
 					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc['success'] + "\" now send data to that endpoint...")
 					try:
 						AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
