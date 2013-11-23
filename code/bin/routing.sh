@@ -24,6 +24,8 @@ def main(argv):
   	proc_data.close()
   except IOError:
     logging.warning("Could not read the proc file for " + WORKINGDIR + "/proc.json, only default routing is performed")
+    proc = {}
+    proc['success'] = 'couldNotReadProcJSON'
 
   # read in the routing table, something like this would work:
   #  {u'AETitleFrom': u'HAUKETEST',
@@ -125,8 +127,8 @@ for keyvaluestr in myself:
 	keyvalue = keyvaluestr.split("=")
 	if len(keyvalue) == 2:
 		if keyvalue[0].strip() == "PARENTIP":
-			PARENTIP=keyvalue[0].strip()
-		if keyvalue[1].strip() == "PARENTPORT":
+			PARENTIP=keyvalue[1].strip()
+		if keyvalue[0].strip() == "PARENTPORT":
 			PARENTPORT=keyvalue[1].strip()
 
 if PARENTIP == "":
