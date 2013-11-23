@@ -10,6 +10,7 @@ def main(argv):
   logging.info("Routing called")
   if len(sys.argv) != 4:
      print "usage: <processing directory> <aetitle called> <aetitle caller>"
+     logging.error("Error: input parameters don't work, see usage..." + len(sys.argv))
      sys.exit()
   WORKINGDIR=sys.argv[1]
   AETitleCalled=sys.argv[2]
