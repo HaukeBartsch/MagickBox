@@ -82,7 +82,7 @@ jQuery(document).ready(function() {
 	    jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
   		    //alert(data);
             jQuery.get('/code/php/setup.php?command=get', function(data) {
-		       jQuery('#setup').text(data);
+		       jQuery('#setup').attr('title',data);
 		    });
 	    });
 
@@ -96,8 +96,6 @@ jQuery(document).ready(function() {
                     alert('Error: ' + data);
             }
         });
-
-        //jQuery('#changeSetup').dialog( "close" );
     });
 
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
