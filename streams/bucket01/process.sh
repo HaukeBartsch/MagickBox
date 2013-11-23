@@ -68,9 +68,9 @@ else
 fi
 
 # try to send back to osirix on parent machine
-echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
-/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
-echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
+#echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
+#/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
+#echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
 # implement routing
 echo "`date`: Process bucket01 (starts routing)..." >> /data/logs/bucket01.log
