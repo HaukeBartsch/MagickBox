@@ -73,11 +73,13 @@ A DICOM connection from a station A (PACS) that sends DICOM data to station B (M
 
 The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied.
 
-The default rule above for example applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be 0 or more of those. As this rules matches to any string regardless of where the data was addressed to (AETitleIn) the rule will always apply (default rule). 
+The default rule above for example applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be none, one or more of those. As this rules matches any string the rule will always apply (default rule) regardless of where the data comes from. 
 
 The "send" section contains one or more destinations for sending. Each of the entries is matched one at a time against the processing result (returned proc.json "success" value string). The default rule matches any value of "success" whereas the rule named "ProcRSI bucket routing of results" matches specific strings like "success", "failed", or "partial". If the "success" string matches one of these entries the corresponding destination is chosen to receive the OUTPUT data.
 
-If the "break" entry of a successful sending operation has the value 1 sending stops.
+If the "break" entry of a successful sending operation has the value 1 sending stops without evaluated if other send entries would match as well. This allows for a fail-back send destination.
+
+Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specifies in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
 
 Logging
 =======
