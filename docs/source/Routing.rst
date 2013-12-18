@@ -4,13 +4,13 @@
 Routing result DICOM files to other systems
 *******************************************
 
-Routing sends resulting DICOM files to other systems. It can react differently in response to success or failure of the computations. Here are some use cases::
+Routing sends resulting DICOM files to other systems. It can react differently in response to success or failure of the computations. Here are some use cases:
 
     * specify the destination for sending resulting images
     * setup a dedicated system that collects copies of partially generated result images
     * try to send to a specific PACS system first, if that fails try to send to an alternative system (see "break" option)
 
-Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json'next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
+Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json' next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
 
     { "success": "failed", "message": "today is Monday" }
 
