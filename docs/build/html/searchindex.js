@@ -1,1 +1,0 @@
-Search.setIndex({envversion:42,terms:{all:0,result:0,file:0,complex:0,still:0,log:0,dicom:0,rout:0,configur:0,system:0,content:0,start:0,experiment:0,progress:0,document:0,more:0,"function":0,describ:0,search:[],setup:0,work:0,page:[],thi:0,other:0},objtypes:{},objnames:{},filenames:["index"],titles:["MagickBox"],objects:{},titleterms:{magickbox:0,indic:0,tabl:0}})
