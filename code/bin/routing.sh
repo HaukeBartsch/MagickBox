@@ -85,6 +85,7 @@ def main(argv):
         for endpoint in routingtable['routing'][route]['send']:
         	for key in endpoint.keys():
         		rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
+        		logging.info("Test if \"" + key + "\" (as a regular expression) matches \"" + proc['success'] + "\" (" + proc['warning'] + ").")
         		if rePROCSUCCESS.search(proc['success']):
 					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc['success'] + "\" now send data to that endpoint...")
 					try:
@@ -104,7 +105,10 @@ def main(argv):
 					logging.info('ROUTE: ' + workstr)
 					os.system(workstr)
 					if BR == 0:
+						logger.info("stop here with mapping success entries against keys...")
 						break
+        		else: 
+        		  logger.info("Key \"" + key + "\" does not match with \"" + proc['success'] + "\".")
 		# break now if we are asked to
 		if BREAKHERE != 0:
 			break

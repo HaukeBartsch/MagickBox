@@ -5,6 +5,7 @@ Routing result DICOM files to other systems
 *******************************************
 
 Routing sends resulting DICOM files to other systems. It can react differently in response to success or failure of the computations. Here are some use cases::
+
     * specify the destination for sending resulting images
     * setup a dedicated system that collects copies of partially generated result images
     * try to send to a specific PACS system first, if that fails try to send to an alternative system (see "break" option)
