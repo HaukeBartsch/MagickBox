@@ -106,14 +106,15 @@ def main(argv):
 					logging.info('ROUTE: ' + workstr)
 					os.system(workstr)
 					if BR == 0:
-						logger.info("stop here with mapping success entries against keys...")
+						logging.info("[break] stop here with mapping success entries against keys...")
 						break
         		else: 
-        		  logger.info("Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
+        		  logging.info("Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
 		# break now if we are asked to
 		if BREAKHERE != 0:
+                        logging.info("[break] rule indicated to break here")
 			break
-	logging.info("routing finished")
+	logging.info("routing finished (route " + str(route) + ")")
 
 
 def replacePlaceholders( str ):
