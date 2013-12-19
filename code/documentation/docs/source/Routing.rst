@@ -12,9 +12,9 @@ Routing sends resulting DICOM files to other systems. It can react differently i
 
 Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json' next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
 
-    { "success": "failed", "message": "today is Monday" }
+    [{ "success": "failed", "message": "today is Monday" }]
 
-This file specifies that the computation failed and provides a reason.
+This file specifies that the computation failed and provides a reason. In a later version of the program more than one success entry will be read. Currently only the first entry is evaluated.
 
 Configuration
 =============
