@@ -74,7 +74,7 @@ A DICOM connection from a station A (PACS) that sends DICOM data to station B (M
 
 The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied.
 
-.. Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs currently as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
+  Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs currently as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
 
 The default rule above for example applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be none, one or more of those. As this rules matches any string the rule will always apply (default rule) regardless of where the data comes from. 
 
