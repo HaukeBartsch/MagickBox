@@ -34,6 +34,7 @@
                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
 		 Documentation <span class="caret"></span></a>
                <ul class="dropdown-menu">
+                  <li><a class="label-info" target="presentation" href="http://magickbox.readthedocs.org/en/latest/">Read the docs</a></li>
                   <li><a class="label-info" target="presentation" href="/code/documentation/presentation/index.html">Presentation</a></li>
                </ul>
             </li>

@@ -1,16 +1,18 @@
 .. _Routing:
 
 *******************************************
-Routing result DICOM files to other systems
+Routing DICOM files to other systems
 *******************************************
 
-Routing sends resulting DICOM files to other systems. It can react differently in response to success or failure of the computations. Here are some use cases:
+The routing function sends processed DICOM files to other DICOM aware systems. It can react differently in response to success or failure of the computations. Here are some use cases:
 
-    * specify the destination for sending resulting images
+    * specify the destination for sending result images
     * setup a dedicated system that collects copies of partially generated result images
-    * try to send to a specific PACS system first, if that fails try to send to an alternative system (see "break" option)
+    * try to send to a specific PACS system, if send fails try to send to an alternative system (see "break" option)
 
-Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json' next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
+Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. Routing only works on DICOM files found in the OUTPUT folder. 
+
+At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json' next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
 
     [{ "success": "failed", "message": "today is Monday" }]
 
@@ -73,6 +75,8 @@ The configuration of the routing function is done in the user interface. Here an
 A DICOM connection from a station A (PACS) that sends DICOM data to station B (MagickBox) is specified by three types of information for both the sender and the receiver of the information. The Application Entity (AE) title of A and B, the internet protocol (IP) numbers of both stations and the port number that A called on the IP of B. MagickBox uses a single port for all its incoming connections, therefore routing depends on the AETitles and the status (success) returned by the computation.
 
 The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied.
+
+  Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs currently as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
 
 The default rule above for example applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be none, one or more of those. As this rules matches any string the rule will always apply (default rule) regardless of where the data comes from. 
 

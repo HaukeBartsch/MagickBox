@@ -54,6 +54,8 @@ def main(argv):
 
   for route in range(len(routingtable['routing'])):
     #pprint(routingtable['routing'][route])
+    sendR1=True
+    sendR2=True
     send=False
     try:
         AETitleFrom = routingtable['routing'][route]['AETitleFrom']
@@ -69,18 +71,29 @@ def main(argv):
         BREAKHERE = 0 # no match
 
     try:
-        reAETitleCalled = re.compile(routingtable['routing'][route]['AETitleFrom'], re.IGNORECASE)
-        logging.info("routing matches: " + routingtable['routing'][route]['AETitleFrom'])
-        send = True    
+        reAETitleCalled = re.compile(routingtable['routing'][route]['AETitleIn'], re.IGNORECASE)
+        logging.info("test if " + AETitleCalled + " routing matches: " + routingtable['routing'][route]['AETitleIn'])
+        if reAETitleCalled.search(AETitleCalled):
+          logging.info("routing matches!")
+          sendR1 = True
+        else:
+          logging.info("routing does not match!")
+          sendR1 = False
     except KeyError:
         logging.info("This entry does not have AETitleFrom")
     try:
-        reAETitleCaller = re.compile(routingtable['routing'][route]['AETitleIn'], re.IGNORECASE)
-        logging.info("routing matches: " + routingtable['routing'][route]['AETitleIn'])
-        send = True
+        reAETitleCaller = re.compile(routingtable['routing'][route]['AETitleFrom'], re.IGNORECASE)
+        logging.info("test if " + AETitleCaller + " routing matches: " + routingtable['routing'][route]['AETitleFrom'])
+        if reAETitleCaller.search(AETitleCaller):
+          logging.info("routing matches!")
+          sendR2 = True
+        else:
+          logging.info("routing does not match!")
+          sendR2 = False
     except KeyError:
         logging.info("This entry does not have AETitleFrom")
 
+    send = sendR1 and sendR2
     if send == True:
         # now find out if the regular expression in proc[0]['success'] matches any key in send
         for endpoint in routingtable['routing'][route]['send']:
