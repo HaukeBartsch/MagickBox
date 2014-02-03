@@ -120,7 +120,7 @@ def main(argv):
 						continue
 
                                         if errorLOG != 0:
-                                          workstr = "/bin/sh saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
+                                          workstr = "/bin/bash /data/code/bin/saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
                                           logging.info('ROUTE: ' + workstr)
                                           os.system(workstr)
 
