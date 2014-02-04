@@ -1,7 +1,7 @@
 <?php
 
   $dirs = glob('/data/streams/*');
-  $ddirs = [];
+  $ddirs = array();
   foreach ($dirs as &$value) {
      $info_fn = $value."/info.json";
      if (file_exists($info_fn) ) {
