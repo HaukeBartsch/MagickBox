@@ -101,7 +101,7 @@ def main(argv):
         		rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
         		logging.info("Test if \"" + key + "\" (as a regular expression) matches \"" + proc[0]['success'] + "\" (" + proc[0]['message'] + ").")
         		if rePROCSUCCESS.search(proc[0]['success']):
-					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint...")
+					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint.")
 					try:
 						AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
 						AETitleTo     = replacePlaceholders( endpoint[key]['AETitleTo'] )
@@ -111,13 +111,23 @@ def main(argv):
 							BR        = endpoint[key]['break']
 						except KeyError:
 							BR = 0
+                                                try:
+                                                  errorLOG = endpoint[key]['sendErrorAsDcm']
+                                                except KeyError:
+                                                  errorLOG = 0
 					except KeyError:
 						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
 						continue
 
+                                        if errorLOG != 0:
+                                          workstr = "/bin/bash /data/code/bin/saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
+                                          logging.info('ROUTE: ' + workstr)
+                                          os.system(workstr)
+
 					workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
 					logging.info('ROUTE: ' + workstr)
 					os.system(workstr)
+
 					if BR == 0:
 						logging.info("[break] stop here with mapping success entries against keys...")
 						break
