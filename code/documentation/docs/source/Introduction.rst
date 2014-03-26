@@ -4,7 +4,7 @@
 System Architecture
 ********************
 
-The system runs inside a virtual machine usually called MasterTemplate. There can be a secondary virtual machine with a mini-PACS such as DICOM4CHEE (http://www.dcm4che.org). This secondary system is used as an image storage location only.
+The system runs inside a virtual machine usually called MasterTemplate. There can be a secondary virtual machine with a mini-PACS such as DICOM4CHEE (http://www.dcm4che.org). This secondary system is used as an image storage location only. Access to both virtual machines is provided by RDP (Microsoft Remote Desktop Connection). If you are running VirtualBox connection will only be successful after installing the "VirtualBox Extension Pack".
 
 Functionality provided by MasterTemplate:
 
@@ -33,8 +33,9 @@ The DCM4CHEE virtual machine can be used as a storage location for routing. Port
 
 This mini-PACS can store DICOM images only and provides its own user interface for query/retrieve::
 
-    http://<Host IP>:1234
+    http://<Host IP>:1234/dcm4chee-web3/
 
+(user name: admin, password: admin)
 
 MasterTemplate
 ==============
@@ -43,4 +44,4 @@ Inside the virtual machine runs Linux. There are two partitions, one for the mai
 
 Each processing stream is contained in its own directory (/data/streams/) with a configuration file (info.json). All streams run as system services under gearman (http://gearman.org).
 
-All system services are monitored using monit (https://mmonit.com/monit/download/) which provides a user interface to start/stop services. Monit makes sure that after a restart all system services are started up again. This functionality uses process id files stored in /data/.pids/. After an unsuccessful restart it might be nessessary to manually delete these files.
+All system services are monitored using monit (https://mmonit.com/monit/download/) which provides its own user interface to start/stop services. Monit makes sure that after a restart all system services are started up again. This functionality uses process id files stored in /data/.pids/. After an unsuccessful reboot it might be nessessary to manually delete these files, alternatively try to stop and restart the storescpd service in the monit user interface which runs locally in MasterTemplate http://localhost:2812/.
