@@ -21,7 +21,7 @@ The web interface is available at:
 
 	http://<Host IP>:2813/
 
-Images can be send to port 11113 using a tool such as OsiriX or storescp (dcmtk toolkit). 
+Images can be send to port 11113 using OsiriX or storescu (part of the dcmtk toolkit). 
 
 DCM4CHEE
 ========
@@ -39,4 +39,4 @@ This mini-PACS can store DICOM images only and provides its own user interface f
 MasterTemplate
 ==============
 
-Inside the virtual machine runs Linux. There are two partitions, one for the main system (/) the other for data storage during processing (/data/scratch). The dcmtk tools provide the DICOM connectivity and run as a system service (ps aux | grep store). 
+Inside the virtual machine runs Linux. There are two partitions, one for the main system (/, 20GB) the other for data storage during processing (/data/scratch, 200GB). The dcmtk tools provide the DICOM connectivity and run as a system service (ps aux | grep store). Processing starts after storescpd receives an image study.
