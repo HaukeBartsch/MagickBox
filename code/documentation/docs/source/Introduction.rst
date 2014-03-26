@@ -22,3 +22,15 @@ The web interface is available at:
 	http://<Host IP>:2813/
 
 Images can be send to port 11113 using a tool such as OsiriX or storescp (dcmtk toolkit). 
+
+DCM4CHEE
+========
+
+The DCM4CHEE virtual machine can be used as a storage location for routing. Port forwarding should be setup similarly::
+
+	[TCP, Host IP, port 11111] -> [TCP, Guest IP, port 11111]
+	[TCP, Host IP, port 1234] -> [TCP, Guest IP, port 8080]
+
+This mini-PACS can store DICOM images only and provides its own user interface for query/retrieve::
+
+    http://<Host IP>:1234
