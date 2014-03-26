@@ -39,4 +39,5 @@ This mini-PACS can store DICOM images only and provides its own user interface f
 MasterTemplate
 ==============
 
-Inside the virtual machine runs Linux. There are two partitions, one for the main system (/, 20GB) the other for data storage during processing (/data/scratch, 200GB). The dcmtk tools provide the DICOM connectivity and run as a system service (ps aux | grep store). Processing starts after storescpd receives an image study.
+Inside the virtual machine runs Linux. There are two partitions, one for the main system (/, 20GB) the other for data storage during processing (/data/scratch, 200GB). The dcmtk tools provide the DICOM connectivity and run as a system service (ps aux | grep store). Processing starts after storescpd receives an image study. As processing is data dependent the user needs to select the appropriate processing stream using the AETitle during DICOM send. The list of available processing (AETitles) streams is displayed on the web interface.
+
