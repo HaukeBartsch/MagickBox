@@ -5,7 +5,7 @@
 # This script is started by monit (/etc/monit/conf.d/processing.conf).
 #
 
-tos=1
+tos=15
 od=/data/scratch/inbox/
 port=1234
 pidfile=/data/.pids/storescpd.pid
