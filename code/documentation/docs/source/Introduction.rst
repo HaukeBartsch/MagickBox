@@ -36,6 +36,20 @@ The web interface is available at:
 
 Images to be processed should be sent to port 11113 on the host IP, using OsiriX or storescu (part of the dcmtk toolkit).
 
+Processing Streams
+------------------
+
+Each processing stream is stored in a separate directory in /data/streams/. Each stream directory contains an info file (info.json) with the following content::
+
+  {
+    "name": "My stream",
+    "description": "DICOM images are processed.",
+    "version": "0.0.1",
+    "AETitle": "ProcPics",
+    "license": "Feel free to change."
+  }
+
+
 DCM4CHEE
 ========
 
