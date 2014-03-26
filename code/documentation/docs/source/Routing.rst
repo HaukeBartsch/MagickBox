@@ -10,7 +10,7 @@ The routing function sends processed DICOM files to other DICOM aware systems. I
     * setup a dedicated system that collects copies of partially generated result images
     * try to send to a specific PACS system, if send fails try to send to an alternative system (see "break" option)
 
-Routing is performed after a computation finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. Routing only works on DICOM files found in the OUTPUT folder. 
+Routing is performed after a computation is finished. Computations are performed on an INPUT folder and results are placed in an OUTPUT folder. Routing only works on DICOM files found in the OUTPUT folder. 
 
 At the level of the parent directory (directory that contains INPUT/ and OUTPUT/ folders) is one file initially called info.json. This file contains information that describes the input connection the data comes from. The computation should place a new file called 'proc.json' next to info.json. This file is evaluated to obtain the information required to start routing. Here is an example content::
 
@@ -76,15 +76,15 @@ A DICOM connection from a station A (PACS) that sends DICOM data to station B (M
 
 The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied.
 
-  Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs currently as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
+  Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
 
-The default rule above for example applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be none, one or more of those. As this rules matches any string the rule will always apply (default rule) regardless of where the data comes from. 
+For example, the default rule above applies if the AETitle called on B by A matches the pattern ".*". This is a regular expression that reads as some character (.) and there can be none, one or more of those. As this rules matches any string, the rule will always apply (default rule) regardless of where the data comes from. 
 
 The "send" section contains one or more destinations for sending. Each of the entries is matched one at a time against the processing result (returned proc.json "success" value string). The default rule matches any value of "success" whereas the rule named "ProcRSI bucket routing of results" matches specific strings like "success", "failed", or "partial". If the "success" string matches one of these entries the corresponding destination is chosen to receive the OUTPUT data.
 
-If the "break" entry of a successful sending operation has the value 1 sending stops without evaluated if other send entries would match as well. This allows for a fail-back send destination.
+If the "break" entry of a successful sending operation has the value 1 sending stops without evaluating if other send entries would match as well. This allows for a fail-back send destination.
 
-Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specifies in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
+Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
 
 Logging
 =======
