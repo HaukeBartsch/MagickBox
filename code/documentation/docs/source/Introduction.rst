@@ -34,3 +34,9 @@ The DCM4CHEE virtual machine can be used as a storage location for routing. Port
 This mini-PACS can store DICOM images only and provides its own user interface for query/retrieve::
 
     http://<Host IP>:1234
+
+
+MasterTemplate
+==============
+
+Inside the virtual machine runs Linux. There are two partitions, one for the main system (/) the other for data storage during processing (/data/scratch). The dcmtk tools provide the DICOM connectivity and run as a system service (ps aux | grep store). 
