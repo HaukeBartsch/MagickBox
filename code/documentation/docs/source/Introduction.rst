@@ -6,7 +6,8 @@ System Architecture
 
 The system runs inside a virtual machine usually called MasterTemplate. There can be a secondary virtual machine with a mini-PACS such as DICOM4CHEE (http://www.dcm4che.org). This secondary system is used as an image storage location only.
 
-The functionality provided by MasterTemplate:
+Functionality provided by MasterTemplate:
+
 	* DICOM node listening to incoming connections
 	* Web interface which provides a user interface for configuration, log files and processed data downloads. The routing functionality can send processed data back. In this mode no continuous access to the web interface is required appart from the initial configuration.
 
