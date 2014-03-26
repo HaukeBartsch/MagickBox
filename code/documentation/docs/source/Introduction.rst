@@ -46,7 +46,7 @@ Each processing stream is stored in a separate directory in /data/streams/. Each
     "description": "DICOM images are processed.",
     "version": "0.0.1",
     "AETitle": "ProcPics",
-    "license": "Feel free to change."
+    "license": "Feel free to change the code."
   }
 
 
