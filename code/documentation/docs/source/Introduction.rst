@@ -4,7 +4,10 @@
 System Architecture
 ********************
 
-The system runs inside a virtual machine usually called MasterTemplate. There can be a secondary virtual machine with a mini-PACS such as DICOM4CHEE (http://www.dcm4che.org). This secondary system is used as an image storage location only. Access to both virtual machines is provided by RDP (Microsoft Remote Desktop Connection). If you are running VirtualBox connection will only be successful after installing the "VirtualBox Extension Pack".
+The system runs inside a virtual machine usually called MasterTemplate. There can be a secondary virtual machine with a mini-PACS such as DICOM4CHEE (http://www.dcm4che.org). This secondary system is used as an image storage location only. Access to both virtual machines is provided by RDP (Microsoft Remote Desktop Connection). If you are running VirtualBox connection will only be successful after installing the "VirtualBox Extension Pack". Use the following information to access the console on each virtual machine::
+
+	* MasterTemplate user name: processing, password: processing
+	* DCM4CHEE user name: dcm4chee, password: dcm4chee
 
 Functionality provided by MasterTemplate:
 
