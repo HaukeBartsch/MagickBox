@@ -11,7 +11,7 @@ Functionality provided by MasterTemplate:
 	* DICOM node listening to incoming connections
 	* Web interface which provides a user interface for configuration, log files and processed data downloads. The routing functionality can send processed data back. In this mode no continuous access to the web interface is required appart from the initial configuration.
 
-MasterTemplate runs on a Host computer using network address translation (NAT). Using this configuration no separate IP address is required. In order to be accessible to the outside the virtual machine forwards two ports to the outside world.
+MasterTemplate runs on a Host computer using network address translation (NAT). Using this configuration no separate IP address is required. In order to be accessible to the outside the virtual machine forwards two ports to the outside world.::
 
 	[TCP, Host IP, port 11113] -> [TCP, Guest IP, port 1234]
 	[TCP, Host IP, port 2813]  -> [TCP, Guest IP, port 2813]
