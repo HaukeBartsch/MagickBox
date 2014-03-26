@@ -39,14 +39,14 @@ Images to be processed should be sent to port 11113 on the host IP, using OsiriX
 DCM4CHEE
 ========
 
-The DCM4CHEE virtual machine can be used as a storage location for routing using port forwarding::
+The DCM4CHEE virtual machine is an optional component and can be used as a storage location for routing using port forwarding::
 
 	[TCP, Host IP, port 11111] -> [TCP, Guest IP, port 11111]
 	[TCP, Host IP, port 1234]  -> [TCP, Guest IP, port 8080]
 
-This mini-PACS can store DICOM images only and provides its own user interface for query/retrieve::
+This mini-PACS stores DICOM images and has its own user interface supporting query/retrieve::
 
     http://<Host IP>:1234/dcm4chee-web3/
 
-(user name: admin, password: admin)
+(user name: admin, password: admin).
 
