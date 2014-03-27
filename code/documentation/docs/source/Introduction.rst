@@ -68,7 +68,5 @@ Each processing stream is stored in a separate directory in /data/streams/. Each
 
 This identifies a stream by an AETitle which has to be used by the sending DICOM node. Information about streams is displayed in the web-interface.
 
-Every processing stream is linked to a system service that is responsible for scheduling the stream. Monit is used to monitor these services. The monit configuration file in /etc/monit/conf.d/processing.conf contains the call to a system monitoring script that can start/stop/restart the processing stream.
-
-
+Every processing stream is linked to a system service that is responsible for scheduling the stream. Monit is used to monitor these services. The monit configuration file in /etc/monit/conf.d/processing.conf contains the call to a system monitoring script which is part of the stream that can start/stop/restart the processing.
 
