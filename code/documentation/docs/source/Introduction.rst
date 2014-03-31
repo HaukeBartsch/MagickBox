@@ -66,7 +66,9 @@ Each processing stream is stored in a separate directory in /data/streams/. Each
     "license": "Feel free to change the code."
   }
 
-This identifies a stream by an AETitle which has to be used by the sending DICOM node. Information about streams is displayed in the web-interface.
+This identifies a stream by an AETitle which has to be used by the sending DICOM node. Information about the available streams are extracted from these info files and displayed in the web-interface.
 
-Every processing stream is linked to a system service that is responsible for scheduling the stream. Monit is used to monitor these services. The monit configuration file in /etc/monit/conf.d/processing.conf contains the call to a system monitoring script which is part of the stream that can start/stop/restart the processing.
+Every processing stream is linked to a system service that is responsible for scheduling the stream. Monit is used to monitor these services. The monit configuration file in /etc/monit/conf.d/processing.conf therefore contains a call to a system monitoring script for each bucket of the stream that can start/stop/restart the processing. 
+
+The script starts the processing stream using a gearman services. Each gearman deamon will wait for a processing job, or list of jobs and execute them one after another (first in - first out). This does not prevent several streams to run at the same time.
 
