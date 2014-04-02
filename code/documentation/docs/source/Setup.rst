@@ -8,7 +8,10 @@ The setup of a MagickBox has to be performed if the IP of the machine that hosts
 
 In order to setup a new MagickBox follow the steps outlined below.
 
-(todo)
+   * install VirtualBox and the VirtualBox extension package (or another virtualization environment)
+   * import the MasterTemplate OVA file
+   * setup the virtual machines to start when the host computer starts (/Library/LaunchDaemon/ scripts)
+
 
 DICOM connectivity
 ==================
