@@ -70,5 +70,5 @@ This identifies a stream by an AETitle which has to be used by the sending DICOM
 
 Every processing stream is linked to a system service that is responsible for scheduling the stream. Monit is used to monitor these services. The monit configuration file in /etc/monit/conf.d/processing.conf therefore contains a call to a system monitoring script for each bucket of the stream that can start/stop/restart the processing. 
 
-The script starts the processing stream using a gearman services. Each gearman deamon will wait for a processing job, or list of jobs and execute them one after another (first in - first out). This does not prevent several streams to run at the same time.
+The script starts the processing stream using a gearman services. Each gearman deamon will wait for a processing job, or list of jobs and execute them one after another (first in - first out). Warning: This does not prevent several streams to run at the same time. For example sending DICOM images between nodes is a separate gearman service and computation will run in parallel with DICOM Send operations.
 
