@@ -2,7 +2,7 @@
 
   // /usr/bin/gearadmin
   // return status values
-  $ok = exec('/usr/bin/gearadmin --status', $ret);
+  $ok = exec('/usr/local/bin/gearadmin --status', $ret);
   $vals = $ret;
   foreach ($vals as &$value) {
     $ss = split("\t", $value);
