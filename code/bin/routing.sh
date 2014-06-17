@@ -19,14 +19,14 @@ def main(argv):
   # read in the proc.json files to find out what the status of processing was
   # it depends on what the status was if routing will be performed
   try:
-	proc_data = open(WORKINGDIR + '/proc.json')
-  	proc = json.load(proc_data)
-  	proc_data.close()
+    proc_data = open(WORKINGDIR + '/proc.json')
+    proc = json.load(proc_data)
+    proc_data.close()
   except IOError:
-    logging.warning("Could not read the proc file for " + WORKINGDIR + "/proc.json, only default routing is performed")
     proc = []
     proc.insert(0,{})
     proc[0]['success'] = 'couldNotReadProcJSON'
+    logging.warning("Could not read the proc file \"" + WORKINGDIR + "/proc.json\", only default routing using " + proc[0]['success'] + " is performed")
 
   # read in the routing table, something like this would work:
   #  {u'AETitleFrom': u'HAUKETEST',
@@ -45,12 +45,12 @@ def main(argv):
   #                       u'PORT': u'11113'}}]}
 
   try:
-  	routingtable_data = open('/data/code/bin/routing.json')
-  	routingtable = json.load(routingtable_data)
-  	routingtable_data.close()
+    routingtable_data = open('/data/code/bin/routing.json')
+    routingtable = json.load(routingtable_data)
+    routingtable_data.close()
   except IOError:
-  	logging.warning("Error: Could not read /data/code/bin/routing.json, no routing is performed")
-  	sys.exit()
+    logging.warning("Error: Could not read /data/code/bin/routing.json, no routing is performed")
+    sys.exit()
 
   for route in range(len(routingtable['routing'])):
     #pprint(routingtable['routing'][route])
@@ -72,7 +72,7 @@ def main(argv):
 
     try:
         reAETitleCalled = re.compile(routingtable['routing'][route]['AETitleIn'], re.IGNORECASE)
-        logging.info("test if " + AETitleCalled + " routing matches: " + routingtable['routing'][route]['AETitleIn'])
+        logging.info("test if AETitleCalled \"" + AETitleCalled + "\" matches: AETitleIn \"" + routingtable['routing'][route]['AETitleIn'] + "\"")
         if reAETitleCalled.search(AETitleCalled):
           logging.info("routing matches!")
           sendR1 = True
@@ -80,10 +80,10 @@ def main(argv):
           logging.info("routing does not match!")
           sendR1 = False
     except KeyError:
-        logging.info("This entry does not have AETitleFrom")
+        logging.info("This entry does not have AETitleIn, which is fine if we have an AETitleFrom")
     try:
         reAETitleCaller = re.compile(routingtable['routing'][route]['AETitleFrom'], re.IGNORECASE)
-        logging.info("test if " + AETitleCaller + " routing matches: " + routingtable['routing'][route]['AETitleFrom'])
+        logging.info("test if AETitleCaller \"" + AETitleCaller + "\" matches: AETitleFrom \"" + routingtable['routing'][route]['AETitleFrom'] + "\"")
         if reAETitleCaller.search(AETitleCaller):
           logging.info("routing matches!")
           sendR2 = True
@@ -91,63 +91,63 @@ def main(argv):
           logging.info("routing does not match!")
           sendR2 = False
     except KeyError:
-        logging.info("This entry does not have AETitleFrom")
+        logging.info("This entry does not have AETitleFrom, which is fine if we have an AETitleIn")
 
     send = sendR1 and sendR2
     if send == True:
         # now find out if the regular expression in proc[0]['success'] matches any key in send
         for endpoint in routingtable['routing'][route]['send']:
-        	for key in endpoint.keys():
-        		rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
-        		logging.info("Test if \"" + key + "\" (as a regular expression) matches \"" + proc[0]['success'] + "\" (" + proc[0]['message'] + ").")
-        		if rePROCSUCCESS.search(proc[0]['success']):
-					logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint.")
-					try:
-						AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
-						AETitleTo     = replacePlaceholders( endpoint[key]['AETitleTo'] )
-						IP            = replacePlaceholders( endpoint[key]['IP'] )
-						PORT          = replacePlaceholders( endpoint[key]['PORT'] )
-						try:
-							BR        = endpoint[key]['break']
-						except KeyError:
-							BR = 0
-                                                try:
-                                                  errorLOG = endpoint[key]['sendErrorAsDcm']
-                                                except KeyError:
-                                                  errorLOG = 0
-					except KeyError:
-						logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
-						continue
+          for key in endpoint.keys():
+            rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
+            logging.info("Test if \"" + key + "\" (as a regular expression) matches \"" + proc[0]['success'] + "\" (" + proc[0]['message'] + ").")
+            if rePROCSUCCESS.search(proc[0]['success']):
+              logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint.")
+              try:
+                AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
+                AETitleTo     = replacePlaceholders( endpoint[key]['AETitleTo'] )
+                IP            = replacePlaceholders( endpoint[key]['IP'] )
+                PORT          = replacePlaceholders( endpoint[key]['PORT'] )
+                try:
+                  BR        = endpoint[key]['break']
+                except KeyError:
+                  BR = 0
+                try:
+                  errorLOG = endpoint[key]['sendErrorAsDcm']
+                except KeyError:
+                  errorLOG = 0
+              except KeyError:
+                logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
+                continue    
 
-                                        if errorLOG != 0:
-                                          workstr = "/bin/bash /data/code/bin/saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
-                                          logging.info('ROUTE: ' + workstr)
-                                          os.system(workstr)
+              if errorLOG != 0:
+                workstr = "/bin/bash /data/code/bin/saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
+                logging.info('ROUTE: ' + workstr)
+                os.system(workstr)    
 
-					workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
-					logging.info('ROUTE: ' + workstr)
-					os.system(workstr)
+              workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
+              logging.info('ROUTE: ' + workstr)
+              os.system(workstr)    
 
-					if BR == 0:
-						logging.info("[break] stop here with mapping success entries against keys...")
-						break
-        		else: 
-        		  logging.info("Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
-		# break now if we are asked to
-		if BREAKHERE != 0:
-                        logging.info("[break] rule indicated to break here")
-			break
-	logging.info("routing finished (route " + str(route) + ")")
+              if BR == 0:
+                logging.info("[break] stop here with mapping success entries against keys...")
+                break
+            else: 
+              logging.info("Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
+    # break now if we are asked to
+    if BREAKHERE != 0:
+      logging.info("[break] rule indicated to break here")
+      break
+  logging.info("routing finished (route " + str(route) + ")")
 
 
 def replacePlaceholders( str ):
-	global PARENTIP
-	global PARENTPORT
-	if str == "$me":
-		return PARENTIP
-	if str == "$port":
-		return PARENTPORT
-	return str
+  global PARENTIP
+  global PARENTPORT
+  if str == "$me":
+    return PARENTIP
+  if str == "$port":
+    return PARENTPORT
+  return str
 
 #
 # read in the machine's name and port and save as global variables
@@ -159,12 +159,12 @@ myself = myself_file.read()
 myself_file.close()
 myself = myself.split(";")
 for keyvaluestr in myself:
-	keyvalue = keyvaluestr.split("=")
-	if len(keyvalue) == 2:
-		if keyvalue[0].strip() == "PARENTIP":
-			PARENTIP=keyvalue[1].strip()
-		if keyvalue[0].strip() == "PARENTPORT":
-			PARENTPORT=keyvalue[1].strip()
+  keyvalue = keyvaluestr.split("=")
+  if len(keyvalue) == 2:
+    if keyvalue[0].strip() == "PARENTIP":
+      PARENTIP=keyvalue[1].strip()
+    if keyvalue[0].strip() == "PARENTPORT":
+      PARENTPORT=keyvalue[1].strip()
 
 if PARENTIP == "":
   logging.info("Warning: could not read the machine's IP")
