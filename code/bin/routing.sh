@@ -3,6 +3,7 @@
 import sys, json, re
 import logging
 import os
+import subprocess as sub
 
 logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
 logging.info("Routing called")
@@ -53,6 +54,7 @@ def main(argv):
     sys.exit()
 
   for route in range(len(routingtable['routing'])):
+    logging.info("check route " + str(route) + " \"" + routingtable['routing'][route]['name'] + "\"");
     #pprint(routingtable['routing'][route])
     sendR1=True
     sendR2=True
@@ -72,26 +74,26 @@ def main(argv):
 
     try:
         reAETitleCalled = re.compile(routingtable['routing'][route]['AETitleIn'], re.IGNORECASE)
-        logging.info("test if AETitleCalled \"" + AETitleCalled + "\" matches: AETitleIn \"" + routingtable['routing'][route]['AETitleIn'] + "\"")
+        logging.info(" test if AETitleCalled \"" + AETitleCalled + "\" matches: AETitleIn \"" + routingtable['routing'][route]['AETitleIn'] + "\"")
         if reAETitleCalled.search(AETitleCalled):
-          logging.info("routing matches!")
+          logging.info(" routing matches!")
           sendR1 = True
         else:
-          logging.info("routing does not match!")
+          logging.info(" routing does not match!")
           sendR1 = False
     except KeyError:
-        logging.info("This entry does not have AETitleIn, which is fine if we have an AETitleFrom")
+        logging.info(" This entry does not have AETitleIn, which is fine if we have an AETitleFrom")
     try:
         reAETitleCaller = re.compile(routingtable['routing'][route]['AETitleFrom'], re.IGNORECASE)
-        logging.info("test if AETitleCaller \"" + AETitleCaller + "\" matches: AETitleFrom \"" + routingtable['routing'][route]['AETitleFrom'] + "\"")
+        logging.info(" test if AETitleCaller \"" + AETitleCaller + "\" matches: AETitleFrom \"" + routingtable['routing'][route]['AETitleFrom'] + "\"")
         if reAETitleCaller.search(AETitleCaller):
-          logging.info("routing matches!")
+          logging.info(" routing matches!")
           sendR2 = True
         else:
-          logging.info("routing does not match!")
+          logging.info(" routing does not match!")
           sendR2 = False
     except KeyError:
-        logging.info("This entry does not have AETitleFrom, which is fine if we have an AETitleIn")
+        logging.info(" This entry does not have AETitleFrom, which is fine if we have an AETitleIn")
 
     send = sendR1 and sendR2
     if send == True:
@@ -99,9 +101,9 @@ def main(argv):
         for endpoint in routingtable['routing'][route]['send']:
           for key in endpoint.keys():
             rePROCSUCCESS   = re.compile(key, re.IGNORECASE)
-            logging.info("Test if \"" + key + "\" (as a regular expression) matches \"" + proc[0]['success'] + "\" (" + proc[0]['message'] + ").")
+            logging.info("  Test if \"" + key + "\" (as a regular expression) matches \"" + proc[0]['success'] + "\").")
             if rePROCSUCCESS.search(proc[0]['success']):
-              logging.info("We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint.")
+              logging.info("  We found an endpoint \"" + key + "\" that matches \"" + proc[0]['success'] + "\" now send data to that endpoint.")
               try:
                 AETitleSender = replacePlaceholders( endpoint[key]['AETitleSender'] )
                 AETitleTo     = replacePlaceholders( endpoint[key]['AETitleTo'] )
@@ -116,28 +118,34 @@ def main(argv):
                 except KeyError:
                   errorLOG = 0
               except KeyError:
-                logging.warning("Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
+                logging.warning("  Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
                 continue    
 
               if errorLOG != 0:
                 workstr = "/bin/bash /data/code/bin/saveErrorAsDcm.sh \"" + WORKINGDIR + "/processing.log\" \"" + WORKINGDIR + "/INPUT\" \"" + WORKINGDIR + "/OUTPUT\" &"
-                logging.info('ROUTE: ' + workstr)
+                logging.info('  ROUTE: ' + workstr)
                 os.system(workstr)    
 
-              workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
-              logging.info('ROUTE: ' + workstr)
-              os.system(workstr)    
+              workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
+              logging.info('  ROUTE: ' + workstr)
+              try:
+                try:
+                  output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
+                except CalledProcessError:
+                  logging.info('    send returned: \"' + output + "\"")
+              except OSError:
+                logging.info('    error executing gearman job (OSError)');
 
               if BR == 0:
-                logging.info("[break] stop here with mapping success entries against keys...")
+                logging.info("  [break] stop here with mapping success entries against keys...")
                 break
             else: 
-              logging.info("Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
+              logging.info("  Key \"" + key + "\" does not match with \"" + proc[0]['success'] + "\".")
     # break now if we are asked to
     if BREAKHERE != 0:
-      logging.info("[break] rule indicated to break here")
+      logging.info("  [break] rule indicated to break here")
       break
-  logging.info("routing finished (route " + str(route) + ")")
+  logging.info("routing finished")
 
 
 def replacePlaceholders( str ):
