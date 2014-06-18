@@ -117,6 +117,10 @@ def main(argv):
                   errorLOG = endpoint[key]['sendErrorAsDcm']
                 except KeyError:
                   errorLOG = 0
+                try:
+                  which = endpoint[key]['which']
+                except KeyError:
+                  which = ""
               except KeyError:
                 logging.warning("  Could not apply routing rule because one of the required entries is missing: " + endpoint[key])
                 continue    
@@ -126,12 +130,17 @@ def main(argv):
                 logging.info('  ROUTE: ' + workstr)
                 os.system(workstr)    
 
-              workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + WORKINGDIR + "/OUTPUT " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
+              OUTPUTDIRECTORY = WORKINGDIR + "/OUTPUT"
+              if which != "":
+                logging.info('  Found which statement, look for specific DICOM files to send...')
+                OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
+
+              workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
               logging.info('  ROUTE: ' + workstr)
               try:
                 try:
                   output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
-                except CalledProcessError:
+                except sub.CalledProcessError:
                   logging.info('    send returned: \"' + output + "\"")
               except OSError:
                 logging.info('    error executing gearman job (OSError)');
@@ -156,6 +165,96 @@ def replacePlaceholders( str ):
   if str == "$port":
     return PARENTPORT
   return str
+
+def filterDICOM( inputdir, which ):
+  # check as well if any one of the which statements is true for this file
+  # collect all dicom tags and query the file once only
+  dicomKeys = []
+  searchString = ""
+  for w in which:
+    for key in w.keys():
+       dicomKeys.append(key)
+       searchString = searchString + " +P " + key
+      
+  # create output directory
+  workstr = '/bin/mktemp -d'
+  try:
+    try:
+      output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
+    except sub.CalledProcessError:
+      logging.info('    mktemp returned: \"' + output + "\"")
+  except OSError:
+    logging.info('    error executing mktemp (OSError)');
+  TEMP=output.rstrip()
+  logging.info('    Write matching files to \"' + TEMP + '\"')
+
+  count = 0
+  for root, dirs, files in os.walk( inputdir ):
+    for file in files:
+      if not os.path.isfile(os.path.join(root, file)):
+        continue
+      # check if this file is a DICOM file
+      workstr = "/usr/bin/dcmftest " + os.path.join(root, file);
+      try:
+        try:
+          output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
+        except sub.CalledProcessError:
+          logging.info('    dcmftest returned: \"' + output + "\"")
+        if output.startswith("no"):
+          continue
+      except OSError:
+        logging.info('    error executing dcmftest (OSError)');
+    
+      workstr = "/usr/bin/dcmdump " + searchString + " " + os.path.join(root,file);
+      try:
+        try:
+          output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
+        except sub.CalledProcessError:
+          logging.info('    dcmdump returned: \"' + output + "\" for " + workstr)
+      except OSError:
+        logging.info('    error executing dcmdump (OSError)');
+      # grab the output as lines by dicomKeys
+      dicomValues = []
+      for line in output.split('\n'):
+        val = re.split('[\[\]]', line)
+        if len(val) > 2:
+          dicomValues.append(val[1])
+          #  logging.info('   FOUND value ' + val[1])
+        else:
+          if len(line) > 0:
+            logging.info('   Error: cannot get value from line \"' + line + '\"')
+            dicomValues.append("")
+      # now walk through which to test the current values (dicomKeys, dicomValues)
+      
+      for w in which:
+        # all values have to match in any of the which
+        allMatch = True
+        for k in w.keys():
+          try:
+            idx = dicomKeys.index(k)
+          except ValueError:
+            logging.info('    Error: tried to find ' + k + ' in list, does not exist')
+            continue
+          reK = re.compile(w[k], re.IGNORECASE)
+          if not reK.search(dicomValues[idx]):
+            allMatch = False
+            break
+        if allMatch == True:
+          # copy file to output
+          output = ""
+          workstr = "/bin/ln -s " + os.path.join(root,file) + " " + os.path.join(TEMP, ("dicom%04d.dcm" % count));
+          #logging.info("       File " + os.path.join(root,file) + " matches which and will be send ")
+          try:
+            try:
+              output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
+            except sub.CalledProcessError:
+              logging.info('    linking file with ' + workstr + ' failed: \"' + output + "\"")
+          except OSError:
+            logging.info('    error executing ln (OSError)');
+          
+          break  
+      count = count + 1
+  return TEMP
 
 #
 # read in the machine's name and port and save as global variables
