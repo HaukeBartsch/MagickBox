@@ -17,6 +17,8 @@ def main(argv):
   AETitleCalled=sys.argv[2]
   AETitleCaller=sys.argv[3]
 
+  logging.info('CALLED routing with ' + WORKINGDIR + ' ' + AETitleCalled + ' ' + AETitleCaller)
+
   # read in the proc.json files to find out what the status of processing was
   # it depends on what the status was if routing will be performed
   try:
@@ -132,7 +134,7 @@ def main(argv):
 
               OUTPUTDIRECTORY = WORKINGDIR + "/OUTPUT"
               if which != "":
-                logging.info('  Found which statement, look for specific DICOM files to send...')
+                logging.info('  Found which statement, look for specific DICOM files to send in ' + OUTPUTDIRECTORY + '...')
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
 
               workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
@@ -191,16 +193,21 @@ def filterDICOM( inputdir, which ):
   count = 0
   for root, dirs, files in os.walk( inputdir ):
     for file in files:
-      if not os.path.isfile(os.path.join(root, file)):
-        continue
+      #logging.info('         check file ' + file)
+      #if not os.path.isfile(os.path.join(root, file)):
+      #  logging.info('         file ' + file + ' is not a DICOM file')
+      #  continue
       # check if this file is a DICOM file
       workstr = "/usr/bin/dcmftest " + os.path.join(root, file);
       try:
         try:
           output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
         except sub.CalledProcessError:
-          logging.info('    dcmftest returned: \"' + output + "\"")
+          #logging.info('    dcmftest returned: \"' + output + "\" from : \"" + workstr + "\"")
+          logging.info('    dcmftest said no to ' + file )
+          continue
         if output.startswith("no"):
+          logging.info('    dcmftest said no to ' + file )
           continue
       except OSError:
         logging.info('    error executing dcmftest (OSError)');
@@ -235,7 +242,11 @@ def filterDICOM( inputdir, which ):
           except ValueError:
             logging.info('    Error: tried to find ' + k + ' in list, does not exist')
             continue
-          reK = re.compile(w[k], re.IGNORECASE)
+          try:
+            reK = re.compile(w[k], re.IGNORECASE)
+          except re.error:
+            logging.info('ERROR in Expression \"' + w[k] + '\" of routing rule ' + k)
+            continue
           if not reK.search(dicomValues[idx]):
             allMatch = False
             break

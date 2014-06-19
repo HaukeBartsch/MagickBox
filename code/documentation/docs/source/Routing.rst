@@ -87,7 +87,7 @@ The "send" section contains one or more destinations for sending. Each of the en
 
 If the "break" entry of a successful sending operation has the value 1 sending stops without evaluating if other send entries would match as well. This allows for a fail-back send destination.
 
-If the "which" statment is set DICOM files are tested before they are send. This filtering allows you to select DICOM images based on DICOM tags. The value of each tag is filtered by a regular expression and only files that fullfil at least one of the "which" array entries are send.
+If a "which" statement is set DICOM files are tested before they are send. This filtering step allows you to select DICOM images based on DICOM tags. The value of each tag is filtered by a regular expression and only files that fullfil at least one of the "which" array entries are send to the corresponding destination.
 
 Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
 
