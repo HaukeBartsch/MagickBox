@@ -43,33 +43,36 @@ EOF
 echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
 
 # DCM4CHEE for save keeping
-# /usr/bin/storescu -aet "Processing" -aec "DCM4CHEE" +r +sd XXX.XXX.XXX.XXX 11111 $WORKINGDIR
-/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
+# /usr/local/bin/storescu -aet "Processing" -aec "DCM4CHEE" +r +sd XXX.XXX.XXX.XXX 11111 $WORKINGDIR
+/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
 
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
 if [ $AETitleCalled = \"ProcRSITBI\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcRSIProstate\" ]
 then 
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT"
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcRSIMS\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT"
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"RSIProsUCSD\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT"
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcTBIp01\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT"
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT"
+elif [ $AETitleCalled = \"copilot\" ]
+then
+  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f CoPilot -- "${WORKINGDIR}/INPUT"
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
 
 # try to send back to osirix on parent machine
 #echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
-#/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
+#/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- "${WORKINGDIR}/OUTPUT $PARENTIP $PARENTPORT"
 #echo "`date`: Process bucket01 (send results done...)" >> /data/logs/bucket01.log
 
 # implement routing
