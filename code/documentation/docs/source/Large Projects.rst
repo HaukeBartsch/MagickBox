@@ -1,4 +1,4 @@
-.. _Large Projects:
+.. _LargeProjects:
 
 *******************************************
 How to process a large number of subjects
