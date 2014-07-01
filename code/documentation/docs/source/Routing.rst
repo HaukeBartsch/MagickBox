@@ -1,8 +1,8 @@
 .. _Routing:
 
-*******************************************
-Routing DICOM files to other systems
-*******************************************
+**************
+Routing DICOM 
+**************
 
 The routing function sends processed DICOM files to other DICOM aware systems. It can react differently in response to success or failure of the computations. Here are some use cases:
 

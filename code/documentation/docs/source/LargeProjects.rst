@@ -4,11 +4,11 @@
 How to process a large number of subjects
 *******************************************
 
-Lets assume that we have a directory on our harddrive with a larger number of DICOM datasets that we want to process. Load the data into OsiriX (MacOS) or use the dcmtk toolkit to send the DICOM data to the processing system::
+Lets assume that we have a directory with a larger number of DICOM datasets that we want to process. We will send the data to the MB and download the results. First load the data into OsiriX (MacOS) or use the dcmtk toolkit (http://dicom.offis.de) to send the DICOM data to the processing system::
 
    storescu +sd +r -nh -aet MySelf -aec ProcBucket <ip of MagickBox> <port of MagickBox> <single DICOM directory>
 
-The call above will descend into sub-directories and keep going even if non-DICOM files are encountered. The receiving AETitle "ProcBucket" will be used to select the processing bucket. Only single subject data should be send to the system as each send operation is interpreted as a command for processing the received data. The above line should therefore be used in a loop with some sleep interval between send operations.
+The call above will descend into sub-directories and keep going even if non-DICOM files are encountered. The receiving AE title "ProcBucket" will be used to select the processing stream. Only single subject data should be send to the system in this way as each send operation is interpreted as a command for processing the received data. The above line should therefore be used in a loop with some sleep interval between send operations if more than one session needs to be send.
 
 In order to find out the status of the processing we can either use the web-interface provided by MB or we can use 'curl' together with 'jq' to automate the procedure. Lets assume that curl and jq are installed. We can get a list of sessions send from a specific machine (here ip44) by::
 
