@@ -53,11 +53,12 @@ echo "`date`: send files to \"$SERVER\" \"$PORT\" \"$AETitleTo\" \"$AETitleSende
 TEMP=`mktemp -d`
 chmod 777 "${TEMP}"
 c=0
-find ${DATA} -type f -print0 |
+find -L ${DATA} -type f -print0 |
 while read -r -d '' u
 do
   /usr/bin/dcmftest "$u" > /dev/null
-  if [ $? -ne 0 ]; then 
+  if [ $? -ne 0 ]; then
+     echo "`date`: found ${u}, is not DICOM, skip" >> /data/logs/bucket02.log
      continue
   fi
 

@@ -107,14 +107,15 @@ jQuery(document).ready(function() {
 				       +"<button type=\"button\" class=\"close remove-process-data\" data=\""
 				       +d['scratchdir']
 				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\">&times;</button>"
-                                       +"<a title=\"Link to processing log file\" href='/scratch/"
+                                       +"<a title=\"Link to processing log file\" target='_logfile' href='/scratch/"
 				       +d['scratchdir']+"/processing.log'>["
 				       +d['received']+"] "
 				       +d['AETitleCalled']
 				       +" -- "
-				       +d['CallerIP']
-				       +"</a>"
-				       +"<br/>If output has been generated download here: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a> (.zip)"
+				       +d['AETitleCaller']
+				       +"</a> <span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+				       + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
+				       +"<br/>If output has been generated click here to download: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a> (.zip)"
 				       +"</li>");
             
 	    });
