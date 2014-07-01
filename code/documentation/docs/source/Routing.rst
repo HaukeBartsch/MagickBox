@@ -50,8 +50,8 @@ The configuration of the routing function is done in the user interface. Here an
              "AETitleSender": "me",
              "AETitleTo": "PACS",
              "break": 1,
-	     "which": [
-                { "0008:103e": ".*" }
+	           "which": [
+                { "0008,103e": ".*" }
              ]
        	   },
        	   "failed": {
