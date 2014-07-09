@@ -24,4 +24,4 @@ This option will write DEBUG, INFO, WARN, ERROR, and FATAL messages to the store
 
   log4cplus.rootLogger = WARN, console, logfile
 
-To reduce the number of log messages to the log file. This should improve the speed slightly as well.
+to reduce the number of log messages. Less log messages can improve the speed of the system.

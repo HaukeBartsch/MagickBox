@@ -27,6 +27,18 @@
        $inputs = glob('/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/INPUT/*', GLOB_ONLYDIR);
        $parts2 = explode("/",$inputs[0]);
        $ar[count($ar)-1]['pid'] = $parts2[count($parts2)-1];
+
+       $fname = '/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/processing.log';
+       if ( ! is_readable($fname) ) {
+          $ar[count($ar)-1]['lastChangedTime'] = '0';
+          continue;
+       }
+       $fileinfo = stat($fname);
+       $ar[count($ar)-1]['lastChangedTime'] = date(DATE_RFC2822, $fileinfo['mtime']);
+       $ar[count($ar)-1]['processingTime'] = -(filemtime($fn)-$fileinfo['mtime']);
+       $ar[count($ar)-1]['processingLogSize'] = $fileinfo['size'];
+       $ar[count($ar)-1]['processingLast'] = time() - $fileinfo['mtime'];
+       
   }
 
   echo json_encode($ar);
