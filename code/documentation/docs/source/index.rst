@@ -3,7 +3,7 @@
 MagickBox
 =========
 
-This documentation is work in progress. We started documenting the routing system as this is more complex. All functionality described is still experimental.
+This documentation is work in progress. All functionality described is still experimental.
 
 Contents:
 
@@ -12,6 +12,7 @@ Contents:
 
    Introduction
    Setup
+   LargeProjects
    Routing
    
 
