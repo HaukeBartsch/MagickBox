@@ -182,7 +182,8 @@ function timeOverview( data ) {
    }*/
    var caldata = {};
    for (var i = 0; i < data.length; i++) {
-      timestamp = new date(data[i]['received']).getTime();
+      timestamp = new Date(data[i]['received']);
+      timestamp = timestamp.getTime();
       caldata[timestamp] = 1;
    }
 
