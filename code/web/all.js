@@ -174,11 +174,24 @@ function timeOverview( data ) {
    var w = jQuery(el).width();
    var h = jQuery(el).height();
 
+   // create time stamp information
+   /*{
+    "timestamp": value,
+    "timestamp2": value2,
+    ...
+   }*/
+   var caldata = {};
+   for (var i = 0; i < data.length; i++) {
+      timestamp = new date(data[i]['received']).getTime();
+      caldata[timestamp] = 1;
+   }
+
    var cal = new CalHeatMap();
    cal.init({
     itemSelector: "#timeOverview",
     domain: "day",
     displayLegend: false,
+    data: caldata,
     label: {
         position: "top"
     }
