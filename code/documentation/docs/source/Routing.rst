@@ -105,7 +105,7 @@ If the "break" entry of a successful sending operation has the value 1 sending s
 
 If a "which" statement is set DICOM files are tested before they are send. This filtering step allows you to select DICOM images based on DICOM tags. The value of each tag is filtered by a regular expression and only files that fullfil at least one of the "which" array entries are send to the corresponding destination.
 
-Input data can also be routed. This will happen only after processing and requires a route with a <em>"RouteDirectory": "INPUT"</em> entry.
+Input data can also be routed. This will happen only after processing and requires a route with a "RouteDirectory": "INPUT" entry.
 
 Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
 
