@@ -268,6 +268,7 @@ def filterDICOM( inputdir, which ):
               logging.info('    linking file with ' + workstr + ' failed: \"' + output + "\"")
           except OSError:
             logging.info('    error executing ln (OSError)');
+          os.chmod(TEMP, 0755);
           
           break  
       count = count + 1

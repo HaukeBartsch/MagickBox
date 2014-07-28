@@ -7,7 +7,7 @@
     return;
 
   $fn = '/tmp/'.$DATA.'.zip';
-  exec("zip -r ".$fn." /data/scratch/$DATA/OUTPUT");
+  exec("cd /data/scratch/$DATA/OUTPUT; zip -r ".$fn." *");
   header("Content-Disposition: attachment; filename=".$DATA.".zip");
   header("Content-Type: application/zip");
   readfile( $fn );
