@@ -101,7 +101,31 @@ jQuery(document).ready(function() {
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
         jQuery('.number-of-studies').html(data.length);
 	    jQuery.each(data, function(i,d) {
-            jQuery('#projects').append("<hr><li><h4 title=\"Patient ID\">"
+	      var time = "";
+  	      if (d['processingLast']<60*60) {
+  		  time = " <span class='label label-info'>"
+		    + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		    + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 60min ago)</span>":"")
+		    + "</span>";
+	 	  if (d['processingLast']<10*60) {
+		      time = " <span class='label label-warning'>"
+		      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 10min ago)</span>":"")
+		      + "</span>";
+	          }
+	 	  if (d['processingLast']<60) {
+		      time = " <span class='label label-danger'>"
+		      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 1min ago)</span>":"")
+		      + "</span>";
+	          }
+	      } else {
+		      time = " <span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
+		      + "</span>";
+	      }
+	
+              jQuery('#projects').append("<li><h4 title=\"Patient ID\">"
 				       +d['pid']
 				       +"</h4>"
 				       +"<button type=\"button\" class=\"close remove-process-data\" data=\""
@@ -113,12 +137,17 @@ jQuery(document).ready(function() {
 				       +d['AETitleCalled']
 				       +" -- "
 				       +d['AETitleCaller']
-				       +"</a> <span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
-				       + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
-				       +"<br/>If output has been generated click here to download: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a> (.zip)"
+				       +"</a>"
+//				       +(d['processingLast']<10?" <span class='label label-warning'>":"")
+//				       +"<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+//				       + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
+//				       +(d['processingLast']<10?"</span>":"")
+				       + time
+				       +"<br/>If output has been generated click to download as zip: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a>"
 				       +"</li>");
             
 	    });
+            search();
     });
 
     jQuery.getJSON('/code/php/getStatus.php', function(data) {
@@ -126,9 +155,41 @@ jQuery(document).ready(function() {
             if (data[i].length < 3)
 		       continue;
             if (data[i][2] == 0)
-   	           jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
+   	        jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"") + " </span>");
 	        else
-   	           jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+" </span>");
+   	            jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"")+" </span>");
 	    }
     });
+  
+    jQuery('#search').change(function() {
+	search();
+    });
 });
+
+function search() {
+	var term = jQuery('#search').val();
+        jQuery('#projects li').each(function() {
+	    jQuery(this).show();
+	});
+        if (term == "") {
+	    return true;
+	}
+        var re = new RegExp(term);
+	jQuery('#projects li').each(function() {
+            var hide = true;
+            var c = jQuery(this).children();
+            for (var i = 0; i < c.length; i++) {
+		var b = c[i];
+		var v = jQuery(b).val();
+		if (v.match(re) != null) {
+                    hide = false;
+		}
+		var v = jQuery(b).text();
+		if (v.match(re) != null) {
+                    hide = false;
+		}
+	    }
+            if (hide == true)
+		jQuery(this).hide();
+	});
+}

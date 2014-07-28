@@ -37,6 +37,7 @@
        $ar[count($ar)-1]['lastChangedTime'] = date(DATE_RFC2822, $fileinfo['mtime']);
        $ar[count($ar)-1]['processingTime'] = -(filemtime($fn)-$fileinfo['mtime']);
        $ar[count($ar)-1]['processingLogSize'] = $fileinfo['size'];
+       $ar[count($ar)-1]['processingLast'] = time() - $fileinfo['mtime'];
        
   }
 

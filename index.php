@@ -65,7 +65,9 @@
       <div class="row-fluid">
         <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
 
+        <div class="pull-right"><input id="search" type="search" class="form-control" placeholder="search"></div>
         <div id="statusrow"></div>
+      
 
         <h2>Processing Logs</h2>
         <ol id="projects"></ol>
