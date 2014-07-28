@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/code/web/css/jquery-ui.min.css" />
     <link href="/code/web/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
+<!-- test for calendar application -->
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<!-- ----------------------------- -->
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -67,7 +73,7 @@
 
         <div class="pull-right"><input id="search" type="search" class="form-control" placeholder="search"></div>
         <div id="statusrow"></div>
-      
+        <div id="timeOverview"></div>      
 
         <h2>Processing Logs</h2>
         <ol id="projects"></ol>

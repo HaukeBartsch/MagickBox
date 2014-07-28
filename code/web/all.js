@@ -125,7 +125,7 @@ jQuery(document).ready(function() {
 		      + "</span>";
 	      }
 	
-              jQuery('#projects').append("<li><h4 title=\"Patient ID\">"
+          jQuery('#projects').append("<li><h4 title=\"Patient ID\">"
 				       +d['pid']
 				       +"</h4>"
 				       +"<button type=\"button\" class=\"close remove-process-data\" data=\""
@@ -147,7 +147,8 @@ jQuery(document).ready(function() {
 				       +"</li>");
             
 	    });
-            search();
+        search();
+        setTimeout(100,function(data) { timeOverview(data); });
     });
 
     jQuery.getJSON('/code/php/getStatus.php', function(data) {
@@ -165,6 +166,24 @@ jQuery(document).ready(function() {
 	search();
     });
 });
+
+function timeOverview( data ) {
+
+   // get width
+   var el = jQuery('#timeOverview');
+   var w = jQuery(el).width();
+   var h = jQuery(el).height();
+
+   var cal = new CalHeatMap();
+   cal.init({
+    itemSelector: "#timeOverview",
+    domain: "day",
+    displayLegend: false,
+    label: {
+        position: "top"
+    }
+   });   
+}
 
 function search() {
 	var term = jQuery('#search').val();
