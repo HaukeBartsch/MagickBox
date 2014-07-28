@@ -25,7 +25,7 @@ The configuration of the routing function is done in the user interface. Here an
 
  { "routing": [
    {
- 	"name": "Default Rule",
+ 	"name": "Default Rule for OUTPUT to DCM4CHEE",
  	"AETitleIn": ".*",
    	"send": [
    		{
@@ -50,7 +50,7 @@ The configuration of the routing function is done in the user interface. Here an
              "AETitleSender": "me",
              "AETitleTo": "PACS",
              "break": 1,
-	           "which": [
+	     "which": [
                 { "0008,103e": ".*" }
              ]
        	   },
@@ -71,6 +71,22 @@ The configuration of the routing function is done in the user interface. Here an
          }
      ],
      "break": 0
+   },
+   {
+ 	"name": "Route Input to DCM4CHEE",
+        "RouteDirectory": "INPUT", // default value is "OUTPUT"
+ 	"AETitleIn": ".*",
+   	"send": [
+   		{
+   			".*": {
+   				"IP": "$me",
+   				"PORT": "$port",
+   				"AETitleSender": "ProcDefault",
+   				"AETitleTo": "DCM4CHEE"
+   			}
+   		}
+   	],
+   	"break": 0
    }
   ]
  }
@@ -88,6 +104,8 @@ The "send" section contains one or more destinations for sending. Each of the en
 If the "break" entry of a successful sending operation has the value 1 sending stops without evaluating if other send entries would match as well. This allows for a fail-back send destination.
 
 If a "which" statement is set DICOM files are tested before they are send. This filtering step allows you to select DICOM images based on DICOM tags. The value of each tag is filtered by a regular expression and only files that fullfil at least one of the "which" array entries are send to the corresponding destination.
+
+Input data can also be routed. This will happen only after processing and requires a route with a <em>"RouteDirectory": "INPUT"</em> entry.
 
 Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
 

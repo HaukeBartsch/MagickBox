@@ -132,7 +132,13 @@ def main(argv):
                 logging.info('  ROUTE: ' + workstr)
                 os.system(workstr)    
 
-              OUTPUTDIRECTORY = WORKINGDIR + "/OUTPUT"
+              ROUTEDIRECTORY="/OUTPUT"
+              try:
+                ROUTEDIRECTORY="/"+endpoint[key]['RouteDirectory'];
+              except KeyError:
+                continue
+
+              OUTPUTDIRECTORY = WORKINGDIR + ROUTEDIRECTORY
               if which != "":
                 logging.info('  Found which statement, look for specific DICOM files to send in ' + OUTPUTDIRECTORY + '...')
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
@@ -265,6 +271,7 @@ def filterDICOM( inputdir, which ):
           
           break  
       count = count + 1
+  logging.info('    ' + count + ' files found by which')
   return TEMP
 
 #
