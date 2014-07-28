@@ -148,7 +148,7 @@ jQuery(document).ready(function() {
             
 	    });
         search();
-        setTimeout(100,function(data) { timeOverview(data); });
+        setTimeout(function(data) { timeOverview(data); }, 200);
     });
 
     jQuery.getJSON('/code/php/getStatus.php', function(data) {
