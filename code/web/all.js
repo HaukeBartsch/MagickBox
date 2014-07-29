@@ -199,7 +199,8 @@ function timeOverview( data ) {
     label: {
         position: "top"
     }
-   });   
+   });
+   cal.previous(12);
 }
 
 function search() {
