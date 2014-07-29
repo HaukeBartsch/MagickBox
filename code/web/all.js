@@ -182,8 +182,11 @@ function timeOverview( data ) {
    }*/
    var caldata = {};
    for (var i = 0; i < data.length; i++) {
-      timestamp = new Date(data[i]['received']);
-      timestamp = timestamp.getTime();
+      var year = data[i]['received'].split(' ').splice(-1)[0];
+      var day = data[i]['received'].split(' ').splice(2)[0];
+      var month = data[i]['received'].split(' ').splice(1)[0];
+      var m = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+      timestamp = new Date(year, m[month], day).getTime();
       caldata[timestamp] = 1;
    }
 
@@ -196,7 +199,8 @@ function timeOverview( data ) {
     label: {
         position: "top"
     }
-   });   
+   });
+   cal.previous(12);
 }
 
 function search() {
