@@ -182,12 +182,16 @@ function timeOverview( data ) {
    }*/
    var caldata = {};
    for (var i = 0; i < data.length; i++) {
-      var year = data[i]['received'].split(' ').splice(-1)[0];
-      var day = data[i]['received'].split(' ').splice(2)[0];
-      var month = data[i]['received'].split(' ').splice(1)[0];
+      var ts    = data[i]['received'].replace(/ +(?= )/g,'');
+      var year  = ts.split(' ').splice(-1)[0];
+      var day   = ts.split(' ').splice(2)[0];
+      var month = ts.split(' ').splice(1)[0];
       var m = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
       timestamp = new Date(year, m[month], day).getTime();
-      caldata[timestamp] = 1;
+      if (typeof(caldata[timestamp]) !== 'undefined')
+        caldata[timestamp] = caldata[timestamp] + 1;
+      else
+        caldata[timestamp] = 1;
    }
 
    var cal = new CalHeatMap();
@@ -200,7 +204,7 @@ function timeOverview( data ) {
         position: "top"
     }
    });
-   cal.previous(12);
+   cal.previous(11);
 }
 
 function search() {
