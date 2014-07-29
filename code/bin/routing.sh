@@ -11,7 +11,7 @@ logging.info("Routing called")
 def main(argv):
   if len(sys.argv) != 4:
      print "usage: <processing directory> <aetitle called> <aetitle caller>"
-     logging.error("Error: input parameters don't work, see usage... \"" + sys.argv + "\"")
+     logging.error("Error: input parameters don't work, see usage... ")
      sys.exit()
   WORKINGDIR=sys.argv[1]
   AETitleCalled=sys.argv[2]
@@ -136,7 +136,7 @@ def main(argv):
               try:
                 ROUTEDIRECTORY="/"+endpoint[key]['RouteDirectory'];
               except KeyError:
-                continue
+                pass
 
               OUTPUTDIRECTORY = WORKINGDIR + ROUTEDIRECTORY
               if which != "":
