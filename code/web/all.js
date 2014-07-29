@@ -187,7 +187,7 @@ function timeOverview( data ) {
       var day   = ts.split(' ').splice(2)[0];
       var month = ts.split(' ').splice(1)[0];
       var m = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-      timestamp = new Date(year, m[month], day).getTime();
+      timestamp = new Date(year, m[month], day).getTime()/1000;
       if (typeof(caldata[timestamp]) !== 'undefined')
         caldata[timestamp] = caldata[timestamp] + 1;
       else
@@ -197,7 +197,7 @@ function timeOverview( data ) {
    var cal = new CalHeatMap();
    cal.init({
     itemSelector: "#timeOverview",
-    domain: "day",
+    domain: "day", // try with "week" as well
     displayLegend: false,
     data: caldata,
     label: {
