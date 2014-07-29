@@ -197,14 +197,15 @@ function timeOverview( data ) {
    var cal = new CalHeatMap();
    cal.init({
     itemSelector: "#timeOverview",
-    domain: "day", // try with "week" as well
+    domain: "month", // try with "week" as well
+    range: 4,
     displayLegend: false,
     data: caldata,
     label: {
         position: "top"
     }
    });
-   cal.previous(11);
+   cal.previous(3);
 }
 
 function search() {
