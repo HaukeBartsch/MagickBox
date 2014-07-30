@@ -147,10 +147,6 @@ jQuery(document).ready(function() {
 				       +d['AETitleCaller']
 				       +"</a>"
 				       + time
-//				       +(d['processingLast']<10?" <span class='label label-warning'>":"")
-//				       +"<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
-//				       + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
-//				       +(d['processingLast']<10?"</span>":"")
 				       +"</li>");
             
 	    });
@@ -205,14 +201,14 @@ function timeOverview( data ) {
    cal.init({
     itemSelector: "#timeOverview",
     domain: "month", // try with "week" as well
-    range: 4,
+    range: 6,
     displayLegend: false,
     data: caldata,
     label: {
         position: "top"
     }
    });
-   cal.previous(3);
+   cal.previous(5);
 }
 
 function search() {
