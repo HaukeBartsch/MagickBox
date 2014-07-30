@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-import sys, json, re
+import sys, json, re, time
 import logging
 import os
 import subprocess as sub
 
 logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
-logging.info("Routing called")
+now = time.strftime("%c")
+logging.info("%s Routing called" % now)
 
 def main(argv):
   if len(sys.argv) != 4:
@@ -133,10 +134,12 @@ def main(argv):
                 os.system(workstr)    
 
               ROUTEDIRECTORY="/OUTPUT"
-              try:
-                ROUTEDIRECTORY="/"+endpoint[key]['RouteDirectory'];
-              except KeyError:
-                pass
+              if 'RouteDirectory' in routingtable['routing'][route].keys():
+                logging.info('    Found RouteDirectory, use it to transfer specific sub-directory.')
+                ROUTEDIRECTORY="/"+routingtable['routing'][route]['RouteDirectory']
+                logging.info('    route directory: ' + ROUTEDIRECTORY)
+              else:
+                logging.info('    DID not find RouteDirectory key')
 
               OUTPUTDIRECTORY = WORKINGDIR + ROUTEDIRECTORY
               if which != "":
