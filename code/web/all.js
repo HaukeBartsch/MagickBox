@@ -7,6 +7,11 @@ function removeThis( name ) {
 
 var editor = null;
 
+function zeroPad(num,places) {
+    var zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
+}
+
 jQuery(document).ready(function() {
     //jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
     //jQuery('#setup').click(function() {
@@ -104,7 +109,7 @@ jQuery(document).ready(function() {
 	      var time = "";
   	      if (d['processingLast']<60*60) {
   		  time = " <span class='label label-info'>"
-		    + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		      + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
 		    + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 60min ago)</span>":"")
 		    + "</span>";
 	 	  if (d['processingLast']<10*60) {
@@ -115,35 +120,37 @@ jQuery(document).ready(function() {
 	          }
 	 	  if (d['processingLast']<60) {
 		      time = " <span class='label label-danger'>"
-		      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+			  + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
 		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 1min ago)</span>":"")
 		      + "</span>";
 	          }
 	      } else {
-		      time = " <span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+		  time = " <span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
 		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
 		      + "</span>";
 	      }
 	
-          jQuery('#projects').append("<li><h4 title=\"Patient ID\">"
-				       +d['pid']
-				       +"</h4>"
-				       +"<button type=\"button\" class=\"close remove-process-data\" data=\""
+          jQuery('#projects').append("<li>"
+				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-error remove-process-data\" data=\""
 				       +d['scratchdir']
 				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\">&times;</button>"
-                                       +"<a title=\"Link to processing log file\" target='_logfile' href='/scratch/"
-				       +d['scratchdir']+"/processing.log'>["
-				       +d['received']+"] "
+				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a>"
+                                       +"<h4 title=\"Patient ID\">"
+				       +"<span class=\"label label-default\">" + zeroPad(i,3) + "</span>&nbsp;"
+				       +d['pid']
+                                       +"&nbsp;<small>["+d['received']+"]</small>"
+				       +"</h4>"
+                                       +"<a class=\"label label-info\" title=\"Link to processing log file\" target='_logfile' href='/scratch/"
+				       +d['scratchdir']+"/processing.log'>Logfile: "
 				       +d['AETitleCalled']
-				       +" -- "
+				       +" <- "
 				       +d['AETitleCaller']
 				       +"</a>"
+				       + time
 //				       +(d['processingLast']<10?" <span class='label label-warning'>":"")
 //				       +"<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
 //				       + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
 //				       +(d['processingLast']<10?"</span>":"")
-				       + time
-				       +"<br/>If output has been generated click to download as zip: <a href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a>"
 				       +"</li>");
             
 	    });

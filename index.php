@@ -76,7 +76,7 @@
         <div id="timeOverview"></div>      
 
         <h2>Processing Logs</h2>
-        <ol id="projects"></ol>
+        <ul id="projects" style="list-style-type: none;"></ul>
 
       </div>
       <hr>
