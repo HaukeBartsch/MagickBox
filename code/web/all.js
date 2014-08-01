@@ -135,6 +135,7 @@ jQuery(document).ready(function() {
 				       +d['scratchdir']
 				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\">&times;</button>"
 				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a>"
+				       +"<a title=\"View\" class=\"pull-right btn btn-info btn-small\" href='/code/web/viewer.php?case="+d['scratchdir']+"'>VIEW</a>"
                                        +"<h4 title=\"Patient ID\">"
 				       +"<span class=\"label label-default\">" + zeroPad(i,3) + "</span>&nbsp;"
 				       +d['pid']
