@@ -39,11 +39,13 @@ function fill_series_selection(series, selected_uid, painter_factory) {
                 app.set_series(u);
             }
         })(uid));
+        $(item).attr('title',series[uid].seriesDescription);
         series_list.append(item);
         var painter = painter_factory(thumb_canvas.id);
         painter.init(thumb_canvas.id);
         painter.set_cluts(ClutManager.r('Plain'), ClutManager.g('Plain'), ClutManager.b('Plain'));
-        painter.set_file(series[uid].files[0]);
+        var slice = Math.round(series[uid].files.length/2)-1;
+        painter.set_file(series[uid].files[slice]);
         painter.set_windowing(40, 200);
         painter.draw_image();
     }

@@ -17,6 +17,30 @@ jQuery(document).ready(function() {
     //jQuery('#setup').click(function() {
     //    jQuery('#changeSetup').dialog( "open" );
     //});
+    jQuery('#alpha-search a').click(function() {
+        jQuery('#alpha-search a').each( function( index ) {
+            jQuery(this).removeClass('active');
+	});
+        jQuery(this).addClass('active');
+        // now search for patient id's that start with the letter
+        if ( jQuery(this).text() == "CLEAR" ) {
+	    // display all entries
+            jQuery('#projects li').each(function(index) {
+		jQuery(this).show();
+	    });
+	} else {
+	    var letter = jQuery(this).text();
+            jQuery('#projects li').each(function(index) {
+                var t = jQuery(this).attr('patientid');
+	        if (t.indexOf(letter) == 0) {
+		    jQuery(this).show();
+		} else {
+		    jQuery(this).hide();
+		}
+	    });
+	}
+    });
+
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
 	    for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
@@ -130,12 +154,12 @@ jQuery(document).ready(function() {
 		      + "</span>";
 	      }
 	
-          jQuery('#projects').append("<li>"
+          jQuery('#projects').append("<li patientid=\"" + d['pid'] + "\">"
 				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-error remove-process-data\" data=\""
 				       +d['scratchdir']
-				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\">&times;</button>"
-				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'>OUTPUT</a>"
-				       +"<a title=\"View\" class=\"pull-right btn btn-info btn-small\" href='/code/web/viewer.php?case="+d['scratchdir']+"'>VIEW</a>"
+				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\"><span class=\"glyphicon glyphicon-trash\"></span></button>"
+				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-download\"></span> OUTPUT</a>"
+				       +"<a title=\"View\" class=\"pull-right btn btn-info btn-small\" href='/code/web/viewer.php?case="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-eye-open\"></span> VIEW</a>"
                                        +"<h4 title=\"Patient ID\">"
 				       +"<span class=\"label label-default\">" + zeroPad(i,3) + "</span>&nbsp;"
 				       +d['pid']
@@ -153,16 +177,32 @@ jQuery(document).ready(function() {
 	    });
         search();
         setTimeout( function(data) { timeOverview(data); }, 200, data );
+
+        // update alphanumeric search list
+        jQuery('#alpha-search a').each(function(index){
+            var letter = jQuery(this).text();
+            if (letter == "CLEAR") {
+                return true;
+            }
+            var entry = jQuery(this);
+            entry.addClass('notthere');
+            jQuery.each(data, function(i,d) {
+                if (d['pid'].indexOf(letter) == 0) {
+                    entry.removeClass('notthere');
+                    return false;
+                } 
+            });
+        });
     });
 
     jQuery.getJSON('/code/php/getStatus.php', function(data) {
 	    for ( var i = 0; i < data.length; i++) {
             if (data[i].length < 3)
-		       continue;
+		continue;
             if (data[i][2] == 0)
    	        jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"") + " </span>");
-	        else
-   	            jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"")+" </span>");
+	    else
+   	        jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"")+" </span>");
 	    }
     });
   

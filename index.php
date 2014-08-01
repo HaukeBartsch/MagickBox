@@ -6,6 +6,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/code/web/css/jquery-ui.min.css" />
     <link href="/code/web/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/code/web/all.css" rel="stylesheet" media="screen">
 
 <!-- test for calendar application -->
 <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
@@ -75,8 +76,39 @@
         <div id="statusrow"></div>
         <div id="timeOverview"></div>      
 
-        <h2>Processing Logs</h2>
-        <ul id="projects" style="list-style-type: none;"></ul>
+        <div id="alpha-search" class="alpha-search" role="navigation">
+          <ul>
+             <li>Processing Logs&nbsp;&nbsp;</li>
+             <li><a href="#">CLEAR</a></li>
+             <li><a href="#">A</a></li>
+             <li><a href="#">B</a></li>
+             <li><a href="#">C</a></li>
+             <li><a href="#">D</a></li>
+             <li><a href="#">E</a></li>
+             <li><a href="#">F</a></li>
+             <li><a href="#">G</a></li>
+             <li><a href="#">H</a></li>
+             <li><a href="#">I</a></li>
+             <li><a href="#">J</a></li>
+             <li><a href="#">K</a></li>
+             <li><a href="#">L</a></li>
+             <li><a href="#">M</a></li>
+             <li><a href="#">N</a></li>
+             <li><a href="#">O</a></li>
+             <li><a href="#">P</a></li>
+             <li><a href="#">Q</a></li>
+             <li><a href="#">R</a></li>
+             <li><a href="#">S</a></li>
+             <li><a href="#">T</a></li>
+             <li><a href="#">U</a></li>
+             <li><a href="#">V</a></li>
+             <li><a href="#">X</a></li>
+             <li><a href="#">Y</a></li>
+             <li><a href="#">Z</a></li>
+             <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+          </ul>
+        </div>
+        <ul id="projects" style="list-style-type: none; margin-left: -40px;"></ul>
 
       </div>
       <hr>

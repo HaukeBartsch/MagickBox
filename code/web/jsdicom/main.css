@@ -1,4 +1,5 @@
 body {
+  background-color: #555555;
 }
 
 #filebox {
@@ -9,6 +10,7 @@ body {
     left: 0;
     width: 173px;
     overflow-y: scroll;
+    background-color: #555555;
 }
 
 #viewer {
@@ -18,18 +20,20 @@ body {
     bottom: 0;
     top: 60px;
     right: 0px;
+    background-color: #555555;
 }
 
 .box {
     margin: 10px;
     background: none repeat scroll 0 0 #F5F5F5;
-    border: 1px solid #AAAAAA;
+    // border: 1px solid #AAAAAA;
     border-radius: 5px 5px 5px 5px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
 }
 
 .box-content {
     padding: 10px;
+    background-color: #555555;
 }
 
 #right-sidebar {
@@ -113,6 +117,7 @@ td {
 #viewer-bar {
     height: 25px;
     margin-bottom: 10px;
+    background-color: #555555;
 }
 
 #viewer-bar >select {
@@ -176,7 +181,7 @@ tr.even {
     border: 1px solid #aaa;
     list-style:none;
     padding: 0px;
-    margin-top: 38px;
+    margin-top: 0px;
 }
 
 #series-selection > li {
@@ -190,7 +195,7 @@ tr.even {
 }
 
 .series-link > canvas{
-    margin: 10px 10px 0px 2px;
+    margin: 10px 10px 0px 10px;
 }
 .series-selected > canvas {
     font-weight: bold;
