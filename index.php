@@ -72,13 +72,15 @@
       <div class="row-fluid">
         <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
 
-        <div class="pull-right"><input id="search" type="search" class="form-control" placeholder="search"></div>
+        <div class="pull-right"><div class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
         <div id="statusrow"></div>
-        <div id="timeOverview"></div>      
+        <div id="timeOverview"></div>
+     </div>
+      <div class="row-fluid">
 
-        <div id="alpha-search" class="alpha-search" role="navigation">
+        <div id="alpha-search" class="alpha-search">
           <ul>
-             <li>Processing Logs&nbsp;&nbsp;</li>
+             <li style="padding-top: 0px;">Processing Logs&nbsp;&nbsp;</li>
              <li><a href="#">CLEAR</a></li>
              <li><a href="#">A</a></li>
              <li><a href="#">B</a></li>
@@ -108,8 +110,9 @@
              <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
           </ul>
         </div>
+      </div>
+      <div class="row-fluid">
         <ul id="projects" style="list-style-type: none; margin-left: -40px;"></ul>
-
       </div>
       <hr>
       <div class="row-fluid">

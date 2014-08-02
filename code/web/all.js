@@ -17,6 +17,11 @@ jQuery(document).ready(function() {
     //jQuery('#setup').click(function() {
     //    jQuery('#changeSetup').dialog( "open" );
     //});
+    $("#searchClear").click(function(){
+	$("#search").val('');
+        search();
+    });
+
     jQuery('#alpha-search a').click(function() {
         jQuery('#alpha-search a').each( function( index ) {
             jQuery(this).removeClass('active');
@@ -155,7 +160,7 @@ jQuery(document).ready(function() {
 	      }
 	
           jQuery('#projects').append("<li patientid=\"" + d['pid'] + "\">"
-				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-error remove-process-data\" data=\""
+				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-warning remove-process-data\" data=\""
 				       +d['scratchdir']
 				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\"><span class=\"glyphicon glyphicon-trash\"></span></button>"
 				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-download\"></span> OUTPUT</a>"
@@ -240,16 +245,34 @@ function timeOverview( data ) {
 
    var cal = new CalHeatMap();
    cal.init({
-    itemSelector: "#timeOverview",
-    domain: "month", // try with "week" as well
-    range: 6,
-    displayLegend: false,
-    data: caldata,
-    label: {
-        position: "top"
-    }
+     itemSelector: "#timeOverview",
+     domain: "month", // try with "week" as well
+     subdomain: "x_day",
+     cellSize: 15,
+     cellPadding: 3,
+     cellRadius: 5,
+     domainGutter: 15,
+     range: 6,
+     displayLegend: false,
+     data: caldata,
+     label: {
+         position: "top"
+     },
+     itemName: ["session", "sessions"]
    });
    cal.previous(5);
+
+    jQuery('svg rect').click(function() {
+        var a = jQuery(this).next();
+        var b = a.text();
+        if (b.split(' ').length > 4) {
+            var d = b.split(/[\ ,]/).splice(3);
+            var month = d[1].substr(0,3);
+            var day = d[2];
+            jQuery('#search').val(month + " " + day);
+	    search();
+        }
+    });
 }
 
 function search() {

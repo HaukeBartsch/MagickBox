@@ -1,0 +1,62 @@
+.alpha-search ul {
+  list-style: none;
+  min-height: 30px;
+}
+.alpha-search {
+  background-color: black;
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  border-radius: 3px;
+}
+
+.alpha-search ul  li {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  //display: inline-flex;
+  float: left;
+}
+
+.alpha-search ul li a {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.alpha-search a {
+  color: #999;
+  cursor: default;
+}
+
+.alpha-search a:hover, a:focus {
+  color: yellow;
+  text-decoration: none;
+}
+
+.alpha-search a.active {
+  color: yellow;
+}
+
+.alpha-search a.notthere {
+  color: #444;
+}
+
+#projects li {
+  border-radius: 3px;
+  background-color: #EEE;
+  padding: 2px;
+  margin-bottom: 2px;
+}
+#searchClear {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ccc;
+}
