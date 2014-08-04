@@ -72,7 +72,7 @@
       <div class="row-fluid">
         <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
 
-        <div class="pull-right"><div class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
+        <div class="pull-right"><div style="z-index: 100;" class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
         <div id="statusrow"></div>
         <div id="timeOverview"></div>
      </div>
