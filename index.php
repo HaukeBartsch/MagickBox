@@ -9,9 +9,9 @@
     <link href="/code/web/all.css" rel="stylesheet" media="screen">
 
 <!-- test for calendar application -->
-<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
-<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<script type="text/javascript" src="/code/web/js/d3.v3.min.js"></script>
+<script type="text/javascript" src="/code/web/js/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="/code/web/css/cal-heatmap.css" />
 <!-- ----------------------------- -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
