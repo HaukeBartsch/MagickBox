@@ -290,10 +290,12 @@ function search() {
             for (var i = 0; i < c.length; i++) {
 		var b = c[i];
 		var v = jQuery(b).val();
+                v = v.replace(/\ +/g,' ')
 		if (v.match(re) != null) {
                     hide = false;
 		}
 		var v = jQuery(b).text();
+                v = v.replace(/\ +/g,' ')
 		if (v.match(re) != null) {
                     hide = false;
 		}
