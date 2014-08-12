@@ -33,6 +33,7 @@ jQuery(document).ready(function() {
             jQuery('#projects li').each(function(index) {
 		jQuery(this).show();
 	    });
+            jQuery('#search').val("");
 	} else {
 	    var letter = jQuery(this).text();
             jQuery('#projects li').each(function(index) {
@@ -47,21 +48,28 @@ jQuery(document).ready(function() {
     });
 
     jQuery.getJSON('/code/php/getInstalledBuckets.php', function(data) {
-	    for (var i = 0; i < data.length; i++) {
+	for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
             desc = data[i]['description'];
             jQuery('#installed-buckets').append("<li><a href='#' title=\"" + desc + "\">" + name + "</a></li>");
-	    }
-	    for (var i = 0; i < data.length; i++) {
+	}
+	for (var i = 0; i < data.length; i++) {
             name = data[i]['name'];
             desc = data[i]['description'];
-	        aetitle = data[i]['AETitle'];
-	        if (typeof aetitle == 'undefined')
-		        aetitle = "NONE";
-            jQuery('#installed-buckets-list-large').append("<li class=\"table-row\">AETitle: \"" + aetitle + "\", Name: \"" 
+	    aetitle = data[i]['AETitle'];
+	    if (typeof(aetitle) == 'undefined')
+	        aetitle = "NONE";
+            jQuery('#installed-buckets-list-large').append("<li class=\"table-row row" + i + "\">AETitle: \"" + aetitle + "\", Name: \"" 
 							   + name + "\"<br/><small>" + desc +
-							   "</small></li>");
-	    }
+						           "</small>" + "</li>");
+            if (typeof(aetitle) !== 'undefined') { 
+              jQuery.get('/code/php/getLicense.php', { operation: "query", feature: aetitle }, function(num){
+                return function(data) {
+                  jQuery('.row'+num).append(" <span class=\"label label-info\" title=\"Number of available sessions\">" + data.contingent + "</span>");
+                };
+              }(i), "jsonp");
+            }
+	}
     });
 
     jQuery.get('/code/php/setup.php?command=get', function(data) {
