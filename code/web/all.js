@@ -145,18 +145,18 @@ jQuery(document).ready(function() {
 	    jQuery.each(data, function(i,d) {
 	      var time = "";
   	      if (d['processingLast']<60*60) {
-  		  time = " <span class='label label-info'>"
+  		  time = " <span class='label label-info'> "
 		      + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
 		    + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 60min ago)</span>":"")
 		    + "</span>";
 	 	  if (d['processingLast']<10*60) {
-		      time = " <span class='label label-warning'>"
+		      time = " <span class='label label-warning'> "
 		      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
 		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 10min ago)</span>":"")
 		      + "</span>";
 	          }
 	 	  if (d['processingLast']<60) {
-		      time = " <span class='label label-danger'>"
+		      time = " <span class='label label-danger'> "
 			  + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
 		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 1min ago)</span>":"")
 		      + "</span>";
@@ -171,7 +171,7 @@ jQuery(document).ready(function() {
 				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-warning remove-process-data\" data=\""
 				       +d['scratchdir']
 				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\"><span class=\"glyphicon glyphicon-trash\"></span></button>"
-				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-download\"></span> OUTPUT</a>"
+				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-cloud-download\"></span> OUTPUT</a>"
 				       +"<a title=\"View\" class=\"pull-right btn btn-info btn-small\" href='/code/web/viewer.php?case="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-eye-open\"></span> VIEW</a>"
                                        +"<h4 title=\"Patient ID\">"
 				       +"<span class=\"label label-default\">" + zeroPad(i,3) + "</span>&nbsp;"
@@ -179,7 +179,7 @@ jQuery(document).ready(function() {
                                        +"&nbsp;<small>["+d['received']+"]</small>"
 				       +"</h4>"
                                        +"<a class=\"label label-info\" title=\"Link to processing log file\" target='_logfile' href='/scratch/"
-				       +d['scratchdir']+"/processing.log'>Logfile: "
+				       +d['scratchdir']+"/processing.log'> <span class=\"glyphicon glyphicon-hand-right\"></span>  Logfile: "
 				       +d['AETitleCalled']
 				       +" <- "
 				       +d['AETitleCaller']
@@ -213,9 +213,9 @@ jQuery(document).ready(function() {
             if (data[i].length < 3)
 		continue;
             if (data[i][2] == 0)
-   	        jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"") + " </span>");
+   	        jQuery('#statusrow').append("<span class='label label-default' title='" + data[i][0] + "'>"+data[i][2]+(data[i][1]>1?"/"+data[i][1]:"") + " </span>");
 	    else
-   	        jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][1]+(data[i][2]>1?"/"+data[i][2]:"")+" </span>");
+   	        jQuery('#statusrow').append("<span class='label label-warning' title='" + data[i][0] + "'>"+data[i][2]+(data[i][1]>1?"/"+data[i][1]:"")+" </span>");
 	    }
     });
   
