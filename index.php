@@ -6,6 +6,13 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/code/web/css/jquery-ui.min.css" />
     <link href="/code/web/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/code/web/all.css" rel="stylesheet" media="screen">
+
+<!-- test for calendar application -->
+<script type="text/javascript" src="/code/web/js/d3.v3.min.js"></script>
+<script type="text/javascript" src="/code/web/js/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="/code/web/css/cal-heatmap.css" />
+<!-- ----------------------------- -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -65,11 +72,47 @@
       <div class="row-fluid">
         <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
 
+        <div class="pull-right"><div style="z-index: 100;" class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
         <div id="statusrow"></div>
+        <div id="timeOverview"></div>
+     </div>
+      <div class="row-fluid">
 
-        <h2>Processing Logs</h2>
-        <ol id="projects"></ol>
-
+        <div id="alpha-search" class="alpha-search">
+          <ul>
+             <li style="padding-top: 0px;">Processing Logs&nbsp;&nbsp;</li>
+             <li><a href="#">CLEAR</a></li>
+             <li><a href="#">A</a></li>
+             <li><a href="#">B</a></li>
+             <li><a href="#">C</a></li>
+             <li><a href="#">D</a></li>
+             <li><a href="#">E</a></li>
+             <li><a href="#">F</a></li>
+             <li><a href="#">G</a></li>
+             <li><a href="#">H</a></li>
+             <li><a href="#">I</a></li>
+             <li><a href="#">J</a></li>
+             <li><a href="#">K</a></li>
+             <li><a href="#">L</a></li>
+             <li><a href="#">M</a></li>
+             <li><a href="#">N</a></li>
+             <li><a href="#">O</a></li>
+             <li><a href="#">P</a></li>
+             <li><a href="#">Q</a></li>
+             <li><a href="#">R</a></li>
+             <li><a href="#">S</a></li>
+             <li><a href="#">T</a></li>
+             <li><a href="#">U</a></li>
+             <li><a href="#">V</a></li>
+             <li><a href="#">X</a></li>
+             <li><a href="#">Y</a></li>
+             <li><a href="#">Z</a></li>
+             <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <ul id="projects" style="list-style-type: none; margin-left: -40px;"></ul>
       </div>
       <hr>
       <div class="row-fluid">

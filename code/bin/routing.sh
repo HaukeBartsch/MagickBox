@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 
-import sys, json, re
+import sys, json, re, time
 import logging
 import os
 import subprocess as sub
 
 logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
-logging.info("Routing called")
+now = time.strftime("%c")
+logging.info("%s Routing called" % now)
 
 def main(argv):
   if len(sys.argv) != 4:
      print "usage: <processing directory> <aetitle called> <aetitle caller>"
-     logging.error("Error: input parameters don't work, see usage... \"" + sys.argv + "\"")
+     logging.error("Error: input parameters don't work, see usage... ")
      sys.exit()
   WORKINGDIR=sys.argv[1]
   AETitleCalled=sys.argv[2]
@@ -132,7 +133,15 @@ def main(argv):
                 logging.info('  ROUTE: ' + workstr)
                 os.system(workstr)    
 
-              OUTPUTDIRECTORY = WORKINGDIR + "/OUTPUT"
+              ROUTEDIRECTORY="/OUTPUT"
+              if 'RouteDirectory' in routingtable['routing'][route].keys():
+                logging.info('    Found RouteDirectory, use it to transfer specific sub-directory.')
+                ROUTEDIRECTORY="/"+routingtable['routing'][route]['RouteDirectory']
+                logging.info('    route directory: ' + ROUTEDIRECTORY)
+              else:
+                logging.info('    DID not find RouteDirectory key')
+
+              OUTPUTDIRECTORY = WORKINGDIR + ROUTEDIRECTORY
               if which != "":
                 logging.info('  Found which statement, look for specific DICOM files to send in ' + OUTPUTDIRECTORY + '...')
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
@@ -262,9 +271,11 @@ def filterDICOM( inputdir, which ):
               logging.info('    linking file with ' + workstr + ' failed: \"' + output + "\"")
           except OSError:
             logging.info('    error executing ln (OSError)');
+          os.chmod(TEMP, 0755);
           
           break  
       count = count + 1
+  logging.info('    ' + count + ' files found by which')
   return TEMP
 
 #
