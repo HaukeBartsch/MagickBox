@@ -394,7 +394,7 @@ DcmApp.prototype.init = function() {
             this.painter = painter;
             break;
         } catch(e) {
-            console.log(e);
+            console.log(e.message);
         }
     }
     if(!this.painter) {
