@@ -49,7 +49,7 @@ echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
 # check the license
-lic=`/usr/bin/curl --data feature=$AETitleCalled http://mmil.ucsd.edu/MagickBox/queryLicense.php | cut -d':' -f2 | cut -d'}'" -f1`
+lic=`/usr/bin/curl http://mmil.ucsd.edu/MagickBox/queryLicense.php?feature=$AETitleCalled | cut -d':' -f2 | cut -d'}' -f1`
 if [ "$lic" == "-1" ]
 then
   echo "`date`: Error: no permissions to run this job ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
