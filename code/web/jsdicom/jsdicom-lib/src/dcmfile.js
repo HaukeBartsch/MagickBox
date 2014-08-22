@@ -56,7 +56,7 @@ DcmFile.prototype.getCTValue = function(col, row) {
     if(col < 0 || col >= this.Columns || row < 0 || row >= this.Rows)
         return undefined;
     var data_idx = (col + row*this.Columns);
-    var intensity = this.PixelData[data_idx] * this.RescaleSlope + ((typeof(this.RescaleIntercept)==='undefined')?0:this.RescaleIntercept);
+    var intensity = this.PixelData[data_idx] * ((typeof(this.RescaleSlope)==='undefined')?1:this.RescaleSlope) + ((typeof(this.RescaleIntercept)==='undefined')?0:this.RescaleIntercept);
     return intensity.toFixed(2);
 }
 
