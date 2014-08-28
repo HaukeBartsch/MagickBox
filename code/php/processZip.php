@@ -1,35 +1,41 @@
 <?php
   // make sure to make the upload size for files in php.ini large enough for this to work
   // data/scratch needs to be writable to www-data as well
+  // we need to use the processing user, make www-data sudo su processing
+
+  function addLog( $message ) {
+    $ip = fopen("/data/logs/processZip.log",'a');
+    fwrite($ip, $message . "\n");
+    fclose($ip);
+  }
 
   $aetitle = "";
   if (isset($_POST['aetitle'])) {
     $aetitle = $_POST['aetitle'];
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " AETitle found\n");
   }
   if ($aetitle === "") {
-    echo ("Error: no AETitle found");
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " no AETitle found\n");
-    $aetitle = "ProcTESTTEST";
-    //return;
+    addLog("Error: no AETitle found (break here)\n");
+    return;
   }
-  $filename = "bla";
+  $filename = "";
   if (isset($_POST['filename'])) {
     $filename = $_POST['filename'];
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " filename found\n");
   } else {
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " no filename in post\n");
+    addLog(" no filename in post\n");
+    return;
   }
 
   if (isset($_FILES)) {
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " found theFile in _FILES\n");
+    addLog(" found theFile in _FILES\n");
   } else {
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " no theFile in _FILES\n");
+    addLog(" no theFile in _FILES\n");
   }
 
-  $ip = "";
+  $ip = "unknown";
   if (isset($_SERVER['REMOTE_ADDR'])) {
      $ip = $_SERVER['REMOTE_ADDR'];
+  } else {
+     addLog("no REMOTE_ADDR");
   }
 
   function tempdir($dir, $prefix='', $mode=0700)
@@ -39,40 +45,44 @@
     do
     {
       $path = $dir.$prefix.mt_rand(0, 9999999);
-      // file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " try this path " . $path);
-
     } while (!mkdir($path, $mode));
 
     return $path;
   }
 
+  function chmod_r($path) {
+    $dir = new DirectoryIterator($path);
+    foreach ($dir as $item) {
+        chmod($item->getPathname(), 0777);
+        if ($item->isDir() && !$item->isDot()) {
+            chmod_r($item->getPathname());
+        }
+    }
+  }
 
   if ($_FILES["theFile"]["error"] > 0) {
-    echo "Error: " . $_FILES["theFile"]["error"] . "<br>";
-    //file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") ." upload error, maybe file is too large? Check php.ini. \"" . $aetitle. "\" \"" .$_FILES["theFile"]["error"]. "\"");
+    addLog("error in sending files");
   } else {
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . "file found:" . $_FILES["theFile"]["name"]);
+    $dir = tempdir("/tmp/", "tmp.", 0777);
+    chmod($dir, 0777);
+    addLog("plan to start processing in " . $dir);
+    $fname = $dir . "/" . $_POST["filename"];
 
-    // create a temp directory in /data/scratch/
-    $dir = tempdir("/data/scratch/", "tmp.", 0777);
-
-    file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . "created directory:" . $dir);
-
-    move_uploaded_file($_FILES["theFile"]["tmp_name"], $dir . "/" . $_POST["filename"]);
+    move_uploaded_file($_FILES["theFile"]["tmp_name"], $fname);
     $zip = new ZipArchive();
-    if ($zip->open($dir . "/" . $_POST["filename"]) === TRUE) {
-        file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " try to unzip files to " . $dir);
+    if ($zip->open($fname) === TRUE) {
+        addLog(" try to unzip files to " . $dir);
         $zip->extractTo($dir);
         $zip->close();
         unlink($dir . "/" . $_POST["filename"]);
-        file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
+        chmod_r($dir);
 
-        // process.sh <aetitle caller> <aetitle called> <caller IP> <dicom directory>"
-        exec("/usr/bin/bash -c --login '/data/streams/bucket01/process.sh \"mb-shell\" $aetitle $ip \"$dir\"'");
+        //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
+        addLog(" start processing by sending to bucket01");        
+        shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"mb-shell\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
     } else {
-        file_put_contents("/tmp/bla", file_get_contents("/tmp/bla") . " could not open zip file " . $_FILES["theFile"]["tmp_name"]);
+        addLog(" could not open zip file " . $_FILES["theFile"]["tmp_name"]);
     }
-
   }
 
 ?>
