@@ -185,6 +185,9 @@ DcmApp.prototype.setup_series_selection = function() {
 
 DcmApp.prototype.set_series = function(series_uid) {
     console.log("set_series");
+    var oldFilesNum   = this.files.length;
+    var oldFilesSlice = this.curr_file_idx;
+
     this.files = this.series[series_uid].files;
     var ww;
     var wl;
@@ -214,12 +217,15 @@ DcmApp.prototype.set_series = function(series_uid) {
             wl -= (0x01 << this.files[0].HighBit);
         }
     }
-    this.curr_file_idx = 0;
+    if (this.files.length == oldFilesNum)
+	this.curr_file_idx = oldFilesSlice;
+    else
+        this.curr_file_idx = 0;
     this.set_windowing(wl, ww);
     this.draw_image();
 
     $("#slider").slider({
-        value: 0,
+        value: this.curr_file_idx,
         max: this.files.length-1,
         slide: function(ui, event) {
             app.curr_file_idx = event.value; //$(this).slider('value');
@@ -394,7 +400,7 @@ DcmApp.prototype.init = function() {
             this.painter = painter;
             break;
         } catch(e) {
-            console.log(e);
+            console.log(e.message);
         }
     }
     if(!this.painter) {
