@@ -121,7 +121,8 @@ CanvasPainter.prototype.draw_image = function() {
         for(var col=0;col<this.file.Columns;++col) {
             var data_idx = (col + row*this.file.Columns);
             var intensity = this.file.PixelData[data_idx];
-            intensity = intensity * this.file.RescaleSlope + this.file.RescaleIntercept;
+            intensity = intensity * (typeof(this.file.RescaleSlope)==='undefined'?1:this.file.RescaleSlope) 
+		+ (typeof(this.file.RescaleIntercept)==='undefined'?0:this.file.RescaleIntercept);
             var intensity = (intensity - lower_bound)/(upper_bound - lower_bound);
             if(intensity < 0.0)
                 intensity = 0.0;
