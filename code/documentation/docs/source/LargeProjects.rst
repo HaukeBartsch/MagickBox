@@ -29,3 +29,4 @@ We can now download each finished session as a zip file into a separate director
 In order to delete processed scans use the same mechanism as above::
 
    echo $fileList | jq -c -M . | while read line; do sc=`echo $line | cut -d'"' -f4`; d=`echo $line | cut -d'"' -f8`; mkdir -p "$d"; cd $d; curl http://<ip of MB>:2813/code/php/deleteStudy.php?scratchdir=$sc; cd ..; done
+
