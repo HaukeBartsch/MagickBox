@@ -90,7 +90,8 @@ function draw_thumbnail_to_canvas(file, ctx, size) {
         for(var col=0;col<file.Columns;col+=step) {
             var data_idx = (col + row*file.columns)*2;
             var intensity = file.PixelData[data_idx+1]*256.0 + file.PixelData[data_idx];
-            intensity = intensity * file.RescaleSlope + file.RescaleIntercept;
+            intensity = intensity * (typeof(file.RescaleSlope)==='undefined'?1:file.RescaleSlope) + 
+		(typeof(file.RescaleIntercept)==='undefined'?0:file.RescaleIntercept);
             var lower_bound = wl - ww/2.0;
             var upper_bound = wl + ww/2.0;
             var intensity = (intensity - lower_bound)/(upper_bound - lower_bound);
