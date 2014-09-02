@@ -10,6 +10,8 @@ You can download the mb executable here:
     * Linux https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/LinuxAMD64/mb
     * MacOSX https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/MacOSX/mb
 
+Here is the basic help page of the application (after calling ./mb)::
+
 	NAME:
 	   mb - MagickBox command shell for query, send, retrieve, and delete of data.
 	
