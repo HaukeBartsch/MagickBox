@@ -39,14 +39,14 @@ Here is the basic help page of the application (after calling ./mb)::
 	
 	COMMANDS:
 	   pull, g		Retrieve matching jobs [pull <regular expression>]
-	   push, p			 Send a directory for processing [push <aetitle> <dicom directory>]
-	   remove, r			      Remove data [remove <regular expression>]
-	   list, l 			      Show list of matching jobs [list [regular expression]]
-	   log, l			      	   Show processing log of matching jobs [log [regular expression]]
-	   queryMachines, q			   Display list of known MagickBox instances [queryMachines]
-	   selectMachine, s			   Specify the default MagickBox [selectMachine [<IP> <port>]]
-	   sender, w	  			   Specify a string identifying the sender [sender [<sender>]]
-	   help, h 				   Shows a list of commands or help for one command
+	   push, p		Send a directory for processing [push <aetitle> <dicom directory>]
+	   remove, r		Remove data [remove <regular expression>]
+	   list, l 		Show list of matching jobs [list [regular expression]]
+	   log, l		Show processing log of matching jobs [log [regular expression]]
+	   queryMachines, q	Display list of known MagickBox instances [queryMachines]
+	   selectMachine, s	Specify the default MagickBox [selectMachine [<IP> <port>]]
+	   sender, w	  	Specify a string identifying the sender [sender [<sender>]]
+	   help, h 		Shows a list of commands or help for one command
 	   
 	GLOBAL OPTIONS:
 	   --help, -h		show help
