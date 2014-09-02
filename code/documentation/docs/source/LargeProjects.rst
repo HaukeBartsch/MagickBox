@@ -4,6 +4,8 @@
 How to process a large number of subjects
 *******************************************
 
+There are two ways to process large numbers of cases. Use the `new command line utility 'mb'`_Shell or follow the description below.
+
 Lets assume that we have a directory with a larger number of DICOM datasets that we want to process. We will send the data to the MB and download the results. First load the data into OsiriX (MacOS) or use the dcmtk toolkit (http://dicom.offis.de) to send the DICOM data to the processing system::
 
    storescu +sd +r -nh -aet MySelf -aec ProcBucket <ip of MagickBox> <port of MagickBox> <single DICOM directory>
