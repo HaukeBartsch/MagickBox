@@ -12,6 +12,7 @@ Contents:
 
    Introduction
    Setup
+   Shell
    LargeProjects
    Routing
    
