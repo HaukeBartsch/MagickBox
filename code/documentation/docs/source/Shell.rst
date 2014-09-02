@@ -6,9 +6,11 @@ MagickBox command shell
 
 The MagickBox command shell is used to query, send, receive and remove jobs from a MagickBox. This command line tool provides a convenient way to interface with MagickBox instances for larger projects.
 
-You can download the mb executable here:
-    * Linux https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/LinuxAMD64/mb
-    * MacOSX https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/MacOSX/mb
+You can download the command shell executable (mb) here:
+    * Linux::
+wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/LinuxAMD64/mb
+    * MacOSX::
+wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/MacOSX/mb
 
 Here is the basic help page of the application (after calling ./mb)::
 
