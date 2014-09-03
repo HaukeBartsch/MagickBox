@@ -4,9 +4,9 @@
 MagickBox command shell
 ************************
 
-The MagickBox command shell is used to query, send, receive and remove jobs from a MagickBox. This command line tool provides a convenient way to interface with MagickBox instances for larger projects.
+The MagickBox command shell is used to query, send, receive, and remove jobs from a MagickBox. This command line tool provides a convenient way to interface with MagickBox instances for larger projects.
 
-You can download the command shell executable (mb) here:
+You can download the command shell executable (mb) for your platform here:
 
 * Linux (MD5 = d0bc07803e49a62a0265f8151db2efa6)
 	wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/LinuxAMD64/mb
@@ -17,8 +17,7 @@ You can download the command shell executable (mb) here:
 * Windows (MD5 = ac417a3786a5c260009325797267c20c)
 	wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/Windows/mb.exe
 
-
-Here is the basic help page of the application (after calling ./mb)::
+This is the basic help page of the application (after calling ./mb)::
 
 	NAME:
 	   mb - MagickBox command shell for query, send, retrieve, and delete of data.
@@ -58,3 +57,13 @@ Here is the basic help page of the application (after calling ./mb)::
 	   --help, -h		show help
 	   --version, -v	print the version
 	
+Start by using the queryMachines command to identify your MagickBox (needs to be installed first). You need to set your MagickBox using 'selectMachine' once and all future calls to mb will use that machine. Also specify the 'sender' (your name for example) as it makes it easier later to identify your scans::
+
+> mb queryMachines
+[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },{ "id": "1", "machine": "10.193.13.181", "port": "2813" }]
+> mb selectMachine 137.110.172.9 2813
+2014/09/03 07:56:45 Error: configuration incomplete, call queryMachines/selectMachine/sender first...
+set magick box to: unknown : unknown (saved in /Users/hauke/.mb )
+set magick box to: 137.110.172.9 : 2813 (saved in /Users/hauke/.mb )
+> mb sender hauke
+set magick box to: 137.110.172.9 : 2813 (saved in /Users/hauke/.mb )
