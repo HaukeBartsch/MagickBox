@@ -93,7 +93,7 @@ Mb will zip all files in the directory and upload the zip-file to your MagickBox
 	  "scratchdir": "tmp.cPQ1qwWqdw"
 	}]
 
-The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender will limit the output to entries that match the sender. Here we have a single session returned in JSON format. A unique entry in this session is 'scratchdir' which identifies the session using a random key.
+The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender string will limit the output to entries that match. Here we have a single session returned in JSON format. As a unique key to identify this session use 'scratchdir' which is based on a random key.
 
 Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed.
 
