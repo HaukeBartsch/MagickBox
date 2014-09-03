@@ -14,6 +14,10 @@ You can download the command shell executable (mb) here:
 * MacOSX
 	wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/MacOSX/mb
 
+* Windows
+	wget https://github.com/HaukeBartsch/MagickBox/tree/master/code/mb-shell/Windows/mb.exe
+
+
 Here is the basic help page of the application (after calling ./mb)::
 
 	NAME:
