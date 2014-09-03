@@ -64,10 +64,7 @@ Setup
 Start by using the queryMachines command to identify your MagickBox (needs to be installed first). You need to set your MagickBox using 'selectMachine' once and all future calls to mb will use that machine. Also specify the 'sender' (your name for example) as it makes it easier later to identify your scans::
 
 	> mb queryMachines
-	[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },{ "id": "1", "machine": "10.193.13.181", "port": "2813" }]
+	[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },
+	 { "id": "1", "machine": "10.193.13.181", "port": "2813" }]
 	> mb selectMachine 137.110.172.9 2813
-	2014/09/03 07:56:45 Error: configuration incomplete, call queryMachines/selectMachine/sender first...
-	set magick box to: unknown : unknown (saved in /Users/hauke/.mb )
-	set magick box to: 137.110.172.9 : 2813 (saved in /Users/hauke/.mb )
 	> mb sender hauke
-	set magick box to: 137.110.172.9 : 2813 (saved in /Users/hauke/.mb )
