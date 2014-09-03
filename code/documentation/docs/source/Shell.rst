@@ -73,7 +73,7 @@ Start by using the queryMachines command to identify your MagickBox (needs to be
 Usage
 ========
 
-The basic workflow is to first identify some data that is locally available on your harddrive. This could be a directory with T1-weighted images in DICOM format. Send the data to a processing bucket on your MagickBox. Here an example that sends the data for gradient unwarp (distortion correction for MRI data)::
+The basic workflow is to first identify some data that is locally available on your harddrive. This could be a directory with T1-weighted images in DICOM format. Send the data to a processing bucket on your MagickBox. Here an example that sends data for gradient unwarp (distortion correction for MRI data)::
 
 	> mb push ProcGradUnwarp ~/data/testdata/DICOMS
 
@@ -93,7 +93,7 @@ Mb will zip all files in the directory and upload the zip-file to your MagickBox
 	  "scratchdir": "tmp.cPQ1qwWqdw"
 	}]
 
-The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender string will limit the output to entries that match. Here we have a single session returned in JSON format. As a unique key to identify this session use 'scratchdir' which is based on a random key.
+The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender string will limit the output to entries that match. Here we have a single session returned in JSON format. As a unique key to identify this session use the value of the 'scratchdir' key which is based on a random sequence of letters and numbers.
 
 Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed.
 
