@@ -24,6 +24,10 @@
     addLog(" no filename in post\n");
     return;
   }
+  $sender = "mb-shell";
+  if (isset($_POST['sender'])) {
+    $sender = $_POST['sender'];
+  }
 
   if (isset($_FILES)) {
     addLog(" found theFile in _FILES\n");
@@ -79,7 +83,7 @@
 
         //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
         addLog(" start processing by sending to bucket01");        
-        shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"mb-shell\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
+        shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"'.$sender.'\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
     } else {
         addLog(" could not open zip file " . $_FILES["theFile"]["tmp_name"]);
     }
