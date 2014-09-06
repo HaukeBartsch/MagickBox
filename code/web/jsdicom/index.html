@@ -57,6 +57,8 @@
         $("#test-scroll").click(function() {
             testscroll(0, app.files.length);
         });
+        $(document).keypress(function( event ) { alert('hi'); });
+
         // Setup cluts
         for(clut in cluts) {
             $("#clut-select optgroup").append($("<option>").val(clut).text(clut));

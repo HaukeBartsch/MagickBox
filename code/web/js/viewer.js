@@ -9,9 +9,11 @@ function load_urllist_from_url(url) {
     app.load_urllist_from_url(url);
 }
 
+var testscrollactive = false;
 function testscroll(i, len) {
-    if(i > len-1)
+    if(i > len-1 || testscrollactive == false) {
         return;
+    }
     app.curr_file_idx = i;
     app.draw_image();
     setTimeout((function(a, b) { 
@@ -24,8 +26,32 @@ $(document).ready(function() {
     app.init();
 
     $("#test-scroll").click(function() {
-        testscroll(0, app.files.length);
+        if (testscrollactive) { // don't start it again
+          testscrollactive = false;
+          testscroll(app.files.length+1, app.files.length); // try to stop again
+        } else {
+          testscrollactive = true;
+          if (app.curr_file_idx == app.files.length-1) {
+		app.curr_file_idx = 0;
+          }
+          testscroll(app.curr_file_idx, app.files.length);
+        }
     });
+    $(document).keypress( function ( event ) {
+	if (event.charCode == 32) { // spacebar
+            if (testscrollactive) {
+		testscrollactive = false;
+  	        testscroll(app.files.length+1, app.files.length);
+	    } else {
+  		testscrollactive = true;
+                if (app.curr_file_idx == app.files.length-1) {
+   		    app.curr_file_idx = 0;
+                }
+		testscroll(app.curr_file_idx, app.files.length);
+	    }
+        }
+    });
+
     // Setup cluts
     for(clut in cluts) {
         $("#clut-select optgroup").append($("<option>").val(clut).text(clut));
