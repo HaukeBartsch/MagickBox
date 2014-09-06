@@ -37,26 +37,29 @@ This is the basic help page of the application (after calling ./mb)::
 	   mb [global options] command [command options] [arguments...]
 	
 	VERSION:
-	   0.0.1
+	   0.0.2
 	
 	AUTHOR:
 	  Hauke Bartsch - <HaukeBartsch@gmail.com>
 	
 	COMMANDS:
 	   pull, g		Retrieve matching jobs [pull <regular expression>]
-	   push, p		Send a directory for processing [push <aetitle> <dicom directory>]
-	   remove, r		Remove data [remove <regular expression>]
-	   list, l 		Show list of matching jobs [list [regular expression]]
-	   log, l		Show processing log of matching jobs [log [regular expression]]
-	   queryMachines, q	Display list of known MagickBox instances [queryMachines]
-	   selectMachine, s	Specify the default MagickBox [selectMachine [<IP> <port>]]
-	   sender, w	  	Specify a string identifying the sender [sender [<sender>]]
-	   help, h 		Shows a list of commands or help for one command
+	   push, p			 Send a directory for processing [push <aetitle> <dicom directory>]
+	   remove, r			      Remove data [remove <regular expression>]
+	   list, l 			      Show list of matching jobs [list [regular expression]]
+	   log, l			      	   Show processing log of matching jobs [log [regular expression]]
+	   queryMachines, q			   Display list of known MagickBox instances [queryMachines]
+	   setMachine, s  Specify the default MagickBox [setMachine [<IP> <port>]]
+	   setSender, w	  	  Specify a string identifying the sender [setSender [<sender>]]
+	   help, h    		  Shows a list of commands or help for one command
 	   
 	GLOBAL OPTIONS:
+	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
+	   --config-machine 	Identify the IP address of the MagickBox you want to work with [--config-machine <string>]
+	   --config-port 	Identify the port number used by your MagickBox [--config-port <string>]
 	   --help, -h		show help
 	   --version, -v	print the version
-	
+
 =======
 Setup
 =======
@@ -66,8 +69,8 @@ Start by using the queryMachines command to identify your MagickBox (needs to be
 	> mb queryMachines
 	[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },
 	 { "id": "1", "machine": "10.193.13.181", "port": "2813" }]
-	> mb selectMachine 137.110.172.9 2813
-	> mb sender hauke:project01
+	> mb setMachine 137.110.172.9 2813
+	> mb setSender hauke:project01
 
 ========
 Usage
@@ -95,7 +98,7 @@ Mb will zip all files in the directory and upload the zip-file to your MagickBox
 
 The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender string will limit the output to entries that match. Here we have a single session returned in JSON format. As a unique key to identify this session use the value of the 'scratchdir' key which is based on a random sequence of letters and numbers.
 
-Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed.
+Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed. The specified string can also be a regular expression.
 
 A command that works very similar to 'list' is 'log'. Additionally to the information listed by 'list', 'log' will also contain the processing log. Getting the processing log is more time consuming, therefore 'log' is a separate command. You can use it for example to search for error messages in the log files.
 
