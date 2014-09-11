@@ -49,16 +49,22 @@ This is the basic help page of the application::
 	
 	COMMANDS:
 	   pull, g		Retrieve matching jobs [pull <regular expression>]
-	   push, p			 Send a directory for processing [push <aetitle> <dicom directory> [<arguments>]]
-	   remove, r			      Remove data [remove <regular expression>]
-	   list, l 			      Show list of matching jobs [list [regular expression]]
-	   log, l			      	   Show processing log of matching jobs [log [regular expression]]
-	   queryMachines, q			   Display list of known MagickBox instances [queryMachines]
-	   setSender, w	  			   Specify a string identifying the sender [setSender [<sender>]]
-	   computeModules, c			   Get list of buckets for the current machine
-	   activeMachines, a			   Get list of active magick box machines
-	   help, h	   			   Shows a list of commands or help for one command
-   
+	   push, p		Send a directory for processing [push <aetitle> <dicom directory> [<arguments>]]
+	   remove, r		Remove data [remove <regular expression>]
+	   list, l 		Show list of matching jobs [list [regular expression]]
+	   log, l		Show processing log of matching jobs [log [regular expression]]
+	   queryMachines, q	Display list of known MagickBox instances [queryMachines]
+	   setSender, w	  	Specify a string identifying the sender [setSender [<sender>]]
+	   computeModules, c	Get list of buckets for the current machine
+	   activeMachines, a	Get list of active magick box machines
+	   help, h	   	Shows a list of commands or help for one command
+	
+	  
+	GLOBAL OPTIONS:
+	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
+	   --help, -h			 show help
+	   --version, -v		 print the version
+
 
 =======
 Setup
