@@ -4,27 +4,28 @@
 MagickBox command shell
 ************************
 
-The MagickBox command shell is used to query, send, receive, and remove jobs from a MagickBox. This command line tool provides a convenient way to interface with MagickBox instances for larger projects. If you have ever worked with programs like git the usage should be familiar. 
+The MagickBox command shell is used to query, send, receive, and remove jobs from a collection of MagickBox machines. This command line tool provides a convenient way to interface with MagickBox instances for larger projects. If you have ever worked with programs like git the usage pattern should be familiar. 
 
 You can download the command shell executable (mb) for your platform here:
 
 * Linux (MD5 = 31a40b4ce1fca92203cc23e908c568d5)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/LinuxAMD64/mb
 
-* MacOSX (MD5 = e4a117f04006b6203e7f9c141035bb43)
+* MacOSX (MD5 = 1c1d6bb3e8de83c17c6ac2549cf525ce)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/MacOSX/mb
 
 * Windows (MD5 = 8ac61aad7d99f1ce55b33aedf71a4a01)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/Windows/mb.exe
 
-This is the basic help page of the application (after calling ./mb)::
+This is the basic help page of the application::
 
 	NAME:
-	   mb - MagickBox command shell for query, send, retrieve, and delete of data.
+	   mb - MagickBox command shell for query, send, retrieve, and deletion of data.
 	
-	   Start by listing known MagickBox instances (queryMachines). Identify your machine
-	   and use selectMachine to specify it for all future commands. Also add your own
-	   identity using the sender command. These steps need to be done only once.
+	   Start by listing known MagickBox instances (queryMachines). Identify your machines
+	   and add them using 'activeMachines add'. They will be used for all future commands.
+	
+	   Also add your own identity using the setSender command. These steps need to be done only once.
 	
 	   Most calls return textual output in JSON format that can be processed by tools
 	   such as jq (http://stedolan.github.io/jq/).
@@ -32,6 +33,10 @@ This is the basic help page of the application (after calling ./mb)::
 	   Regular expressions are used to identify individual sessions. They are applied
 	   to all field values returned by the list command. If a session matches, the
 	   command will be applied to it (list, push, pull, remove).
+	
+	   If data is send (push) and there is more than 1 machine available that provide that processing
+	   one of them will be selected by random. Commands such as 'list' will return the machine and port
+	   used for that session.
 	
 	USAGE:
 	   mb [global options] command [command options] [arguments...]
@@ -44,21 +49,16 @@ This is the basic help page of the application (after calling ./mb)::
 	
 	COMMANDS:
 	   pull, g		Retrieve matching jobs [pull <regular expression>]
-	   push, p			 Send a directory for processing [push <aetitle> <dicom directory>]
+	   push, p			 Send a directory for processing [push <aetitle> <dicom directory> [<arguments>]]
 	   remove, r			      Remove data [remove <regular expression>]
 	   list, l 			      Show list of matching jobs [list [regular expression]]
 	   log, l			      	   Show processing log of matching jobs [log [regular expression]]
 	   queryMachines, q			   Display list of known MagickBox instances [queryMachines]
-	   setMachine, s  Specify the default MagickBox [setMachine [<IP> <port>]]
-	   setSender, w	  	  Specify a string identifying the sender [setSender [<sender>]]
-	   help, h    		  Shows a list of commands or help for one command
-	   
-	GLOBAL OPTIONS:
-	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
-	   --config-machine 	Identify the IP address of the MagickBox you want to work with [--config-machine <string>]
-	   --config-port 	Identify the port number used by your MagickBox [--config-port <string>]
-	   --help, -h		show help
-	   --version, -v	print the version
+	   setSender, w	  			   Specify a string identifying the sender [setSender [<sender>]]
+	   computeModules, c			   Get list of buckets for the current machine
+	   activeMachines, a			   Get list of active magick box machines
+	   help, h	   			   Shows a list of commands or help for one command
+   
 
 =======
 Setup
