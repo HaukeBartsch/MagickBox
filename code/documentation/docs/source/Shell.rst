@@ -62,20 +62,21 @@ This is the basic help page of the application::
 	  
 	GLOBAL OPTIONS:
 	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
-	   --help, -h			 show help
-	   --version, -v		 print the version
+	   --help, -h		show help
+	   --version, -v	print the version
 
 
 =======
 Setup
 =======
 
-Start by using the queryMachines command to identify your MagickBox (needs to be installed first). You need to set your MagickBox using 'selectMachine' once and all future calls to mb will use that machine. Also specify the 'sender' (your name or the name of your project for example) as it makes it easier later to identify your scans::
+Start by using the queryMachines command to identify your processing machines (MagickBox needs to run on those machines). You need to activate your MagickBox instances using 'activeMachines' once and all future calls to mb will use these machines. Also specify the 'sender' (your name or the name of your project for example) as it makes it easier later to identify your scans::
 
 	> mb queryMachines
 	[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },
 	 { "id": "1", "machine": "10.193.13.181", "port": "2813" }]
-	> mb setMachine 137.110.172.9 2813
+	> mb activeMachines add 137.110.172.9 2813
+	> mb activeMachines add 10.193.172.181 2813
 	> mb setSender hauke:project01
 
 ========
