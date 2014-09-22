@@ -4,27 +4,28 @@
 MagickBox command shell
 ************************
 
-The MagickBox command shell is used to query, send, receive, and remove jobs from a MagickBox. This command line tool provides a convenient way to interface with MagickBox instances for larger projects. If you have ever worked with programs like git the usage should be familiar. 
+The MagickBox command shell is used to query, send, receive, and remove jobs from a collection of MagickBox machines. This command line tool provides a convenient way to interface with MagickBox instances for larger projects. If you have ever worked with programs like git the usage pattern should be familiar. 
 
 You can download the command shell executable (mb) for your platform here:
 
-* Linux (MD5 = d0bc07803e49a62a0265f8151db2efa6)
+* Linux (MD5 = 764a386128376368528cdd6e66f15487)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/LinuxAMD64/mb
 
-* MacOSX (MD5 = 309cce38fbb9159a8f965e763e33f13a)
+* MacOSX (MD5 = fe6dd4d960c289892bbcaf218561fdd0)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/MacOSX/mb
 
-* Windows (MD5 = ac417a3786a5c260009325797267c20c)
+* Windows (MD5 = 68b9e25fef9f351eca91be531e2f033d)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/Windows/mb.exe
 
-This is the basic help page of the application (after calling ./mb)::
+This is the basic help page of the application::
 
 	NAME:
-	   mb - MagickBox command shell for query, send, retrieve, and delete of data.
+	   mb - MagickBox command shell for query, send, retrieve, and deletion of data.
 	
-	   Start by listing known MagickBox instances (queryMachines). Identify your machine
-	   and use selectMachine to specify it for all future commands. Also add your own
-	   identity using the sender command. These steps need to be done only once.
+	   Start by listing known MagickBox instances (queryMachines). Identify your machines
+	   and add them using 'activeMachines add'. They will be used for all future commands.
+	
+	   Also add your own identity using the setSender command. These steps need to be done only once.
 	
 	   Most calls return textual output in JSON format that can be processed by tools
 	   such as jq (http://stedolan.github.io/jq/).
@@ -33,41 +34,50 @@ This is the basic help page of the application (after calling ./mb)::
 	   to all field values returned by the list command. If a session matches, the
 	   command will be applied to it (list, push, pull, remove).
 	
+	   If data is send (push) and there is more than 1 machine available that provide that processing
+	   one of them will be selected by random. Commands such as 'list' will return the machine and port
+	   used for that session.
+	
 	USAGE:
 	   mb [global options] command [command options] [arguments...]
 	
 	VERSION:
-	   0.0.1
+	   0.0.2
 	
 	AUTHOR:
 	  Hauke Bartsch - <HaukeBartsch@gmail.com>
 	
 	COMMANDS:
 	   pull, g		Retrieve matching jobs [pull <regular expression>]
-	   push, p		Send a directory for processing [push <aetitle> <dicom directory>]
+	   push, p		Send a directory for processing [push <aetitle> <dicom directory> [<arguments>]]
 	   remove, r		Remove data [remove <regular expression>]
 	   list, l 		Show list of matching jobs [list [regular expression]]
 	   log, l		Show processing log of matching jobs [log [regular expression]]
 	   queryMachines, q	Display list of known MagickBox instances [queryMachines]
-	   selectMachine, s	Specify the default MagickBox [selectMachine [<IP> <port>]]
-	   sender, w	  	Specify a string identifying the sender [sender [<sender>]]
-	   help, h 		Shows a list of commands or help for one command
-	   
+	   setSender, w	  	Specify a string identifying the sender [setSender [<sender>]]
+	   computeModules, c	Get list of buckets for the current machine
+	   activeMachines, a	Get list of active magick box machines
+	   help, h	   	Shows a list of commands or help for one command
+	
+	  
 	GLOBAL OPTIONS:
+	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
 	   --help, -h		show help
 	   --version, -v	print the version
-	
+
+
 =======
 Setup
 =======
 
-Start by using the queryMachines command to identify your MagickBox (needs to be installed first). You need to set your MagickBox using 'selectMachine' once and all future calls to mb will use that machine. Also specify the 'sender' (your name or the name of your project for example) as it makes it easier later to identify your scans::
+Start by using the queryMachines command to identify your processing machines (MagickBox needs to run on those machines). You need to activate your MagickBox instances using 'activeMachines' once and all future calls to mb will use these machines. Also specify the 'sender' (your name or the name of your project for example) as it makes it easier later to identify your scans::
 
 	> mb queryMachines
 	[{ "id": "0", "machine": "137.110.172.9", "port": "2813" },
 	 { "id": "1", "machine": "10.193.13.181", "port": "2813" }]
-	> mb selectMachine 137.110.172.9 2813
-	> mb sender hauke:project01
+	> mb activeMachines add 137.110.172.9 2813
+	> mb activeMachines add 10.193.172.181 2813
+	> mb setSender hauke:project01
 
 ========
 Usage
@@ -95,7 +105,7 @@ Mb will zip all files in the directory and upload the zip-file to your MagickBox
 
 The 'list' command on its own will list all sessions that exist on the MagickBox, specifying the sender or parts of the sender string will limit the output to entries that match. Here we have a single session returned in JSON format. As a unique key to identify this session use the value of the 'scratchdir' key which is based on a random sequence of letters and numbers.
 
-Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed.
+Use any other string as a search term instead of the sender. You could specify "Sep" and all session that contain "Sep" will be listed. The specified string can also be a regular expression.
 
 A command that works very similar to 'list' is 'log'. Additionally to the information listed by 'list', 'log' will also contain the processing log. Getting the processing log is more time consuming, therefore 'log' is a separate command. You can use it for example to search for error messages in the log files.
 

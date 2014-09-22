@@ -67,10 +67,10 @@
   if ($_FILES["theFile"]["error"] > 0) {
     addLog("error in sending files");
   } else {
-    $dir = tempdir("/tmp/", "tmp.", 0777);
+    $dir = tempdir("/tmp/", $filename . ".", 0777);
     chmod($dir, 0777);
     addLog("plan to start processing in " . $dir);
-    $fname = $dir . "/" . $_POST["filename"];
+    $fname = $dir . "/" . $filename;
 
     move_uploaded_file($_FILES["theFile"]["tmp_name"], $fname);
     $zip = new ZipArchive();
@@ -78,7 +78,7 @@
         addLog(" try to unzip files to " . $dir);
         $zip->extractTo($dir);
         $zip->close();
-        unlink($dir . "/" . $_POST["filename"]);
+        unlink($dir . "/" . $filename);
         chmod_r($dir);
 
         //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
