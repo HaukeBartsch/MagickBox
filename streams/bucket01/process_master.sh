@@ -81,7 +81,7 @@ else
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
 read s2 < <(date + '%s')
-/usr/bin/curl ${PARENTIP}:2813/code/php/timing.php?aetitle=$AETitleCalled&time=$((s2-s1))
+/usr/bin/curl ${PARENTIP}:2813/code/php/timing.php?aetitle=${AETitleCalled}\&time=$((s2-s1))
 
 # try to send back to osirix on parent machine
 #echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
