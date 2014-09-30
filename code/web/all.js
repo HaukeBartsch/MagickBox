@@ -88,6 +88,9 @@ jQuery(document).ready(function() {
                               if (jQuery.trim(str2[0]) == "PARENTPORT") {
                                   jQuery('#PORT').val(jQuery.trim(str2[1]));
                               }
+                              if (jQuery.trim(str2[0]) == "WEBPORT") {
+                                  jQuery('#WEBPORT').val(jQuery.trim(str2[1]));
+                              }
                            }
 	        });
         }
@@ -117,10 +120,11 @@ jQuery(document).ready(function() {
     });
 
     jQuery('#setupSaveChanges').click(function() {
-	    var valid = true;
-	    var IP = jQuery('#IP').val();
-	    var PORT = jQuery('#PORT').val();
-        var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
+	    var valid   = true;
+	    var IP      = jQuery('#IP').val();
+	    var PORT    = jQuery('#PORT').val();
+            var WEBPORT = jQuery('#WEBPORT').val();
+            var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";WEBPORT="+WEBPORT+";";
 	    jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
   		    //alert(data);
             jQuery.get('/code/php/setup.php?command=get', function(data) {
