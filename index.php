@@ -145,7 +145,9 @@
               <label for="IP" style="width: 100px;">Name:</label>
               <input type="text" name="IP" id="IP" placeholder="192.168.0.1" class="text ui-widget-content ui-corner-all" /><br/>
               <label for="PORT" style="width: 100px;">Port:</label>
-              <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" />
+              <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" /><br/>
+              <label for="WEBPORT" style="width: 100px;" title="Port under which the webpage is accessible, usually something like 2813.">WebPort:</label>
+              <input type="number" name="WEBPORT" id="WEBPORT" placeholder="2813" class="text ui-widget-content ui-corner-all" />
              </fieldset>
            </form>
            <hr/>

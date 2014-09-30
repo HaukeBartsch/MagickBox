@@ -9,7 +9,7 @@ then
    exit 1
 fi
 
-# get the PARENTIP and PARENTPORT variables
+# get the PARENTIP and PARENTPORT/WEBPORT variables
 . /data/code/setup.sh
 # echo "we can read these from setup.sh: $PARENTIP $PARENTPORT" >> /data/logs/bucket01.log
 
@@ -24,7 +24,9 @@ mkdir ${WORKINGDIR}/INPUT
 echo "`date`: Process bucket01 received data for processing in $WORKINGDIR (moving)" >> /data/logs/bucket01.log
 
 # move the data away first
-mv $DIR ${WORKINGDIR}/INPUT/
+# mv $DIR ${WORKINGDIR}/INPUT/
+eval /bin/cp -R ${DIR}/ ${WORKINGDIR}/INPUT/
+eval /bin/rm -rf ${DIR}
 # files need to be deleted by apache later
 chmod -R gou+rwx ${WORKINGDIR}/INPUT
 
@@ -49,14 +51,14 @@ echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
 # check the license
-lic=`/usr/bin/curl http://mmil.ucsd.edu/MagickBox/queryLicense.php?feature=$AETitleCalled | cut -d':' -f2 | cut -d'}' -f1`
+lic=`/usr/bin/curl http://mmil.ucsd.edu/MagickBox/queryLicense.php?feature=$AETitleCalled | cut -d':' -f2 | sed -e 's/[\"})]//g'`
 if [ "$lic" == "-1" ]
 then
   echo "`date`: Error: no permissions to run this job ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
 echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /data/logs/bucket01.log
 
-
+read s1 < <(date + '%s')
 if [ $AETitleCalled = \"ProcRSITBI\" ]
 then
   /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
@@ -78,6 +80,8 @@ then
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
+read s2 < <(date + '%s')
+/usr/bin/curl ${PARENTIP}:${WEBPORT}/code/php/timing.php?aetitle=${AETitleCalled}\&time=$((s2-s1))
 
 # try to send back to osirix on parent machine
 #echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
