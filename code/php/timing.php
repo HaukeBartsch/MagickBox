@@ -43,7 +43,7 @@ function saveDB( $d ) {
    // works and copy the result over to the pw_file
    $testfn = $db_file . '_test';
    addLog("try to write to " . $testfn);
-   file_put_contents($testfn, json_encode($d));
+   file_put_contents($testfn, json_encode($d, JSON_PRETTY_PRINT));
    if (filesize($testfn) > 0) {
       // seems to have worked, now rename this file to pw_file
       rename($testfn, $db_file);
@@ -58,6 +58,7 @@ function saveDB( $d ) {
 
 if (isset($_GET['aetitle'])) {
   $aetitle = $_GET['aetitle'];
+  $aetitle = trim($aetitle, "\\\"");
 } else {
   addLog("no aetitle argument given");
   return; 
