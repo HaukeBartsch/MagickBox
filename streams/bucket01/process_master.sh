@@ -58,7 +58,7 @@ then
 fi
 echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /data/logs/bucket01.log
 
-read s1 < <(date + '%s')
+read s1 < <(date +'%s')
 if [ $AETitleCalled = \"ProcRSITBI\" ]
 then
   /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
@@ -80,8 +80,8 @@ then
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
-read s2 < <(date + '%s')
-/usr/bin/curl ${PARENTIP}:${WEBPORT}/code/php/timing.php?aetitle=${AETitleCalled}\&time=$((s2-s1))
+read s2 < <(date +'%s')
+/usr/bin/curl ${PARENTIP}:${WEBPORT}/code/php/timing.php?aetitle=${AETitleCalled}\&time=$(( s2 - s1 ))
 
 # try to send back to osirix on parent machine
 #echo "`date`: Process bucket01 (send results to DCM4CHEE on \"$PARENTIP\" \"$PARENTPORT\"...)" >> /data/logs/bucket01.log
