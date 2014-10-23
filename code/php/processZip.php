@@ -3,9 +3,11 @@
   // data/scratch needs to be writable to www-data as well
   // we need to use the processing user, make www-data sudo su processing
 
+  date_default_timezone_set('America/Los_Angeles');
+
   function addLog( $message ) {
     $ip = fopen("/data/logs/processZip.log",'a');
-    fwrite($ip, $message . "\n");
+    fwrite($ip, date(DATE_RFC2822) . ": " . $message . "\n");
     fclose($ip);
   }
 
