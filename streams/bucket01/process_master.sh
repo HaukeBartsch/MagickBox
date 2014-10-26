@@ -46,7 +46,7 @@ echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
 
 # DCM4CHEE for save keeping
 # /usr/bin/storescu -aet "Processing" -aec "DCM4CHEE" +r +sd XXX.XXX.XXX.XXX 11111 $WORKINGDIR
-/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
+# /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
 
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
