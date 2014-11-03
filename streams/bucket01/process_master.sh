@@ -19,16 +19,14 @@ CallerIP=$3
 DIR=$4
 WORKINGDIR=`mktemp -d --tmpdir=/data/scratch/`
 chmod gou+rwx $WORKINGDIR
-mkdir ${WORKINGDIR}/INPUT
+mkdir ${WORKINGDIR}
 
 echo "`date`: Process bucket01 received data for processing in $WORKINGDIR (moving)" >> /data/logs/bucket01.log
 
-# move the data away first
-# mv $DIR ${WORKINGDIR}/INPUT/
-eval /bin/cp -R ${DIR}/ ${WORKINGDIR}/INPUT/
-eval /bin/rm -rf ${DIR}
-# files need to be deleted by apache later
-chmod -R gou+rwx ${WORKINGDIR}/INPUT
+# don't move the data away anymore, keep it in the archive and link to it only
+eval /bin/ln -s ${DIR} ${WORKINGDIR}/INPUT
+# create the output directory here
+mkdir -p ${WORKINGDIR}/OUTPUT
 
 # store the sender information as text
 (
@@ -46,7 +44,7 @@ echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
 
 # DCM4CHEE for save keeping
 # /usr/bin/storescu -aet "Processing" -aec "DCM4CHEE" +r +sd XXX.XXX.XXX.XXX 11111 $WORKINGDIR
-/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
+# /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
 
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
@@ -61,22 +59,22 @@ echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /da
 read s1 < <(date +'%s')
 if [ $AETitleCalled = \"ProcRSITBI\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 elif [ $AETitleCalled = \"ProcRSIProstate\" ]
 then 
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 elif [ $AETitleCalled = \"ProcRSIMS\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 elif [ $AETitleCalled = \"RSIProsUCSD\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 elif [ $AETitleCalled = \"ProcTBIp01\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 elif [ $AETitleCalled = \"ProcRSIProstUCLA\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstUCLA -- "${WORKINGDIR}/INPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstUCLA -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
