@@ -24,9 +24,9 @@ mkdir ${WORKINGDIR}
 echo "`date`: Process bucket01 received data for processing in $WORKINGDIR (moving)" >> /data/logs/bucket01.log
 
 # don't move the data away anymore, keep it in the archive and link to it only
+mkdir ${WORKINGDIR}/INPUT
+# the next link is now inside INPUT (this allows us to go INPUT/../ without the link)
 eval /bin/ln -s ${DIR} ${WORKINGDIR}/INPUT
-# create the output directory here
-mkdir -p ${WORKINGDIR}/OUTPUT
 
 # store the sender information as text
 (
@@ -59,22 +59,22 @@ echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /da
 read s1 < <(date +'%s')
 if [ $AETitleCalled = \"ProcRSITBI\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcRSIProstate\" ]
 then 
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcRSIMS\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"RSIProsUCSD\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcTBIp01\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT"
 elif [ $AETitleCalled = \"ProcRSIProstUCLA\" ]
 then
-  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstUCLA -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+  /usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstUCLA -- "${WORKINGDIR}/INPUT"
 else 
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
