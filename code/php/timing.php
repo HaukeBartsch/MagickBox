@@ -71,7 +71,7 @@ if (isset($_GET['aetitle'])) {
 
 if (isset($_GET['time'])) {
   $time = $_GET['time'];
-  addLog("got some time :" . $time);
+  addLog("got some time: " . $time);
   $d = loadDB();
   if ($d == NULL) {
      $d = array();
