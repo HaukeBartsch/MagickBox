@@ -31,6 +31,11 @@
     $sender = $_POST['sender'];
   }
 
+  $jobname = "";
+  if (isset($_POST['jobname'])) {
+    $jobname = $_POST['jobname'];
+  }
+
   if (isset($_FILES)) {
     addLog(" found theFile in _FILES\n");
   } else {
@@ -69,7 +74,7 @@
   if ($_FILES["theFile"]["error"] > 0) {
     addLog("error in sending files");
   } else {
-    $dir = tempdir("/tmp/", $filename . ".", 0777);
+    $dir = tempdir("/data/scratch/", 'tmp.mb'.$jobname.'_', 0777);
     chmod($dir, 0777);
     addLog("plan to start processing in " . $dir);
     $fname = $dir . "/" . $filename;
