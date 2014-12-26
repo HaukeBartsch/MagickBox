@@ -3,17 +3,39 @@
 # This script can be started by cron (something like every 10 minutes should work).
 # It can be run several times, only the first run will actually work. Followup runs
 # will fail until the first run is finished.
+#
+# Example crontab entry that starts this script every 30 minutes
+#   */30 * * * * /usr/bin/nice -n 3 /data/code/bin/scrubStorage.sh
+#
+
+# read in the configuration file
+. /data/code/setup.sh
+# we look for SCRUBhighwatermark (percentages, 90)
+# we look for SCRUBlowwatermark (percentages, 80)
+# we look for SCRUBenable (0 - false, 1 - true)
 
 # percentage value of hard drive filled when we have to do something
-highwaterborder=90
+if [ -z ${SCRUBhighwaterborder+x} ]; then
+  highwaterborder=90
+else
+  highwaterborder=$SCRUBhighwaterborder
+fi
 # we remove directories until we hit this border (should always be smaller)
-lowwaterborder=80
+if [ -z ${SCRUBlowwaterborder+x} ]; then
+  lowwaterborder=80
+else
+  lowwaterborder=$SCRUBlowwaterborder
+fi
 # directory to scrub (look for tmp.* files only)
 dir=/data/scratch
 # location of log file
 log=/data/logs/scrubStorage.log
 # just checking or really removing stuff?
-enable=0
+if [ -z ${SCRUBenable+x} ]; then
+  enable=0
+else
+  enable=$SCRUBenable
+fi
 
 scrub () {
   echo "START SCRUBBING `date`" >> $log
