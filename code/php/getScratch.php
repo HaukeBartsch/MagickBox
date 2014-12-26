@@ -23,10 +23,8 @@
 
        $parts = explode("/",$fn);
        $ar[count($ar)-1]['scratchdir'] = $parts[count($parts)-2];
-       // add the first directory in side INPUT
-       $inputs = glob('/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/INPUT/*', GLOB_ONLYDIR);
-       $parts2 = explode("/",$inputs[0]);
-       $ar[count($ar)-1]['pid'] = $parts2[count($parts2)-1];
+       // add the directory that INPUT links to
+       $ar[count($ar)-1]['pid'] = basename(realpath('/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/INPUT'));
 
        $fname = '/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/processing.log';
        if ( ! is_readable($fname) ) {

@@ -69,7 +69,7 @@
   if ($_FILES["theFile"]["error"] > 0) {
     addLog("error in sending files");
   } else {
-    $dir = tempdir("/data/scratch/", 'tmp.mb_', 0777);
+    $dir = tempdir("/data/scratch/archive/", 'mb_', 0777);
     chmod($dir, 0777);
     addLog("plan to start processing in " . $dir);
     $fname = $dir . "/" . $filename;
