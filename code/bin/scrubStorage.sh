@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# This script can be started by cron (something like every 10 minutes should work).
+# This script can be started by cron (something like every 30 minutes should work).
 # It can be run several times, only the first run will actually work. Followup runs
 # will fail until the first run is finished.
 #
 # Example crontab entry that starts this script every 30 minutes
 #   */30 * * * * /usr/bin/nice -n 3 /data/code/bin/scrubStorage.sh
+# Add the above line to your machine using:
+#   > crontab -e
 #
 
 # read in the configuration file
@@ -39,6 +41,10 @@ fi
 
 scrub () {
   echo "START SCRUBBING `date`" >> $log
+
+  # before we scrub we should sweep, maybe there is no need to remove stuff afterwards
+  sweep  
+
   # find out how much space we have left in /data/scratch
   fr=`nice -n 3 df "$dir" | grep -v Filesystem | awk '{print $5}' | cut -d'%' -f1`
   if [ "$fr" -lt "$highwaterborder" ]; then
@@ -70,6 +76,15 @@ scrub () {
     accumulated=$(($accumulated + $s))
     echo "removing $f (cleans up $s bytes of space)"
     if [ "$enable" == "1" ]; then
+       # we need to remove the input as well, its just a symbolic link in tmp.*
+       input=`readlink -f $f/INPUT`
+       if [ `echo $input | cut -d'/' -f1-3` != '/data/scratch' ]; then
+          echo "ERROR: \"$input\" would need to be removed but is not in /data/scratch" >> $log
+       else
+          echo "`date` deleted \"$input\" which is inside \"$f\"" >> $log
+          su nice -n 3 /bin/rm -f -R "$input"
+       fi
+       # now remove the directory itself
        su nice -n 3 /bin/rm -f -R "$f"
        echo "`date` deleted $f (cleans up $s bytes of space)" >> $log
     else
@@ -110,6 +125,33 @@ scrubList () {
       echo "$si;$file"
     fi
   done
+}
+
+# there are some left-over directories that we can remove
+# there are also some docker containers we can clean out
+sweep () {
+   # first remove invisible tmp directories - a directory is invisible if if does not contain info.json
+   for u in `ls -d /data/scratch/tmp.*`; do 
+      if [ ! -e $u/info.json ]; then
+         echo "REMOVE: invisible directory $u\n" >> $log
+         sudo \rm -f -R $u;
+      fi; 
+   done
+
+   # next remove all archive data that do not have a reference in tmp anymore
+   ls -d /data/scratch/tmp.*/INPUT | xargs readlink -f | sort | uniq > /tmp/tmpreferenced
+   ls -d /data/scratch/archive/* > /tmp/inarchive
+   notreferenced=`grep -v -f /tmp/tmpreferenced /tmp/inarchive`
+   echo "REMOVE: archive data not referenced in /data/scratch/tmp.* anymore \"$notreferenced\"" >> $log
+   grep -v -f /tmp/tmpreferenced /tmp/inarchive | xargs sudo \rm -R -f 
+
+   # next remove all docker container that are un-named and not running
+   old=`sudo docker ps -a | grep Exit | awk '{print $1}'`
+   echo "REMOVE: exited docker containers \"$old\"" >> $log
+   sudo docker ps -a | grep Exit | awk '{print $1}' | sudo xargs docker rm
+   old=`sudo docker images -q --filter "dangling=true"`
+   echo "REMOVE: dangling containers \"$old\"" >> $log
+   sudo docker images -q --filter "dangling=true" | sudo xargs docker rmi
 }
 
 # The following section takes care of not starting this script more than once 
