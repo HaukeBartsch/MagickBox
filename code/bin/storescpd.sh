@@ -6,7 +6,11 @@
 #
 
 tos=15
-od=/data/scratch/inbox/
+od=/data/scratch/archive
+# create the output directory
+mkdir -p ${od}
+chmod -R 777 ${od}
+
 port=1234
 pidfile=/data/.pids/storescpd.pid
 # the following script will get the aetitle of the caller, the called aetitle and the path to the data as arguments
@@ -21,7 +25,7 @@ case $1 in
 	/usr/bin/storescp --eostudy-timeout $tos \
 	    --write-xfer-little \
 	    --exec-on-eostudy "$scriptfile '#a' '#c' '#r' '#p'" \
-	    --sort-on-study-uid "" \
+  	    --sort-on-study-uid scp \
 	    --log-config /data/code/bin/logger.cfg \
 	    --output-directory "$od" \
 	    $port & &>/data/logs/storescpd.log

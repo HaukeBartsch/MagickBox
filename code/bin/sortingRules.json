@@ -1,0 +1,41 @@
+[
+ { "name": "Study",
+   "rules": [ { "tag": "StudyInstanceUID", "operation": "equal" } ]
+ },
+ { "name": "Series",
+   "rules": [ { "rule": "Study" }, { "tag": "SeriesInstanceUID", "operation": "equal" } ]
+ },
+ { "name": "MRI",
+   "rules": [ { "tag": "Modality", "operation": "equal", "arg1": "MR" } ]
+ },
+ { "name": "T1",
+   "rules": [ { "rule": "MRI" }, 
+              { "rule": "Series" }, 
+              { "tag": "TE", "operation": "smaller", "arg1": 750 },
+              { "tag": "TR", "operation": "smaller", "arg2": 40 },
+              { "tag": "numSlices", "operation": "greater", "arg1": 100 }
+            ]
+ },
+ { "name": "T2",
+   "rules": [ { "rule": "MRI" }, 
+              { "rule": "Series" }, 
+              { "tag": "TE", "operation": "larger", "arg1": 1500 },
+              { "tag": "TR", "operation": "larger", "arg2": 75 },
+              { "tag": "numSlices", "operation": "greater", "arg1": 100 }
+            ]
+ },
+ { "name": "PD",
+   "rules": [ { "rule": "MRI" }, 
+              { "rule": "Series" }, 
+              { "tag": "TE", "operation": "larger", "arg1": 1500 },
+              { "tag": "TR", "operation": "smaller", "arg2": 40 },
+              { "tag": "numSlices", "operation": "greater", "arg1": 100 }
+            ]
+ },
+ { "name": "T1post",
+   "rules": [ { "rule": "T1" },
+              { "tag": "0018,0010", "operation": "exists" },
+              { "tag": "dateTimeOrder", "operation": "largest" }
+            ]
+ }
+]
