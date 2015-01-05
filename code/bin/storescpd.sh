@@ -21,7 +21,7 @@ case $1 in
 	/usr/bin/storescp --eostudy-timeout $tos \
 	    --write-xfer-little \
 	    --exec-on-eostudy "$scriptfile '#a' '#c' '#r' '#p'" \
-	    --sort-on-patientname \
+	    --sort-on-study-uid "" \
 	    --log-config /data/code/bin/logger.cfg \
 	    --output-directory "$od" \
 	    $port & &>/data/logs/storescpd.log
