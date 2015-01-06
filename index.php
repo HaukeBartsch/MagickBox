@@ -145,7 +145,19 @@
               <label for="IP" style="width: 100px;">Name:</label>
               <input type="text" name="IP" id="IP" placeholder="192.168.0.1" class="text ui-widget-content ui-corner-all" /><br/>
               <label for="PORT" style="width: 100px;">Port:</label>
-              <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" />
+              <input type="text" name="PORT" id="PORT" placeholder="11112" class="text ui-widget-content ui-corner-all" /><br/>
+              <label for="WEBPORT" style="width: 100px;" title="Port under which the webpage is accessible, usually something like 2813.">WebPort:</label>
+              <input type="number" name="WEBPORT" id="WEBPORT" placeholder="2813" class="text ui-widget-content ui-corner-all" /><br/>
+             </fieldset>
+              <hr>
+              <p class="validateTips">Delete data if hard drive is too full?</p>
+             <fieldset>
+              <label for="SCRUBenable" style="width: 100px;" title="Should data be deleted?">Enable:</label>
+              <input type="checkbox" name="SCRUBenable" id="SCRUBenable" class="text ui-widget-content ui-corner-all" /><br/>
+              <label for="SCRUBhighwaterborder" style="width: 100px;" title="High-water border for deleting data (percentage of space available).">High water border:</label>
+              <input type="number" name="SCRUBhighwaterborder" id="SCRUBhighwaterborder" placeholder="90" class="text ui-widget-content ui-corner-all" /><br/>
+              <label for="SCRUBlowwaterborder" style="width: 100px;" title="Low-water border when deleting data stops (percentage of space available).">Low-water border:</label>
+              <input type="number" name="SCRUBlowwaterborder" id="SCRUBlowwaterborder" placeholder="80" class="text ui-widget-content ui-corner-all" />
              </fieldset>
            </form>
            <hr/>

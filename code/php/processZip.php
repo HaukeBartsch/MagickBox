@@ -3,9 +3,11 @@
   // data/scratch needs to be writable to www-data as well
   // we need to use the processing user, make www-data sudo su processing
 
+  date_default_timezone_set('America/Los_Angeles');
+
   function addLog( $message ) {
     $ip = fopen("/data/logs/processZip.log",'a');
-    fwrite($ip, $message . "\n");
+    fwrite($ip, date(DATE_RFC2822) . ": " . $message . "\n");
     fclose($ip);
   }
 
@@ -27,6 +29,11 @@
   $sender = "mb-shell";
   if (isset($_POST['sender'])) {
     $sender = $_POST['sender'];
+  }
+
+  $jobname = "";
+  if (isset($_POST['jobname'])) {
+    $jobname = $_POST['jobname'];
   }
 
   if (isset($_FILES)) {
@@ -67,10 +74,10 @@
   if ($_FILES["theFile"]["error"] > 0) {
     addLog("error in sending files");
   } else {
-    $dir = tempdir("/tmp/", "tmp.", 0777);
+    $dir = tempdir("/data/scratch/", 'tmp.mb'.$jobname.'_', 0777);
     chmod($dir, 0777);
     addLog("plan to start processing in " . $dir);
-    $fname = $dir . "/" . $_POST["filename"];
+    $fname = $dir . "/" . $filename;
 
     move_uploaded_file($_FILES["theFile"]["tmp_name"], $fname);
     $zip = new ZipArchive();
@@ -78,7 +85,7 @@
         addLog(" try to unzip files to " . $dir);
         $zip->extractTo($dir);
         $zip->close();
-        unlink($dir . "/" . $_POST["filename"]);
+        unlink($dir . "/" . $filename);
         chmod_r($dir);
 
         //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");

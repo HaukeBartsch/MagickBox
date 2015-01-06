@@ -88,6 +88,21 @@ jQuery(document).ready(function() {
                               if (jQuery.trim(str2[0]) == "PARENTPORT") {
                                   jQuery('#PORT').val(jQuery.trim(str2[1]));
                               }
+                              if (jQuery.trim(str2[0]) == "WEBPORT") {
+                                  jQuery('#WEBPORT').val(jQuery.trim(str2[1]));
+                              }
+                              if (jQuery.trim(str2[0]) == "SCRUBhighwaterborder") {
+                                  jQuery('#SCRUBhighwaterborder').val(jQuery.trim(str2[1]));
+                              }
+                              if (jQuery.trim(str2[0]) == "SCRUBlowwaterborder") {
+                                  jQuery('#SCRUBlowwaterborder').val(jQuery.trim(str2[1]));
+                              }
+                              if (jQuery.trim(str2[0]) == "SCRUBenable") {
+                                  if (jQuery.trim(str2[1]) == "1")
+                                      jQuery('#SCRUBenable').prop('checked', true);
+				  else
+                                      jQuery('#SCRUBenable').prop('checked', false);
+                              }
                            }
 	        });
         }
@@ -117,10 +132,16 @@ jQuery(document).ready(function() {
     });
 
     jQuery('#setupSaveChanges').click(function() {
-	    var valid = true;
-	    var IP = jQuery('#IP').val();
-	    var PORT = jQuery('#PORT').val();
-        var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";";
+	    var valid   = true;
+	    var IP      = jQuery('#IP').val();
+	    var PORT    = jQuery('#PORT').val();
+            var WEBPORT = jQuery('#WEBPORT').val();
+            var SCRUBhighwaterborder = jQuery('#SCRUBhighwaterborder').val();
+            var SCRUBlowwaterborder  = jQuery('#SCRUBlowwaterborder').val();
+            var SCRUBenable = "0";
+        if (jQuery('#SCRUBenable').is(':checked'))
+              SCRUBenable          = "1";
+            var str = "PARENTIP="+IP+";PARENTPORT="+PORT+";WEBPORT="+WEBPORT+";SCRUBhighwaterborder="+SCRUBhighwaterborder+";SCRUBlowwaterborder="+SCRUBlowwaterborder+";SCRUBenable="+SCRUBenable+";";
 	    jQuery.get('/code/php/setup.php?command=set&value='+str, function(data) {
   		    //alert(data);
             jQuery.get('/code/php/setup.php?command=get', function(data) {
