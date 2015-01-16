@@ -74,7 +74,7 @@
   if ($_FILES["theFile"]["error"] > 0) {
     addLog("error in sending files");
   } else {
-    $dir = tempdir("/data/scratch/", 'tmp.mb'.$jobname.'_', 0777);
+    $dir = tempdir("/data/scratch/", 'tmp.mb.'.$jobname.'_', 0777);
     chmod($dir, 0777);
     addLog("plan to start processing in " . $dir);
     $fname = $dir . "/" . $filename;
@@ -89,11 +89,12 @@
         chmod_r($dir);
 
         //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
-        addLog(" start processing by sending to bucket01");        
+        addLog(" start processing by sending to bucket01: [ \"$sender\", \"$aetitle\", \"$ip\", \"$dir\" ]");
         shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"'.$sender.'\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
     } else {
         addLog(" could not open zip file " . $_FILES["theFile"]["tmp_name"]);
     }
   }
+  addLog(" done");        
 
 ?>
