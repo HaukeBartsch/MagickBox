@@ -76,19 +76,21 @@
   } else {
     $dir = tempdir("/data/scratch/", 'tmp.mb.'.$jobname.'_', 0777);
     chmod($dir, 0777);
-    addLog("plan to start processing in " . $dir);
+    addLog("plan to start processing in " . $dir . " (copy zip file " . $filename ." there)");
     $fname = $dir . "/" . $filename;
 
     move_uploaded_file($_FILES["theFile"]["tmp_name"], $fname);
     $zip = new ZipArchive();
     if ($zip->open($fname) === TRUE) {
-        addLog(" try to unzip files to " . $dir);
+        addLog(" try to unzip " . $fname . " to " . $dir);
         $zip->extractTo($dir);
         $zip->close();
+	addLog(" remove " . $dir . "/" . $filename . " after unzip");
         unlink($dir . "/" . $filename);
         chmod_r($dir);
 
-        //file_put_contents($dir . "/info.json", "{ \"ip\": \"$ip\", \"AETitleCalled\": \"$aetitle\" }");
+	// we have to store an info.json file in this directory because otherwise scrubStorage will remove it as an orphan
+        file_put_contents($dir . "/info.json", "{ \"CallerIP\": \"$ip\", \"AETitleCalled\": \"$aetitle\", \"AETitleCaller\": \"". $sender ."\", \"received\": \"". date(DATE_RFC2822). "\" }");
         addLog(" start processing by sending to bucket01: [ \"$sender\", \"$aetitle\", \"$ip\", \"$dir\" ]");
         shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"'.$sender.'\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
     } else {
