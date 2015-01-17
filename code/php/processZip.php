@@ -90,7 +90,7 @@
         chmod_r($dir);
 
 	// we have to store an info.json file in this directory because otherwise scrubStorage will remove it as an orphan
-        file_put_contents($dir . "/info.json", "{ \"CallerIP\": \"$ip\", \"AETitleCalled\": \"$aetitle\", \"AETitleCaller\": \"". $sender ."\", \"received\": \"". date(DATE_RFC2822). "\" }");
+        file_put_contents($dir . "/info.json", "{ \n\"CallerIP\": \"$ip\", \n\"AETitleCalled\": \"$aetitle\", \n\"AETitleCaller\": \"". $sender ."\", \n\"received\": \"". date(DATE_RFC2822). "\" \n}\n");
         addLog(" start processing by sending to bucket01: [ \"$sender\", \"$aetitle\", \"$ip\", \"$dir\" ]");
         shell_exec('nohup sudo -u processing -S /data/streams/bucket01/process.sh \"'.$sender.'\" \"'.$aetitle.'\" '.$ip.' \"'.$dir.'\" > /dev/null 2>/dev/null &');
     } else {
