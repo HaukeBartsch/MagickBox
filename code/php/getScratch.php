@@ -2,26 +2,39 @@
 
   $fileList = array();
   $files = glob('/data/scratch/*/info.json');
-  foreach ($files as $file) {
-      $fileList[filemtime($file)] = $file;
+
+  // sort array of files by file creation time
+  function cmp($a, $b) {
+    $x = filemtime($a);
+    $y = filemtime($b);
+    if ($x == $y) {
+       return 0;
+    }
+    return ($x < $y) ? -1 : 1;
   }
-  ksort($fileList);
-  $fileList = array_reverse($fileList, TRUE);
+  usort($files, "cmp");
+
+  $fileList = array_reverse($files, TRUE);
   //print_r $fileList;
   $ar = array();
   foreach ($fileList as $fn) {
        $c = file_get_contents($fn);
-       if ( $c == FALSE )
+       if ( $c == FALSE ) {
+          //echo ("could not read info.json ". $fn);
           continue;
+       }
        $cont = json_decode($c, TRUE);
        // check if we have a valid processing folder here
-       if (!array_key_exists('CallerIP', $cont))
+       if (!array_key_exists('CallerIP', $cont)) {
+          //echo ("could not find CallerIP in " . $c);
           continue;
+       }
 
        // printf("try to read in %s %s\n", $fn, $c);
        $ar[] = $cont;
 
        $parts = explode("/",$fn);
+       //echo (" the array key is: " . count($ar)-1);
        $ar[count($ar)-1]['scratchdir'] = $parts[count($parts)-2];
        // add the directory that INPUT links to
        $ar[count($ar)-1]['pid'] = basename(realpath('/data/scratch/'.$ar[count($ar)-1]['scratchdir'].'/INPUT'));
