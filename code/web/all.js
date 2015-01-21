@@ -260,10 +260,18 @@ function timeOverview( data ) {
    }*/
    var caldata = {};
    for (var i = 0; i < data.length; i++) {
-      var ts    = data[i]['received'].replace(/ +(?= )/g,'');
-      var year  = ts.split(' ').splice(-1)[0];
-      var day   = ts.split(' ').splice(2)[0];
-      var month = ts.split(' ').splice(1)[0];
+       var ts, year, day, month;
+      if ( data[i]['received'].indexOf(',') === -1 ) {
+        ts    = data[i]['received'].replace(/ +(?= )/g,'');
+        year  = ts.split(' ').splice(-1)[0];
+        day   = ts.split(' ').splice(2)[0];
+        month = ts.split(' ').splice(1)[0];
+      } else {
+        ts    = data[i]['received'].replace(/ +(?= )/g,'');
+        year  = ts.split(' ').splice(-3)[0];
+        day   = ts.split(' ').splice(1)[0];
+        month = ts.split(' ').splice(2)[0];
+      }
       var m = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
       timestamp = new Date(year, m[month], day).getTime()/1000;
       if (typeof(caldata[timestamp]) !== 'undefined')
