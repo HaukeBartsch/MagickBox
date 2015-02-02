@@ -185,17 +185,17 @@ aria-hidden="true">
             </div>
             <div class="modal-body">
 	      <div style="height: 190px; width: 300px;" class="pull-right">
-               <img src="/code/web/img/RAVEN-gray.svg" style="overflow-y: hidden;">
+               <img src="/code/web/img/RAVEN-gray.svg" style="overflow-y: hidden;" title="Image extracted using material from British Library HMNTS 7106.bb.33. 'Precious Stones and Gems... Third edition, page 61'.">
 	      </div>
               A system to process data by magick.<br/>
-	      Data such as medical DICOM images are send to MB which starts dedicated processing pipelines. After processing results are automatically send back to the sender. The processing engine contains a scheduler and can run on different machines from a laptop to a large workstation.<br/>
+	      <p>Data such as medical DICOM images are send to MB which starts dedicated processing pipelines. After processing results are automatically send back to the sender. The processing engine contains a scheduler and can run on different machines from a laptop to a large workstation.</p>
 
-              <p>The system integrates the following projects:</p>
+              <p>The system integrates the following two projects:</p>
 	      <dl>
 		<dt>www.github.com/HaukeBartsch/MagickBox</dt>
 		<dd>Web interface and components that hide most of the dirty data receive, process and routing functionality.</dd>
 		<dt>www.github.com/HaukeBartsch/mb</dt>
-		<dd>Scriptable interface to a group of Magick Box machines.</dd>
+		<dd>Scriptable interface to a group of Magick Box machines. If you work with a large study this is what you would want to use.</dd>
 	      </dl>
 	      <i>Hauke Bartsch</i>
             </div>
