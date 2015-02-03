@@ -29,12 +29,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Magick Box [#<span title="number of studies processed" class="number-of-studies"></span>]</a>
+          <a class="navbar-brand" data-toggle="modal" data-target="#about">Magick Box [#<span title="number of studies processed" class="number-of-studies"></span>]</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a id="pacs-link" href="localhost:1234/dcm4chee-web3" target="_PACS" title="Open DCM4CHEE storage on this machine">PACS</a></li>
+     <!--       <li><a id="pacs-link" href="localhost:1234/dcm4chee-web3" target="_PACS" title="Open DCM4CHEE storage on this machine">PACS</a></li> -->
       <!--      <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li> -->
             <li class="dropdown">
@@ -56,13 +56,14 @@
                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
 	          Admin <span class="caret"></span></a>
                <ul class="dropdown-menu" id="installed-buckets">
+                  <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
                   <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
             </li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
+          <!-- <ul class="nav navbar-nav navbar-right">
             <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
-          </ul>
+          </ul> -->
         </div><!--/.nav-collapse -->
       </div>
     </div>
@@ -174,6 +175,33 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+  <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="myAboutLabel"
+aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myAboutLabel">MagickBox</h4>
+            </div>
+            <div class="modal-body">
+	      <div style="height: 190px; width: 300px;" class="pull-right">
+               <img src="/code/web/img/RAVEN-gray.svg" style="overflow-y: hidden;" title="Image extracted using material from British Library HMNTS 7106.bb.33. 'Precious Stones and Gems... Third edition, page 61'.">
+	      </div>
+              A system to process data by magick.<br/>
+	      <p>Data such as medical DICOM images are send to MB which starts dedicated processing pipelines. After processing results are automatically send back to the sender. The processing engine contains a scheduler and can run on different machines from a laptop to a large workstation.</p>
+
+              <p>The system integrates the following two projects:</p>
+	      <dl>
+		<dt>www.github.com/HaukeBartsch/MagickBox</dt>
+		<dd>Web interface and components that hide most of the dirty data receive, process and routing functionality.</dd>
+		<dt>www.github.com/HaukeBartsch/mb</dt>
+		<dd>Scriptable interface to a group of Magick Box machines. If you work with a large study this is what you would want to use.</dd>
+	      </dl>
+	      <i>Hauke Bartsch</i>
+            </div>
+        </div>
+    </div>
+  </div>
 
 
     <script src="/code/web/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
