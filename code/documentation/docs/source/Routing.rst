@@ -25,7 +25,7 @@ The configuration of the routing function is done in the user interface. Here an
 
  { "routing": [
    {
- 	"name": "Default Rule for OUTPUT to DCM4CHEE",
+ 	"name": "Default Rule for OUTPUT to OsiriX",
  	"AETitleIn": ".*",
    	"send": [
    		{
@@ -33,7 +33,7 @@ The configuration of the routing function is done in the user interface. Here an
    				"IP": "$me",
    				"PORT": "$port",
    				"AETitleSender": "ProcDefault",
-   				"AETitleTo": "DCM4CHEE"
+   				"AETitleTo": "OsiriX"
    			}
    		}
    	],
@@ -73,7 +73,7 @@ The configuration of the routing function is done in the user interface. Here an
      "break": 0
    },
    {
- 	"name": "Route Input to DCM4CHEE",
+ 	"name": "Route Input to PACS",
         "RouteDirectory": "INPUT", // default value is "OUTPUT"
  	"AETitleIn": ".*",
         "enabled": "F",
@@ -83,7 +83,7 @@ The configuration of the routing function is done in the user interface. Here an
    				"IP": "$me",
    				"PORT": "$port",
    				"AETitleSender": "ProcDefault",
-   				"AETitleTo": "DCM4CHEE"
+   				"AETitleTo": "PACS1"
    			}
    		}
    	],
@@ -110,7 +110,7 @@ Input data can also be routed. This will happen only after processing and requir
 
 A routing rule can be disabled if "enabled" is set to "F". By default routing rules are executed.
 
-Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
+Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to a default PACS to send images to.
 
 Logging
 =======
