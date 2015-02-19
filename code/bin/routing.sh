@@ -145,6 +145,7 @@ def main(argv):
               if which != "":
                 logging.info('  Found which statement, look for specific DICOM files to send in ' + OUTPUTDIRECTORY + '...')
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
+                logging.info('  Instead of original OUTPUT send now files from: ' + OUTPUTDIRECTORY)
 
               workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
               logging.info('  ROUTE: ' + workstr)
@@ -263,7 +264,7 @@ def filterDICOM( inputdir, which ):
           # copy file to output
           output = ""
           workstr = "/bin/ln -s " + os.path.join(root,file) + " " + os.path.join(TEMP, ("dicom%04d.dcm" % count));
-          #logging.info("       File " + os.path.join(root,file) + " matches which and will be send ")
+          logging.info("       File " + os.path.join(root,file) + " matches which and will be send ")
           try:
             try:
               output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
@@ -275,7 +276,7 @@ def filterDICOM( inputdir, which ):
           
           break  
       count = count + 1
-  logging.info('    ' + count + ' files found by which')
+  logging.info('    ' + str(count) + ' files found by which')
   return TEMP
 
 #
