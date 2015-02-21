@@ -43,7 +43,7 @@ scrub () {
   echo "START SCRUBBING `date`" >> $log
 
   # before we scrub we should sweep, maybe there is no need to remove stuff afterwards
-  sweep  
+  sweep
 
   # find out how much space we have left in /data/scratch
   fr=`nice -n 3 df "$dir" | grep -v Filesystem | awk '{print $5}' | cut -d'%' -f1`
@@ -82,10 +82,10 @@ scrub () {
           echo "ERROR: \"$input\" would need to be removed but is not in /data/scratch" >> $log
        else
           echo "`date` deleted \"$input\" which is inside \"$f\"" >> $log
-          su nice -n 3 /bin/rm -f -R "$input"
+          nice -n 3 /bin/rm -f -R "$input"
        fi
        # now remove the directory itself
-       su nice -n 3 /bin/rm -f -R "$f"
+       nice -n 3 /bin/rm -f -R "$f"
        echo "`date` deleted $f (cleans up $s bytes of space)" >> $log
     else
        echo "`date` could delete $f (would clean up $s bytes of space)" >> $log
@@ -144,7 +144,8 @@ sweep () {
      ls -d /data/scratch/archive/* > /tmp/inarchive
      notreferenced=`grep -v -f /tmp/tmpreferenced /tmp/inarchive`
      echo "REMOVE: archive data not referenced in /data/scratch/tmp.* anymore \"$notreferenced\"" >> $log
-     grep -v -f /tmp/tmpreferenced /tmp/inarchive | xargs sudo \rm -R -f 
+     # I am not trusting this one yet
+     #grep -v -f /tmp/tmpreferenced /tmp/inarchive | xargs sudo \rm -R -f 
    else
      echo "ERROR: could not remove non-referenced scans because realpath is not installed" >> $log
    fi
