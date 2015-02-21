@@ -5,9 +5,9 @@ import logging
 import os
 import subprocess as sub
 
-logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
-now = time.strftime("%c")
-logging.info("%s Routing called" % now)
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(filename='/data/logs/routing.log',format=FORMAT,level=logging.DEBUG)
+logging.info("Routing called")
 
 def main(argv):
   if len(sys.argv) != 4:
@@ -58,6 +58,15 @@ def main(argv):
 
   for route in range(len(routingtable['routing'])):
     logging.info("check route " + str(route) + " \"" + routingtable['routing'][route]['name'] + "\"");
+    # is this route active?
+    try:
+        active = routingtable['routing'][route]['status']
+    except KeyError:
+        active = 1
+    if active == 0:
+      logging.warning("Inactive route")
+      continue
+
     #pprint(routingtable['routing'][route])
     sendR1=True
     sendR2=True

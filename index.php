@@ -57,6 +57,7 @@
 	          Admin <span class="caret"></span></a>
                <ul class="dropdown-menu" id="installed-buckets">
                   <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
+                  <li><a id="rlog" data-toggle="modal" href="#routingLog">Routing Log</a></li>
                   <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
             </li>
@@ -174,6 +175,25 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+
+  <div id="routingLog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Routing Log</h4>
+        </div>
+        <div class="modal-body" style="height: 600px; overflow-y: scroll;">
+           <table class="table table-hover table-striped" id="logtable">
+           </table>
+	</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
 
   <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="myAboutLabel"
 aria-hidden="true">
