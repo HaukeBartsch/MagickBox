@@ -22,6 +22,18 @@ jQuery(document).ready(function() {
         search();
     });
 
+    jQuery('#rlog').click(function() {
+	jQuery('#logtable').children().remove();
+	jQuery.getJSON('/code/php/getRoutingLog.php', function(data) {
+	    // got data from the log, show them as one line each
+	    str = "";
+	    for (var i = 0; i < data.length; i++) {
+		str += "<tr><td>" + data[i] + "</td></tr>";
+	    }
+	    jQuery('#logtable').append(str);
+	});
+    });
+
     jQuery('#alpha-search a').click(function() {
         jQuery('#alpha-search a').each( function( index ) {
             jQuery(this).removeClass('active');

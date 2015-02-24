@@ -5,9 +5,9 @@ import logging
 import os
 import subprocess as sub
 
-logging.basicConfig(filename='/data/logs/routing.log',level=logging.DEBUG)
-now = time.strftime("%c")
-logging.info("%s Routing called" % now)
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(filename='/data/logs/routing.log',format=FORMAT,level=logging.DEBUG)
+logging.info("Routing called")
 
 def main(argv):
   if len(sys.argv) != 4:
@@ -58,6 +58,15 @@ def main(argv):
 
   for route in range(len(routingtable['routing'])):
     logging.info("check route " + str(route) + " \"" + routingtable['routing'][route]['name'] + "\"");
+    # is this route active?
+    try:
+        active = routingtable['routing'][route]['status']
+    except KeyError:
+        active = 1
+    if active == 0:
+      logging.warning("Inactive route")
+      continue
+
     #pprint(routingtable['routing'][route])
     sendR1=True
     sendR2=True
@@ -145,6 +154,7 @@ def main(argv):
               if which != "":
                 logging.info('  Found which statement, look for specific DICOM files to send in ' + OUTPUTDIRECTORY + '...')
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
+                logging.info('  Instead of original OUTPUT send now files from: ' + OUTPUTDIRECTORY)
 
               workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
               logging.info('  ROUTE: ' + workstr)
@@ -263,7 +273,7 @@ def filterDICOM( inputdir, which ):
           # copy file to output
           output = ""
           workstr = "/bin/ln -s " + os.path.join(root,file) + " " + os.path.join(TEMP, ("dicom%04d.dcm" % count));
-          #logging.info("       File " + os.path.join(root,file) + " matches which and will be send ")
+          logging.info("       File " + os.path.join(root,file) + " matches which and will be send ")
           try:
             try:
               output = sub.check_output( workstr, stderr=sub.STDOUT, shell=True )
@@ -275,7 +285,7 @@ def filterDICOM( inputdir, which ):
           
           break  
       count = count + 1
-  logging.info('    ' + count + ' files found by which')
+  logging.info('    ' + str(count) + ' files found by which')
   return TEMP
 
 #

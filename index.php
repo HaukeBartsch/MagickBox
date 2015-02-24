@@ -57,6 +57,7 @@
 	          Admin <span class="caret"></span></a>
                <ul class="dropdown-menu" id="installed-buckets">
                   <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
+                  <li><a id="rlog" data-toggle="modal" href="#routingLog">Routing Log</a></li>
                   <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
             </li>
@@ -175,27 +176,48 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+  <div id="routingLog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Routing Log</h4>
+        </div>
+        <div class="modal-body" style="height: 600px; overflow-y: scroll;">
+           <table class="table table-hover table-striped" id="logtable">
+           </table>
+	</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
   <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="myAboutLabel"
 aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myAboutLabel">MagickBox</h4>
+              <h4 class="modal-title" id="myAboutLabel">MagickBox <small>A system to process data by magic</small></h4>
             </div>
             <div class="modal-body">
 	      <div style="height: 190px; width: 300px;" class="pull-right">
                <img src="/code/web/img/RAVEN-gray.svg" style="overflow-y: hidden;" title="Image extracted using material from British Library HMNTS 7106.bb.33. 'Precious Stones and Gems... Third edition, page 61'.">
 	      </div>
-              A system to process data by magick.<br/>
+
 	      <p>Data such as medical DICOM images are send to MB which starts dedicated processing pipelines. After processing results are automatically send back to the sender. The processing engine contains a scheduler and can run on different machines from a laptop to a large workstation.</p>
 
-              <p>The system integrates the following two projects:</p>
+              <p>The system integrates the following projects:</p>
 	      <dl>
 		<dt>www.github.com/HaukeBartsch/MagickBox</dt>
-		<dd>Web interface and components that hide most of the dirty data receive, process and routing functionality.</dd>
+		<dd>Web interface and components that hide most of the dirty data receive, process and data routing functionality.</dd>
 		<dt>www.github.com/HaukeBartsch/mb</dt>
 		<dd>Scriptable interface to a group of Magick Box machines. If you work with a large study this is what you would want to use.</dd>
+                <dt>magickbox.readthedocs.org<dt>
+		<dd>Documentation project to explain especially the more advanced functionalities such as routing.</dd>
 	      </dl>
 	      <i>Hauke Bartsch</i>
             </div>
