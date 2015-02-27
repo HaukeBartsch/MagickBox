@@ -78,3 +78,7 @@ else
   echo "`date`: send files to \"${AETitleTo}\" ($DATA) done" >> /data/logs/bucket02.log
   logger "send files to \"${AETitleTo}\" ($DATA) done"
 fi
+
+# remove the data directory again
+echo "`date`: delete temporary files to in ${TEMP}..." >> /data/logs/bucket02.log
+/bin/rm -R -f ${TEMP}
