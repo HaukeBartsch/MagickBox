@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#
+# check if argument has a specific name, read and parse, return json
+#
+
+name=`basename "$1"`
+if [ "$name" != "MI.txt" ]; then
+  exit
+fi
+
+data=`cat "$1"`
+echo "{ \"data\": [ $data ] }"

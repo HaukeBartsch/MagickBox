@@ -85,3 +85,9 @@ read s2 < <(date +'%s')
 echo "`date`: Process bucket01 (starts routing)..." >> /data/logs/bucket01.log
 /data/code/bin/routing.sh ${WORKINGDIR} $AETitleCalled $AETitleCaller
 echo "`date`: Process bucket01 (routing is being performed)..." >> /data/logs/bucket01.log
+
+# implement data extraction
+echo "`date`: Start data extraction..." >> /data/logs/bucket01.log
+aet=`echo $AETitleCaller | sed -e 's/"//g'`
+/usr/bin/curl -G -d "sender=${aet}&parse=${WORKINGDIR}" ${PARENTIP}:${WEBPORT}/code/php/db.php
+echo "`date`: End data extraction..." >> /data/logs/bucket01.log
