@@ -6,7 +6,7 @@
 
 name=`basename "$1"`
 if [ "$name" != "MI.txt" ]; then
-  exit
+  exit -1
 fi
 
 data=`cat "$1"`

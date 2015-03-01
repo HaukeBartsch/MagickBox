@@ -45,6 +45,10 @@ if (isset($_GET['sender'])) {
 
 $plugindir='/data/code/php/db-plugins';
 
+function endsWith( $haystack, $needle) {
+  return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
+}
+
 # requires "f" saves results to "result"
 function call_plugins ( $f ) {
   global $plugindir;
@@ -52,7 +56,9 @@ function call_plugins ( $f ) {
   $result=array();
   $plugins=scandir( $plugindir );
   foreach ($plugins as $plugin) {
-     if (is_file( $plugindir."/".$plugin ) 
+     if ($plugin == "." || $plugin == "..")
+        continue;
+     if ( is_file( $plugindir."/".$plugin ) 
          && is_executable( $plugindir."/".$plugin ) 
          && endsWith($plugin,".code")) {
        $out=array();
@@ -72,16 +78,16 @@ function store_result ( $sender, $key, $file, $result ) {
    file_put_contents($fn."/".$file, json_encode($result));
 }
 
-function getDirContents($dir, &$result= array()) {
+function getDirContent($dir, &$result = array()) {
   $files = scandir($dir);
 
   foreach($files as $key => $value) {
     $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
     if (!is_dir($path)) {
-      $results[] = $path;
+      $result[] = $path;
     } else if (is_dir($path) && $value != "." && $value != "..") {
-      getDirContents($path, $results);
-      $results[] = $path;
+      getDirContent($path, $result);
+      $result[] = $path;
     }
   }
 }
@@ -92,15 +98,18 @@ function getDirContents($dir, &$result= array()) {
 if (isset($_GET['parse'])) {
    $parse = $_GET['parse'];
    $key=$parse;
-   addLog("Called for parse with ".$parse);
+   addLog("Called for ".$parse);
    # call all plugins for all files in this result directory
    if (is_file($parse)) {
+      addLog('single file');
       $result = call_plugins( $parse );
       store_result( $sender, $key, $parse, $result );
    } else {
-      $files = getDirContent( $parse );
+      $files = array();
+      getDirContent( $parse, $files );
+      addLog('Check '.count($files).' separate files in '.$parse);
       foreach($files as $file) {
-        $result=call_plugins( $file );
+        $result = call_plugins( $file );
         store_result( $sender, $key, $parse, $result );
       }
    }
