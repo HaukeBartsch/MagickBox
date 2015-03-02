@@ -44,6 +44,7 @@ if (isset($_GET['sender'])) {
 }
 
 $plugindir='/data/code/php/db-plugins';
+$databasedir='/data/db';
 
 function endsWith( $haystack, $needle) {
   return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
@@ -64,7 +65,7 @@ function call_plugins ( $f ) {
        $out=array();
        exec($plugindir."/".$plugin." ".$f, $out);
        if (count($out) > 0) {
-         $result[] = json_decode($out[0], True);
+         $result[] = array("plugin" => $plugin, "data" => json_decode(join("", $out), True));
        }
      }
   }
@@ -72,10 +73,21 @@ function call_plugins ( $f ) {
 }
 
 function store_result ( $sender, $key, $file, $result ) {
+   global $databasedir;
    # store whatever is in result with the information from sender
-   $fn='/data/db/'.$sender.'/'.$key;
-   mkdir($fn, true);
-   file_put_contents($fn."/".$file, json_encode($result));
+   $fn=$databasedir.'/'.$sender.'/'.$key;
+   addLog("store data in DIR ".$fn);
+   if (! is_dir($fn)) {
+     $ok=mkdir($fn, 0777, true);
+     if (! $ok) {
+       addLog("Error: could not create directory ".$fn);
+       return;
+     }
+   }
+   foreach($result as $res) {
+     addLog("write: ".json_encode($res['data']).' to '.$fn.'/'.$res['plugin']);
+     file_put_contents($fn."/".$res['plugin'], json_encode($res['data']));
+   }
 }
 
 function getDirContent($dir, &$result = array()) {
@@ -97,20 +109,22 @@ function getDirContent($dir, &$result = array()) {
 #
 if (isset($_GET['parse'])) {
    $parse = $_GET['parse'];
-   $key=$parse;
+   $key=basename($parse);
    addLog("Called for ".$parse);
    # call all plugins for all files in this result directory
    if (is_file($parse)) {
       addLog('single file');
       $result = call_plugins( $parse );
-      store_result( $sender, $key, $parse, $result );
+      if ( count($result) > 0 )
+        store_result( $sender, $key, $parse, $result );
    } else {
       $files = array();
       getDirContent( $parse, $files );
       addLog('Check '.count($files).' separate files in '.$parse);
       foreach($files as $file) {
         $result = call_plugins( $file );
-        store_result( $sender, $key, $parse, $result );
+	if ( count($result) > 0 )
+          store_result( $sender, $key, $parse, $result );
       }
    }
 } else {
