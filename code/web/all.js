@@ -348,6 +348,13 @@ function search() {
 		if (v.match(re) != null) {
                     hide = false;
 		}
+		var v = jQuery(b).attr("href");
+		if (typeof(v) !== 'undefined') {
+                  v = v.replace(/\ +/g,' ')
+		  if (v.match(re) != null) {
+                    hide = false;
+		  }
+		}
 	    }
             if (hide == true)
 		jQuery(this).hide();
