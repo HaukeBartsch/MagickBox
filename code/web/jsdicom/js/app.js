@@ -110,9 +110,10 @@ DcmApp.prototype.load_arraybuffer = function(abuf, index, file_count) {
 
     if (file.Modality == "CT" || file.Modality == "PT" || file.Modality == "MR") {
         imageOrientation = file.ImageOrientationPatient;
-        file.imageOrientationRow = imageOrientation.slice(0,3);
-        file.imageOrientationColumn = imageOrientation.slice(3,6);
-        
+        if (typeof(imageOrientation) !== 'undefined') {
+          file.imageOrientationRow = imageOrientation.slice(0,3);
+          file.imageOrientationColumn = imageOrientation.slice(3,6);
+        }
         app.organize_file(file);
     } else if(file.modality == "US") {
         file.RescaleIntercept = 0;
@@ -134,6 +135,7 @@ DcmApp.prototype.load_arraybuffer = function(abuf, index, file_count) {
     ++app.files_loaded;
     if(app.files_loaded == file_count) {
         // All files are loaded
+        console.log("HI");
         app.setup_series_selection();
     }
 }
