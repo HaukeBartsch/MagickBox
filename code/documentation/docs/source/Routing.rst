@@ -25,15 +25,16 @@ The configuration of the routing function is done in the user interface. Here an
 
  { "routing": [
    {
- 	"name": "Default Rule for OUTPUT to DCM4CHEE",
+ 	"name": "Default Rule for OUTPUT to OsiriX",
  	"AETitleIn": ".*",
+        "status": 0,
    	"send": [
    		{
    			".*": {
    				"IP": "$me",
    				"PORT": "$port",
    				"AETitleSender": "ProcDefault",
-   				"AETitleTo": "DCM4CHEE"
+   				"AETitleTo": "OsiriX"
    			}
    		}
    	],
@@ -73,7 +74,7 @@ The configuration of the routing function is done in the user interface. Here an
      "break": 0
    },
    {
- 	"name": "Route Input to DCM4CHEE",
+ 	"name": "Route Input to PACS",
         "RouteDirectory": "INPUT", // default value is "OUTPUT"
  	"AETitleIn": ".*",
         "enabled": "F",
@@ -83,7 +84,7 @@ The configuration of the routing function is done in the user interface. Here an
    				"IP": "$me",
    				"PORT": "$port",
    				"AETitleSender": "ProcDefault",
-   				"AETitleTo": "DCM4CHEE"
+   				"AETitleTo": "PACS1"
    			}
    		}
    	],
@@ -94,7 +95,7 @@ The configuration of the routing function is done in the user interface. Here an
 
 A DICOM connection from a station A (PACS) that sends DICOM data to station B (MagickBox) is specified by three types of information for both the sender and the receiver of the information. The Application Entity (AE) title of A and B, the internet protocol (IP) numbers of both stations and the port number that A called on the IP of B. MagickBox uses a single port for all its incoming connections, therefore routing depends on the AETitles and the status (success) returned by the computation.
 
-The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied.
+The default rule above specifies "AETitleIn" which is the application entity title of our MagickBox (B). Additionally, or as an alternative one can also specify "AETitleFrom" as the AETitle that was used by the sending station (A). These two entries, AETitleIn and AETitleFrom are used by the routing function to find out if a specifc routing rule should be applied. A status entry, if present, is used to activate (1, default) or de-active a route (0). 
 
   Currently we do not support the IP-address as a possible filter. This is because the MagickBox runs as a virtual machine using NAT and port forwarding. Therefore the IP address of the incoming DICOM connection is not the IP of the sending machine but of the interface that forwards the packages (host computer running the VM).
 
@@ -110,7 +111,7 @@ Input data can also be routed. This will happen only after processing and requir
 
 A routing rule can be disabled if "enabled" is set to "F". By default routing rules are executed.
 
-Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to the DCM4CHEE virtual machine (VM) that can be installed side by side with the MagickBox VM.
+Two placeholders are available "$me" references the IP of the MagickBox and "$port" the port specified in the Setup interface. Both usually refer to a default PACS to send images to.
 
 Logging
 =======

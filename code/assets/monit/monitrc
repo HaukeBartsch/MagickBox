@@ -52,6 +52,11 @@
 # set mailserver mail.bar.baz,               # primary mailserver
 #                backup.bar.baz port 10025,  # backup mailserver on port 10025
 #                localhost                   # fallback relay
+  set mailserver smtp.gmail.com port 587     # primary mailserver
+      username "XXXXXX@gmail.com" password "YYYYYY"
+      using tlsv1
+      with timeout 30 seconds
+  set alert <account name>@ucsd.edu with reminder on 1000 cycles
 #
 #
 ## By default Monit will drop alert events if no mail servers are available. 

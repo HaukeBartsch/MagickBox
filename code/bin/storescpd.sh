@@ -25,7 +25,7 @@ case $1 in
 	/usr/bin/storescp --eostudy-timeout $tos \
 	    --write-xfer-little \
 	    --exec-on-eostudy "$scriptfile '#a' '#c' '#r' '#p'" \
-	    --sort-on-study-uid scp \
+  	    --sort-on-study-uid scp \
 	    --log-config /data/code/bin/logger.cfg \
 	    --output-directory "$od" \
 	    $port & &>/data/logs/storescpd.log

@@ -1,3 +1,12 @@
+.navbar .container {
+   background-image: url(/code/web/img/RAVEN-gray.svg);
+   background-repeat: no-repeat;
+   background-position: 1% 0%;
+   background-scale: 0.5;
+   background-attachement: fixed;
+   background-size: 400px;
+}
+
 .alpha-search ul {
   list-style: none;
   min-height: 30px;
