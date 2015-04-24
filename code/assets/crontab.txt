@@ -1,0 +1,7 @@
+# sudo crontab -e
+
+# after a reboot we should clean out the /data/.pids directory
+@reboot /usr/bin/rm -f /data/.pids/*
+
+# at 4am in the morning kill storescp, monit will restart it again
+0 4 * * * pkill -1 storescp
