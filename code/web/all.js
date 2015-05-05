@@ -12,6 +12,13 @@ function zeroPad(num,places) {
     return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
+// removes data from the archive given a study instance uid
+function removeArchive( siuid ) {
+    jQuery.getJSON('/code/php/deleteStudy.php?SIUID='+ siuid, function(data) {
+	alert('tried to remove, got this: ' + data['message']);
+    });
+}
+
 jQuery(document).ready(function() {
     //jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
     //jQuery('#setup').click(function() {
@@ -20,6 +27,24 @@ jQuery(document).ready(function() {
     $("#searchClear").click(function(){
 	$("#search").val('');
         search();
+    });
+
+    jQuery('#RemoveStudies').click(function() {
+	jQuery('#removestudiestable').children().remove();
+        jQuery.getJSON('/code/php/getArchive.php', function(data) {
+	    str = "";
+	    for (var i = 0; i < data.length; i++) {
+                str += "<tr>";
+		str += "<td>" + data[i]['PatientID'] + "</td>";
+		str += "<td>" + data[i]['AccessionNumber'] + "</td>";
+		str += "<td>" + data[i]['StudyDate'] + "</td>";
+		str += "<td>" + data[i]['PatientName'] + "</td>";
+		str += "<td>" + data[i]['SIUID'] + "</td>";
+		str += "<td><button class=\"btn btn-default\" onclick=\"removeArchive('"+data[i]['SIUID']+"');\" val=\""+data[i]['SIUID']+"\">Delete Study</button></td>";
+                str += "</tr>";
+	    }
+	    jQuery('#removestudiestable').append(str);
+	});
     });
 
     jQuery('#rlog').click(function() {
