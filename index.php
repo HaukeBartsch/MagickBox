@@ -57,7 +57,7 @@
 	          Admin <span class="caret"></span></a>
                <ul class="dropdown-menu" id="installed-buckets">
                   <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
-                  <li><a id="RemoveStudies" data-toggle="modal" href="#removeStudies">Remove Studies</a></li>
+                  <li><a id="RemoveStudies" data-toggle="modal" href="#removeStudies">List Studies</a></li>
                   <li><a id="rlog" data-toggle="modal" href="#routingLog">Routing Log</a></li>
                   <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
@@ -200,11 +200,14 @@
         <div class="modal-content">
            <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Remove Studies</h4>
+          <h4 class="modal-title">List Studies</h4>
         </div>
         <div class="modal-body" style="height: 600px; overflow-y: scroll;">
            <p>
-               Studies that have been send to this machine can be used as priors for processing buckets. Here you can delete a study if if has been send in error. The corresponding files will be removed from the machine.
+               Studies that have been send to this machine can be used as priors for processing buckets. Here you can delete a study if if has been send in error. The corresponding files will be removed from the machine. 
+           </p>
+           <p>
+              Please be patient as populating the table below can take some time.
            </p>
            <table class="table table-hover table-striped">
              <thead>
