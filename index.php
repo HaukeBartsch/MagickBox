@@ -71,17 +71,19 @@
     </div>
 
 
-    <div class="container" style="margin-top: 60px;">
+    <div class="container-fluid" style="margin-top: 60px;">
       <div class="row-fluid">
-        <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
+	<div class="col-sm-12 col-xm-12 col-xs-12">
+          <!-- <h2>Number of studies available: <span class="number-of-studies"></span></h2> -->
 
-        <div class="pull-right"><div style="z-index: 100;" class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
-        <div id="statusrow"></div>
-        <div id="timeOverview"></div>
+          <div class="pull-right"><div style="z-index: 100;" class="btn-group"><input id="search" type="search" class="form-control" placeholder="search"><span id="searchClear" class="glyphicon glyphicon-remove-circle"></span></div></div>
+          <div id="statusrow"></div>
+          <div id="timeOverview"></div>
+        </div>
      </div>
       <div class="row-fluid">
 
-        <div id="alpha-search" class="alpha-search">
+        <div id="alpha-search" class="alpha-search col-sm-12 col-xm-12 col-xs-12">
           <ul>
              <li style="padding-top: 0px;">Processing Logs&nbsp;&nbsp;</li>
              <li><a href="#">CLEAR</a></li>
@@ -115,20 +117,24 @@
         </div>
       </div>
       <div class="row-fluid">
-        <ul id="projects" style="list-style-type: none; margin-left: -40px;"></ul>
+        <div class="col-sm-12 col-xm-12 col-xs-12">
+          <ul id="projects" style="list-style-type: none; margin-left: -40px;"></ul>
+        </div>
       </div>
       <hr>
       <div class="row-fluid">
+        <div class="col-sm-12 col-xm-12 col-xs-12">
          <h2>How to submit data</h2>
          <p>Use DICOM Send to submit data for processing (port 11113). Use the appropriate AETitle to select the corresponding processing bucket:</p>
          <ol class="table table-stipped" id="installed-buckets-list-large">
 
          </ol>
          <p>After successful processing most buckets send data back to the sending entity.</p>
+        </div>
       </div>
       <hr>
       <div class="row-fluid">
-        <footer>
+        <footer class="col-sm-12 col-xm-12 col-xs-12">
             <p>&copy; Multi-Modal Imaging Laboratory, 2013</p>
         </footer>
       </div>
