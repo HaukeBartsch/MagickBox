@@ -13,14 +13,26 @@
 
 # read in the configuration file
 . /data/code/setup.sh
+PARENTIP=10.0.2.15
+PARENTPORT=1234
 
 log=/data/logs/heartbeat.log
+
+# cheap way to test if storescp is actually running
+# check if the storescp log file is new enough
+# (Bug: fixes a problem with non-fork send data, echoscu does not work if data is received)
+storelog=/data/logs/storescp.log
+testtime=5
+if [ "$(( $(date +"%s") - $(stat -c "%Y" "$storelog") ))" -lt "$testtime" ]; then
+   echo "`date` - no try: storescp.log is too new, seems to work" >> $log
+   exit 0
+fi
 
 echo "`date` - try now: /usr/bin/echoscu $PARENTIP $PARENTPORT" >> $log
 timeout 10 /usr/bin/echoscu $PARENTIP $PARENTPORT
 if (($? == 124)); then
-   # get pid of storescu
-   pid=`pgrep "storescp"`
+   # get pid of the main storescu
+   pid=`pgrep -f "storescp.*$PARENTPORT"`
    if [ -z "$pid" ]; then
       echo "storescp's pid could not be found" >> $log
       exit 0
