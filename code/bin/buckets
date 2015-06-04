@@ -8,6 +8,18 @@
 # files and add the bucket monit (gearman entry).
 # 
 
+if [ $# -eq 0 ]
+then
+   echo "Usage: bucket install <docker image name>"
+   echo " This requires an existing docker image (can be created with bucket create)."
+   echo "   or: bucket remove <docker image name>"
+   echo " This will not remove the docker container image, only MB local files."
+   echo "   or: bucket create <docker image name>"
+   echo " This should work on any system that supports docker. It creates an initial MB"
+   echo " docker image which can be used with bucket install."
+   exit 1
+fi
+
 # this requires jq
 JQ=`which jq`
 if [ $? -eq 1 ]; then
@@ -20,15 +32,10 @@ if [ "$EUID" -ne 0 ]; then
    exit 1
 fi
 
-if [ $# -eq 0 ]
-then
-   echo "Usage: bucket install <docker image name>"
-   echo "   or: bucket remove <docker image name>"
-   exit 1
-fi
-
-# force flag
 force=0
+create=0
+install=0
+remove=0
 while [[ $# > 0 ]]
 do
   key="$1"
@@ -44,6 +51,11 @@ do
       what="$2"
       shift
       ;;
+      create)
+      create=1
+      what="$2"
+      shift
+      ;;
       force|-f)
       force=1
       ;;
@@ -55,9 +67,9 @@ do
   shift
 done 
 
-if [ "$install" == 0 ] && [ "$remove" == 0 ]
+if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ]
 then
-   echo "either install or removed"
+   echo "Error: either install or removed or create, it needs to be one of them"
    exit 1
 fi
 
@@ -71,6 +83,80 @@ if [ $what == "01" ] || [ $what == "02" ]; then
    echo "Error: bucket01 and bucket02 are system buckets and cannot be changed by this script"
    exit 1
 fi
+
+if [ "$create" = 1 ]; then
+  which docker > /dev/null
+  if [ ! $? -eq 0 ]; then
+     echo "Could not call docker on this system, this is required to create an MB container"
+     exit 1
+  fi
+  # create a shell container now
+  RUNNING=$(docker inspect $what 2> /dev/null)
+  if [ $? -eq 0 ]; then
+     echo "Error: This container exists already. Please make the name of the container unique."
+     exit 1
+  fi
+  echo "Creating new container..."  
+  DIR=`mktemp -d`
+  cat >$DIR/info.json <<EOF
+{
+  "name": "${what}",
+  "description": "Describe briefly what this bucket does",
+  "version": "0.0",
+  "AETitle": "${what}",
+  "enabled": 1
+}
+EOF
+  cat >$DIR/work.sh <<EOF
+#!/bin/bash
+
+if [ $# -ne 2 ];
+then
+   echo "usage: work.sh <dicom directory> <output directory>"
+   exit; 
+fi
+
+subj=\`basename \$1\`
+input="\$1"
+output="\$2"
+
+# find the first file in input (usually a DICOM file)
+ff=\`find "\$input" -type f -print | head -1\`
+
+#
+# Add your command on the input here.
+# Any result should be copied to \${output}. Don't change anything in \${input}.
+#
+
+echo "Done..."
+EOF
+  cwd=`pwd`
+  cd $DIR
+  cat >$DIR/Dockerfile <<EOF
+#####################################
+# Docker file to build a bucket for MagickBox
+# based on ubuntu
+#####################################
+FROM ubuntu
+
+RUN mkdir -p /root/storage;
+COPY info.json /root/storage/
+COPY work.sh /root/
+EOF
+  docker build -t "$what" "$DIR"
+  cd $cwd
+  echo ""
+  echo ""
+  echo "Done! A new bucket has been created (\"$what\")."
+  echo "Start using it by:"
+  echo "  docker run -i -t ${what} /bin/bash"
+  echo "and edit the work.sh script in:"
+  echo "  vi /root/work.sh"
+  echo ""
+
+  exit 0
+fi
+
 
 RUNNING=$(docker inspect $what 2> /dev/null)
 if [ $? -eq 1 ]
