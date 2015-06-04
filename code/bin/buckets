@@ -23,8 +23,20 @@ fi
 # this requires jq
 JQ=`which jq`
 if [ $? -eq 1 ]; then
-   echo "Error: this script requires the jq script"
-   exit 1
+   echo "Error: this script requires jq"
+   # try to download jq
+   WG=`which wget`
+   if [ $? -eq 1 ]; then
+      echo "Tried to download jq but could not (no wget, giving up now...)"
+      exit 1
+   fi
+   wget http://stedolan.github.io/jq/download/linux64/jq
+   if [ ! -f jq ]; then
+      echo "Error: could not download jq, giving up"
+      exit 1
+   fi
+   chmod gou+rx jq
+   JQ=./jq
 fi
 
 if [ "$EUID" -ne 0 ]; then
