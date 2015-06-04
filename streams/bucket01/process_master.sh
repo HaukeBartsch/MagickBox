@@ -57,25 +57,22 @@ fi
 echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /data/logs/bucket01.log
 
 read s1 < <(date +'%s')
-if [ $AETitleCalled = \"ProcRSITBI\" ]
-then
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket04RSITBI -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-elif [ $AETitleCalled = \"ProcRSIProstate\" ]
-then 
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstate -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-elif [ $AETitleCalled = \"ProcRSIMS\" ]
-then
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket06RSIMS -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-elif [ $AETitleCalled = \"RSIProsUCSD\" ]
-then
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket07RSIProstateP2 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-elif [ $AETitleCalled = \"ProcTBIp01\" ]
-then
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucketTBIp01 -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-elif [ $AETitleCalled = \"ProcRSIProstUCLA\" ]
-then
-  /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket05RSIProstUCLA -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
-else 
+$found = 0
+for stream in $( ls -d /data/streams/* ); do
+  if [ -f $stream/info.json ]; then
+      enabled=`cat $stream/info.json | jq ".enabled"`
+      if [ "$enabled" == "1" ]; then
+         AETitle=`cat $stream/info.json | jq ".AETitle"`
+         if [ $AETitleCalled = $AETitle ]; then
+           echo "start stream $AETitle..." >> /data/logs/bucket01.log
+           /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket${AETitle} -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+	   found=1
+           break;
+         fi
+      fi
+  fi
+done
+if [ "$found" -eq 0 ]; then
   echo "`date`: Error: unknown job type ($CallerIP requested $AETitleCalled), ignored" >> /data/logs/bucket01.log
 fi
 read s2 < <(date +'%s')

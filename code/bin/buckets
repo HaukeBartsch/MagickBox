@@ -1,0 +1,232 @@
+#!/bin/bash
+#
+# A script to rule the buckets
+# We want to be able to install and deinstall a bucket based
+# on its docker file only. Users would install a bucket
+# by specifying the docker file which would in turn create
+# a /data/streams/bucket directory with all the required
+# files and add the bucket monit (gearman entry).
+# 
+
+# this requires jq
+JQ=`which jq`
+if [ $? -eq 1 ]; then
+   echo "Error: this script requires the jq script"
+   exit 1
+fi
+
+if [ "$EUID" -ne 0 ]; then
+   echo "Please run as root using sudo..."
+   exit 1
+fi
+
+if [ $# -eq 0 ]
+then
+   echo "Usage: bucket install <docker image name>"
+   echo "   or: bucket remove <docker image name>"
+   exit 1
+fi
+
+# force flag
+force=0
+while [[ $# > 0 ]]
+do
+  key="$1"
+
+  case $key in
+      install)
+      install=1
+      what="$2"
+      shift
+      ;;
+      remove)
+      remove=1
+      what="$2"
+      shift
+      ;;
+      force|-f)
+      force=1
+      ;;
+      *)
+	echo "unknown option"
+	exit 1
+      ;;
+  esac
+  shift
+done 
+
+if [ "$install" == 0 ] && [ "$remove" == 0 ]
+then
+   echo "either install or removed"
+   exit 1
+fi
+
+# what would be the name for this bucket?
+if [ $what == "" ]
+then
+   echo "This command requires a valid docker container known to this machine"
+   exit 1
+fi
+if [ $what == "01" ] || [ $what == "02" ]; then
+   echo "Error: bucket01 and bucket02 are system buckets and cannot be changed by this script"
+   exit 1
+fi
+
+RUNNING=$(docker inspect $what 2> /dev/null)
+if [ $? -eq 1 ]
+then
+  echo "Error: docker container does not exist, import the container first, call this script again afterwards..."
+  exit 1
+fi
+# ok we have a container
+echo "Found the container image \"$what\". Query for included items."
+# first one we need is /root/storage/info.json
+INFO=$(docker run $what /bin/bash -c "cat /root/storage/info.json;exit")
+echo "We found this information:"
+echo $INFO | $JQ "."
+
+# now we can create the bucket directory
+AETitle=`echo $INFO | $JQ ".AETitle" | sed -e 's/\"//g'`
+DESCRIPTION=`echo $INFO | $JQ ".Description"`
+DATESTR=`date`
+bucket=/data/streams/bucket${AETitle}
+
+echo "Based on the information found in \"$what\" this should be bucket \"$bucket\"..."
+
+if [ -d "$bucket" ] && [ "$install" == 1 ] && [ "$force" == 0 ]; then
+   echo "Error: This bucket exists already. If you really want to do this again use the -f flag"
+   exit 1
+fi
+
+# install this bucket
+if [ "$install" == 1 ]; then
+   # create the bucket directory first
+   mkdir -p "$bucket"
+   # put a copy of the config file into this directory
+   echo $INFO | $JQ "." > "$bucket/info.json"
+   # a gearman worker that will do something
+   cat >$bucket/gearman-worker.sh <<EOF
+#!/bin/sh
+# gearman worker created by MB
+
+pidfile=/data/.pids/gearman-worker-bucket${AETitle}.pid
+
+case \$1 in
+    'start')
+	echo "starting gearman for bucket${AETitle}..."
+	/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -w -f "bucket${AETitle}" -- xargs -0 ${bucket}/work.sh &
+	pid=\$!
+	echo \$pid > \$pidfile
+	;;
+    'stop')
+	/usr/bin/pkill -F \$pidfile
+	RETVAL=\$?
+	[ \$RETVAL -eq 0 ] && rm -f \$pidfile
+	;;
+    *)
+	echo "usage: gearman-worker-bucket${AETitle}.sh { start | stop }"
+	;;
+esac
+exit 0
+EOF
+   chmod gou+rx $bucket/gearman-worker.sh
+
+   # In case we need more than one worker we could create more of these with different names...
+
+   # a configuration file for monit that starts this bucket (done with root permissions)
+   sudo cat >/etc/monit/conf.d/processing-${AETitle}.conf <<EOF
+check process gearman-${AETitle} with matching "gearman.*-w.*-f.*bucket${AETitle}"
+      start program = "/data/streams/bucket${AETitle}/gearman-worker.sh start"
+     	   as uid processing and gid processing
+      stop program = "/data/streams/bucket${AETitle}/gearman-worker.sh stop"
+     	   as uid processing and gid processing
+EOF
+
+  # a work script that process.sh in bucket01 can call
+  cat >$bucket/work.sh <<EOF
+#!/bin/bash -l
+#
+# This script is called by other scripts using the gearman${AETitle} worker.
+# ${Description}
+# (installed by bucket on $DATESTR)
+
+log=/data/logs/bucket${AETitle}.log
+
+if [ \$# -eq 0 ]
+then
+   echo "usage: work.sh <DICOM directory>"
+   echo "usage: work.sh <DICOM directory>" >> \$log
+   exit 1
+fi
+
+INP=\$1
+INP=( \$INP )
+if [ \${#INP[@]} -eq 2 ]
+then
+  DATA=\${INP[0]}
+  DATA=\`readlink -f \$DATA\`
+  OUTPUT=\${INP[1]}
+  OUTPUT=\`readlink -f \$OUTPUT\`
+else
+  echo "\`date\`: bucket${AETitle} error, not enough parameters for processing..." >> \$log
+  exit 1
+fi
+
+echo "\`date\`: ${AETitle} processing (\$DATA) start..." >> \$log
+
+mkdir -p \${OUTPUT}
+
+echo "\`date\`: use \${DATA} and \${OUTPUT} as directories for processing" >> \$log
+
+read s1 < <(date +'%s')
+JOB=\$(sudo /usr/bin/docker run -d -v "\${DATA}":/input -v "\${OUTPUT}":/output $what /bin/bash -l -c "/root/work.sh /input /output" )
+JOB=\`echo \$JOB | cut -c1-8\`
+echo "\`date\`: ID for docker job is \"\$JOB\"" >> \$log
+sleep 10
+
+EX=1
+while [ $EX -eq 1 ]; do
+  sudo /usr/bin/docker logs \$JOB > \${OUTPUT}/../processing.log
+  sleep 10
+  EX=\$(sudo /usr/bin/docker ps | grep \$JOB | wc -l)
+done
+read s2 < <(date +'%s')
+echo "\`date\`: ${AETitle} processing (\$JOB) required \$((s2-s1)) seconds" >> \$log 
+
+echo "[{\"success\": \"success\",\"message\": \"\"}]" > "\${OUTPUT}/../proc.json"
+
+echo "\`date\`: processing ${AETitle} (\$DATA) done" >> \$log
+EOF
+  chmod gou+rx $bucket/work.sh
+
+  # now restart monit
+  echo "As the last step reload monit again..."
+  sudo monit reload
+
+  # done with install
+  exit 0
+fi
+
+if [ "$remove" == 1 ]; then
+
+  if [ -d "$bucket" ]; then
+     # found a bucket directory
+     echo -n "Found a directory \"$bucket\". Delete? (Yes/No) "
+     read yesno
+     if [ $yesno == "Yes" ]; then
+        echo "Delete directory..."
+        /bin/rm -rf $bucket
+        # and remove the monit file
+	f=/etc/monit/conf.d/processing-${AETitle}.conf
+	echo "Delete monit file at \"$f\"."
+        sudo /bin/rm $f
+	# and reload monit again
+	sudo monit reload
+     else
+        echo "directory not deleted..."
+     fi
+  else
+     echo "The bucket \"$bucket\" could not be found. Nothing is done."
+  fi
+  exit 0
+fi
