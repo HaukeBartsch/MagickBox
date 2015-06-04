@@ -20,11 +20,6 @@ then
    exit 1
 fi
 
-if [ "$EUID" -ne 0 ]; then
-   echo "Please run as root using sudo..."
-   exit 1
-fi
-
 force=0
 create=0
 install=0
@@ -167,6 +162,11 @@ if [ $? -eq 1 ]; then
    fi
    chmod gou+rx jq
    JQ=./jq
+fi
+
+if [ "$EUID" -ne 0 ]; then
+   echo "Please run as root using sudo (for install or remove)..."
+   exit 1
 fi
 
 RUNNING=$(docker inspect $what 2> /dev/null)
