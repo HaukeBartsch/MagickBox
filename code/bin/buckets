@@ -20,25 +20,6 @@ then
    exit 1
 fi
 
-# this requires jq
-JQ=`which jq`
-if [ $? -eq 1 ]; then
-   echo "Error: this script requires jq"
-   # try to download jq
-   WG=`which wget`
-   if [ $? -eq 1 ]; then
-      echo "Tried to download jq but could not (no wget, giving up now...)"
-      exit 1
-   fi
-   wget http://stedolan.github.io/jq/download/linux64/jq 2> /dev/null
-   if [ ! -f jq ]; then
-      echo "Error: could not download jq, giving up"
-      exit 1
-   fi
-   chmod gou+rx jq
-   JQ=./jq
-fi
-
 if [ "$EUID" -ne 0 ]; then
    echo "Please run as root using sudo..."
    exit 1
@@ -169,6 +150,24 @@ EOF
   exit 0
 fi
 
+# this next step requires jq
+JQ=`which jq`
+if [ $? -eq 1 ]; then
+   echo "Error: this script requires jq, lets try to download the executable..."
+   # try to download jq
+   WG=`which wget`
+   if [ $? -eq 1 ]; then
+      echo "Tried to download jq but could not (no wget, giving up now...)"
+      exit 1
+   fi
+   wget http://stedolan.github.io/jq/download/linux64/jq 2> /dev/null
+   if [ ! -f jq ]; then
+      echo "Error: could not download jq, giving up"
+      exit 1
+   fi
+   chmod gou+rx jq
+   JQ=./jq
+fi
 
 RUNNING=$(docker inspect $what 2> /dev/null)
 if [ $? -eq 1 ]
