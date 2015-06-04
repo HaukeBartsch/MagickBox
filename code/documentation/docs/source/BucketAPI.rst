@@ -6,7 +6,7 @@ How to add processing capabilities
 
 Processing functionality is added as docker containers that contain a basic structure of files. Such a container can be created using the following call::
 
- wget https://github.com/HaukeBartsch/MagickBox/blob/master/code/bin/buckets
+ wget https://raw.githubusercontent.com/HaukeBartsch/MagickBox/master/code/bin/buckets
  chmod gou+rx buckets
  ./buckets create mytestbucket
 
