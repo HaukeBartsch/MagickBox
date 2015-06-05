@@ -17,6 +17,8 @@ then
    echo "   or: bucket create <docker image name>"
    echo " This should work on any system that supports docker. It creates an initial MB"
    echo " docker image which can be used with bucket install."
+   echo "   or: bucket open <docker image name>"
+   echo " Start the editor included inside a bucket. Open the interface on a website."
    exit 1
 fi
 
@@ -24,6 +26,7 @@ force=0
 create=0
 install=0
 remove=0
+open=0
 while [[ $# > 0 ]]
 do
   key="$1"
@@ -44,6 +47,11 @@ do
       what="$2"
       shift
       ;;
+      open)
+      open=1
+      what="$2"
+      shift
+      ;;
       force|-f)
       force=1
       ;;
@@ -55,7 +63,7 @@ do
   shift
 done 
 
-if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ]
+if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ] && [ "$open" == 0 ]
 then
    echo "Error: either install or removed or create, it needs to be one of them"
    exit 1
@@ -70,6 +78,26 @@ fi
 if [ $what == "01" ] || [ $what == "02" ]; then
    echo "Error: bucket01 and bucket02 are system buckets and cannot be changed by this script"
    exit 1
+fi
+
+# open the editor for the bucket
+if [ "$open" = 1 ]; then
+  which docker > /dev/null
+  if [ ! $? -eq 0 ]; then
+     echo "Could not call docker on this system, this is required to create an MB container"
+     exit 1
+  fi
+  # check if that container already exists
+  RUNNING=$(docker inspect $what 2> /dev/null)
+  if [ ! $? -eq 0 ]; then
+     echo "Error: Bucket does not exists. Please create a container first (bucket create <bucket name>)."
+     exit 1
+  fi
+  # could check if the container has our file structure to make sure (todo)
+
+  echo "Open a webbrowser and point it at http://localhost:8080 (Ctrl-C to stop)."
+  R=$( docker run -i -t -p 8080:8080 -p 8022:8022 ${what} )
+  exit 0
 fi
 
 if [ "$create" = 1 ]; then
@@ -104,20 +132,143 @@ then
    exit; 
 fi
 
-subj=\`basename \$1\`
 input="\$1"
 output="\$2"
 
-# find the first file in input (usually a DICOM file)
-ff=\`find "\$input" -type f -print | head -1\`
-
-#
-# Add your command on the input here.
+# Add the call to your installed program here.
+#    ./myprogram "\${input}" "\${output}"
 # Any result should be copied to \${output}. Don't change anything in \${input}.
-#
 
 echo "Done..."
 EOF
+  cat >$DIR/bucket.conf <<EOF
+# editor page for MagickBox buckets
+server {
+   listen 8080 default_server;
+   listen [::]:8080 default_server ipv6only=on;
+
+   root /usr/share/nginx/html;
+   index index.html index.php
+   server_name localhost;
+
+   location ~ \.php$ {
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      fastcgi_pass unix:/var/run/php5-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+   }
+}
+EOF
+  cat >$DIR/index.html <<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MagickBox bucket ${what}</title>
+  <style type="text/css" media="screen">
+     #editor {
+        position: relative;
+        height: 1000px;
+        top: 0; bottom: 0; left: 0; right: 0;
+     }
+  </style>
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css"></link>
+</head>
+<body>
+  <div class="container" style="margin-top: 50px;">
+    <div class="row">
+      <div class="col-xm-3 col-md-3 col-xs-3 col-lg-3">
+         <table class="table table-striped">
+           <thead>
+             <tr><th></th></tr>
+           </thead>
+           <tbody>
+             <tr><td><a href="#" onclick="load('info.json');">info.json</a></td></tr>
+             <tr><td><a href="#" onclick="load('work.sh');">work.sh</a></td></tr>
+           </tbody>
+         </table>
+         <div class="btn-group">
+            <button id="save-current" class="btn btn-default" onclick="save();">Save</button>
+         </div>
+      </div>
+      <div class="col-xm-9 col-xs-9 col-md-9 col-lg-9">
+         <div id="editor"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+  
+  <script>
+    current="";
+    editor="";
+    function load( what ) {
+      if (what == "info.json" || what == "work.sh") {
+         jQuery.get('getFile.php?file='+what, function(data) {
+            editor.setValue(data);
+            current=what;
+         });
+      }
+    }
+    function save() {
+      if (current == "") {
+         return;
+      }
+      data = {};
+      data.text = editor.getValue();
+      jQuery.post('saveFile.php', { 'file': current, 'data': editor.getValue() });
+    }
+
+    jQuery(document).ready(function() {
+      editor = ace.edit("editor");
+      editor.setTheme("ace/theme/tomorrow_night_eighties");
+      editor.session.setMode("ace/mode/html");
+      editor.setAutoScrollEditorIntoView(true);
+      editor.setOption("maxLines", 30);
+      load("info.json");
+    });
+  </script>
+</body>
+</html>
+EOF
+
+  cat >$DIR/getFile.php <<EOF
+<?php
+   \$file="info.json";
+   if (isset(\$_GET['file'])) {
+      \$file = \$_GET['file'];
+   }
+
+   echo(file_get_contents(\$file));
+?>
+EOF
+  cat >$DIR/saveFile.php <<EOF
+<?php
+   \$file="";
+   if (isset(\$_POST['file'])) {
+      \$file = \$_POST['file'];
+   } else {
+      return; // ignore
+   }
+   \$data = "";
+   if (isset(\$_POST['data'])) {
+      \$data = \$_POST['data'];
+   }
+
+   \$fp = fopen(\$file, 'w');
+   fwrite(\$fp, \$data);   
+   fclose(\$fp);
+?>
+EOF
+
+  cat >$DIR/startservices.sh <<EOF
+#!/bin/bash
+  service php5-fpm start &
+  sleep 2
+  nginx
+EOF
+
   cwd=`pwd`
   cd $DIR
   cat >$DIR/Dockerfile <<EOF
@@ -127,17 +278,42 @@ EOF
 #####################################
 FROM ubuntu
 
-RUN mkdir -p /root/storage;
-COPY info.json /root/storage/
-COPY work.sh /root/
+RUN mkdir -p /root/storage/interface && \
+    apt-get update && \
+    apt-get install -y nginx php5-common php5-cli php5-fpm && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
+    chown -R www-data:www-data /var/lib/nginx && \
+    chown -R www-data:www-data /root/storage/interface && \
+    chmod g+s /root/storage/interface
+COPY info.json /usr/share/nginx/html/
+COPY work.sh /usr/share/nginx/html/
+COPY bucket.conf /etc/nginx/sites-enabled/
+COPY index.html /usr/share/nginx/html/
+COPY getFile.php /usr/share/nginx/html/
+COPY saveFile.php /usr/share/nginx/html/
+COPY startservices.sh /
+RUN chmod gou+rx /startservices.sh && \
+    chown -R www-data:www-data /usr/share/nginx/html && \
+    ln -s /usr/share/nginx/html/info.json /root/storage/info.json && \
+    ln -s /usr/share/nginx/html/work.sh /root/work.sh
+EXPOSE 8080
+CMD /startservices.sh
 EOF
-  docker build -t "$what" "$DIR"
+#
+#    cd /opt/ && wget http://mmil.ucsd.edu/MagickBox/WebShell-0.9.6.zip -q && \
+#    unzip WebShell-0.9.6.zip && \
+#    rm WebShell-0.9.6.zip && \
+#    cd /opt/WebShell-0.9.6 && \
+#    ./make_certificate.sh
+
+  docker build --no-cache -t "$what" "$DIR"
   cd $cwd
   echo ""
   echo ""
   echo "Done! A new bucket has been created (\"$what\")."
   echo "Start using it by:"
-  echo "  docker run -i -t ${what} /bin/bash"
+  echo "  docker run -i -t -p 8080:8080 ${what} /bin/bash"
   echo "and edit the work.sh script in:"
   echo "  vi /root/work.sh"
   echo ""
