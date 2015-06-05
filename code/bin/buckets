@@ -229,6 +229,7 @@ if [ "$install" == 1 ]; then
    # put a copy of the config file into this directory
    echo $INFO | $JQ "." > "$bucket/info.json"
    # a gearman worker that will do something
+   GEARMAN=`which gearman`
    cat >$bucket/gearman-worker.sh <<EOF
 #!/bin/sh
 # gearman worker created by MB
@@ -238,7 +239,7 @@ pidfile=/data/.pids/gearman-worker-bucket${AETitle}.pid
 case \$1 in
     'start')
 	echo "starting gearman for bucket${AETitle}..."
-	/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -w -f "bucket${AETitle}" -- xargs -0 ${bucket}/work.sh &
+	$GEARMAN -h 127.0.0.1 -p 4730 -w -f "bucket${AETitle}" -- xargs -0 ${bucket}/work.sh &
 	pid=\$!
 	echo \$pid > \$pidfile
 	;;
