@@ -4,7 +4,7 @@
 # system uses plugins for data types.
 #
 # Data is stored as:
-#    /data/db/<sender>/<key>/<value tupel.csv>
+#    /data/db/<sender>/<key>/<value tupel.json>
 #
 # Test for looking for data in directory:
 #    curl -G -d 'sender=me&parse=/data/scratch/tmp.ABCD' http://localhost:2813/code/php/db.php
@@ -23,17 +23,18 @@ addLog("called");
 # What we really want is to query the data we have, if we had a job that 
 # parses the files on our disk we could specify extraction methods that
 # can automatically pull out information like Left.txt and Right.txt, MI.txt for NQ.
-# this should be a low nice job in the background that looks for new files in scratch
+# This should be a low nice job in the background that looks for new files in scratch
 # and has a list of plugin parsers to extract information as key/value pairs
 #
 
-# Install incron to be able to react to changes on /data/scratch/
+# Possibility: Install incron to be able to react to changes on /data/scratch/
 # Problem with incron is that it cannot watch files in subdirectories... better to call 
 # db.php manually after each bucket performed.
-# sudo apt-get install incron
-# add processing user to /etc/incron.allow
-# create entry using incrontab -e (user processing)
-#   /data/scratch/ IN_MODIFY 
+## sudo apt-get install incron
+## add processing user to /etc/incron.allow
+## create entry using incrontab -e (user processing)
+##   /data/scratch/ IN_MODIFY 
+#
 
 $sender = "";
 if (isset($_GET['sender'])) {
@@ -43,7 +44,12 @@ if (isset($_GET['sender'])) {
   addLog("Error: sender is required");
 }
 
-$plugindir='/data/code/php/db-plugins';
+$bucket = "nonspecific";
+if (isset($_GET['bucket'])) {
+  $bucket = $_GET['bucket'];
+}
+
+$plugindir='/data/code/php/db-plugins/'.$bucket.'/';
 $databasedir='/data/db';
 
 function endsWith( $haystack, $needle) {
@@ -65,7 +71,7 @@ function call_plugins ( $f ) {
        $out=array();
        exec($plugindir."/".$plugin." ".$f, $out);
        if (count($out) > 0) {
-         $result[] = array("plugin" => $plugin, "data" => json_decode(join("", $out), True));
+         $result[] = array("plugin" => $plugin, "file" => $f, "data" => json_decode(join("", $out), True));
        }
      }
   }
@@ -85,8 +91,10 @@ function store_result ( $sender, $key, $file, $result ) {
      }
    }
    foreach($result as $res) {
-     addLog("write: ".json_encode($res['data']).' to '.$fn.'/'.$res['plugin']);
-     file_put_contents($fn."/".$res['plugin'], json_encode($res['data']));
+     $fileName = $fn.'/'.basename($res['file']).'_'.$res['plugin'].'.json';
+     addLog("write: ".json_encode($res['data']).' to '.$fileName);
+     # we can have this file already ... should we add values? or overwrite?
+     file_put_contents($fileName, json_encode($res['data']));
    }
 }
 
@@ -127,14 +135,20 @@ if (isset($_GET['parse'])) {
           store_result( $sender, $key, $parse, $result );
       }
    }
-} else {
-
+} else if (isset($_GET['query'])) {
+   $query = $_GET['query'];
+   $key=basename($query);
+   // collect all measures for this handle (could be sender or tmp)
+   $datafiles = glob($databasedir.'/'.$sender.'/'.$key.'/*.json');   
+   //$data = array( 'message' => 'in query with '.count($datafiles). ' files found in '.$databasedir.'/'.$sender.'/'.$key.'/*.json' );
+   foreach( $datafiles as $d ) {
+      $content = json_decode( file_get_contents($d), true );
+      // $content = array( 'look in file' => $d );
+      $data[basename($d)] = $content;
+   }
+   echo( json_encode( $data ) );
+   return;
 }
 addLog("Finished");
-
-# if we get arguments return the level below
-#
-
-
 
 ?>

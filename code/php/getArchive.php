@@ -1,10 +1,19 @@
 <?php
+//
+// call with ?siuid=Series Instance UID to get the values for a single subject
+//
 
 function addLog( $message ) {
   $ip = fopen("/data/logs/getArchive.log",'a');
   fwrite($ip, date(DATE_RFC2822)." ".$message . "\n");
   fclose($ip);
 }
+
+  // This could be something in archive - or in scratch (if it comes from mb)
+  $siuid = "";
+  if (isset($_GET['siuid'])) {
+     $siuid = $_GET['siuid'];
+  }
 
   $fileList = array();
   $path = '/data/scratch/archive';
@@ -15,7 +24,22 @@ function addLog( $message ) {
      return;
   }
 
-  $files = glob($path."/*");
+  if ($siuid == "") {
+    $files = glob($path."/*");
+  } else {
+    // a single entry instead of a whole directory
+    $files = [];
+    $files[] = $path.'/'.$siuid;
+    if (!file_exists($files[0])) { // in this case the siuid could refer to a directory in scratch itself (load its info and return)
+       if (file_exists('/data/scratch/'.$siuid.'/info.json')) {
+           $cont = json_decode(file_get_contents('/data/scratch/'.$siuid.'/info.json'), True);
+	   $ar = [];
+	   $ar[] = $cont;
+           echo json_encode($ar);
+	   return;
+       }
+    }
+  }
 
   // sort array of directories by file creation time
   function cmp($a, $b) {

@@ -19,16 +19,243 @@ function removeArchive( siuid ) {
     });
 }
 
+var boxselected = null;
+
+function fillInProjects( data ) {
+        jQuery('.number-of-studies').html(data.length);
+	// how wide is our page?
+        w = parseInt(jQuery('#projects2').css('width'));
+        boxw = 250; // size of a single box
+        gaps = Math.floor(w/boxw) - 1;
+        boxperrow = parseInt(Math.floor((w - gaps*13)/boxw));
+        rowcounter = 0;
+
+        jQuery('#projects2').children().remove(); // clean out the old data
+        jQuery('#projects2').append("<div class=\"row-fluid\" id=\"rowcontainer"+rowcounter+"\"></div>");
+        trow = jQuery("#rowcontainer"+rowcounter);
+	for (var i = 0, inrowcounter = 0; i < data.length; i++, inrowcounter++) {
+	    d = data[i];
+	    if (inrowcounter >= boxperrow) {
+		inrowcounter = 0;
+		jQuery('#projects2').append("<div id=\"rowdetail-"+rowcounter+"\" class=\"rowdetail\"></div>");
+                rowcounter++;
+		// add an empty placeholder for details
+                jQuery('#projects2').append("<div class=\"row-fluid\" id=\"rowcontainer"+rowcounter+"\"></div>");
+		trow = jQuery("#rowcontainer"+rowcounter);
+	    }
+
+  	    if (d['processingLast']<60*60) {
+  	    	time = " <span class='label label-info'> "
+	    	      + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
+	    	    + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated <60min ago)</span>":"")
+	    	    + "</span>";
+	    	if (d['processingLast']<10*60) {
+	    	      time = " <span class='label label-warning'> "
+	    	      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
+	    	      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated <10min ago)</span>":"")
+	    	      + "</span>";
+	        }
+	    	if (d['processingLast']<60) {
+	    	      time = " <span class='label label-danger'> "
+	    		  + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
+	    	      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated <1min ago)</span>":"")
+	    	      + "</span>";
+	        }
+	    } else {
+		if (typeof(d['processingLogSize']) == 'undefined') {
+                    time = "<span class='processingLogSize'>&nbsp;</span>";
+		} else {
+  	    	  time = " <span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
+	    	      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
+	    	      + "</span>";
+                }
+	    }
+
+            str = "<div class=\"box\" detailtarget=\"rowdetail-"+rowcounter+"\" patientid=\""+d['pid']+"\" tmpDir=\""+d['scratchdir']+"\" sender=\""+d['AETitleCaller']+"\" style=\"background-image: url('data:image/png;"+patternList[d['AETitleCalled']]+"');\">";
+            str = str + "  <div class=\"aheader\">";
+	    str = str + "    <div class=\"pull-right\" title=\"Date/Time the request for processing was received\">" + 
+		  d['received'].split(" ").slice(0,4).join(" ") + "</div>";
+            str = str + "    <div class=\"number\">" + zeroPad(i,3) + "</div>";
+            str = str + "  </div>";
+            str = str + "<div class=\"abody\" style=\"background-color: rgba(255,255,255,0.3);\">";
+	    str = str + "<span class=\"proctitle\">" + d['AETitleCalled'] + "</span>";
+	    str = str + "<br/><span title=\"Send by\">Sender: " + d['AETitleCaller'] + "</span>";
+            str = str + "<br/><div title=\"Series Instance UID "+d['pid']+"\">"+smartTrim(d['pid'],30)+"</div>";
+            str = str + "</div>";
+            str = str + "<div class=\"afooter\">";
+	    str = str + time;
+            str = str + "<div class=\"pull-right\">";
+	    str = str + "    <a title=\"Link to processing log file\" target='_logfile' href='/scratch/" + d['scratchdir'] + "/processing.log' style=\"color: black;\"><span class=\"glyphicon glyphicon-list-alt\" style=\"margin-right: 5px; \"></span></a>";
+            str = str + "</div>";
+            str = str + "</div>";
+            str = str + "</div>";
+            trow.append(str);
+        }
+	// and open the currently open detail again
+	if (boxselected != null) {
+	    console.log("show this box again " + boxselected);
+  	    openDetail(boxselected);
+        }
+
+}
+
+function smartTrim(string, maxLength) {
+    if (!string) return string;
+    if (maxLength < 1) return string;
+    if (string.length <= maxLength) return string;
+    if (maxLength == 1) return string.substring(0,1) + '...';
+    var midpoint = Math.ceil(string.length / 2);
+    var toremove = string.length - maxLength;
+    var lstrip = Math.ceil(toremove/2);
+    var rstrip = toremove - lstrip;
+    return string.substring(0,midpoint-lstrip) + '...' + string.substring(midpoint+rstrip);
+}
+
+var logTimer;
+function showDetails( target, siuid, tmpFolder, sender, bucket, number) {
+
+    id1 = target + "-binfo";
+    id2 = target + "-logfile";
+    jQuery('#'+target).append("<div class=\"col-lg-4 col-md-4 col-sm-6 col-xs-12\" id=\""+id1+"\"></div>");
+    jQuery('#'+target).append("<div class=\"col-lg-4 col-md-6 col-sm-6 col-xs-12\" id=\""+id2+"\"></div>");
+
+    // now add information about the bucket as well
+    jQuery.getJSON('/code/php/timing.php?aetitle=' + bucket, function(data) {
+	console.log(data);
+	str = " <h4>" + number + " " + bucket + " Bucket <small title=\"Estimated processing time\">"+ moment.duration(data.avg, "s").humanize() + "</small></h4>";
+
+        str = str + "<a title=\"If output has been generated click to download as zip\" class=\"btn btn-info btn-small btn-block\" href='/code/php/getOutputZip.php?folder="+tmpFolder+"'><span class=\"glyphicon glyphicon-cloud-download\"></span> DOWNLOAD OUTPUT</a>";
+        str = str + "<a title=\"View Image Data\" class=\"btn btn-info btn-small btn-block\" href='/code/web/viewer.php?case="+tmpFolder+"'><span class=\"glyphicon glyphicon-eye-open\"></span> VIEW IMAGES</a><br/><br/>";
+        str = str +"<button type=\"button\" title=\"remove output folder for this computation\" class=\"btn btn-warning remove-process-data btn-block\" data=\"";
+        str = str + tmpFolder;
+        str = str + "\" onclick=\"removeThis('"+tmpFolder+"')\"><span class=\"glyphicon glyphicon-trash\"></span> REMOVE OUTPUT</button>";
+
+        str = str +"<button type=\"button\" title=\"remove input for this computation\" class=\"btn btn-warning remove-process-data btn-block\" data=\"";
+        str = str + d['scratchdir'];
+        str = str + "\" onclick=\"removeArchive('"+siuid+"')\"><span class=\"glyphicon glyphicon-trash\"></span> REMOVE INPUT</button>";
+        jQuery('#'+id1).append(str);
+    });
+
+    str = "<div class=\"alogfile\">"
+    str = str + "Processing log file:<br/><textarea id=\"ta-"+target+"\" rows=\"10\" style=\"width: 100%; color: #BBBBBB; border: 2px solid #cccccc; padding: 5px; font-family: 'Lucida Console', Monaco, monospace; font-size: 9pt; overflow-x: auto;";
+    str = str + "-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;\"></textarea>";
+    str = str + "</div>";
+    jQuery('#'+id2).append(str);
+    // now fill every 10 seconds with data
+    var fillText = (function(target) {
+        return function() {
+  	  jQuery.get('/scratch/' + tmpFolder + '/processing.log', function(data) {
+              if (jQuery('#ta-'+target).length > 0) {
+  	        var a = jQuery('#ta-'+target)[0].selectionStart;
+	        var b = jQuery('#ta-'+target)[0].selectionEnd;
+	        jQuery('#ta-'+target).val(data.split('\n').reverse().join('\n'));
+	        jQuery('#ta-'+target)[0].setSelectionRange(a, b);
+              }
+          });
+	};
+    })(target);
+    fillText();
+    logTimer = setInterval(function() {
+	fillText();
+    }, 10000);
+
+    // now query the database for information on this subject (needs sender and scratch)
+    jQuery.getJSON('/code/php/db.php?query='+tmpFolder+'&sender='+sender, function(data) {
+	if (data == null)
+	    return; // just ignore this
+        // ok now add a table
+	str = "<div class=\"col-lg-4 col-md-6 col-sm-6 col-xs-12\" style=\"margin-top: 20px; height: 120px; overflow-y: scroll; overflow-x: auto;\">";
+        keys = Object.keys(data);
+        for (var i = 0; i < keys.length; i++) {
+	  str = str + "<br/>file: " + keys[i] + "<br/>";
+          e = data[keys[i]];
+	  ind = Object.keys(e);
+          str = str + "<table class=\"table table-hover table-striped\"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>"
+          for (var j = 0; j < ind.length; j++) {
+             str = str + "<tr><td>" + ind[j] + "</td><td>" + e[ind[j]] + "</td></tr>";
+          }
+          str = str + "</tbody></table>";
+        }
+        str = str + "</div>";
+        jQuery('#'+target).append(str);
+    });
+
+    if (siuid !== "") {
+      jQuery.getJSON('/code/php/getArchive.php?siuid='+siuid, function(data) {
+	str = "<div class=\"col-lg-4 col-md-6 col-sm-6 col-xs-12\" style=\"margin-top: 20px; overflow-x: auto;\">";
+        keys = Object.keys(data);
+        for (var i = 0; i < keys.length; i++) {
+	  // str = str + "<br/>file: " + keys[i] + "<br/>";
+          e = data[keys[i]];
+	  ind = Object.keys(e);
+          str = str + "<table class=\"table table-striped table-hover\"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>"
+          for (var j = 0; j < ind.length; j++) {
+             str = str + "<tr><td>" + ind[j] + "</td><td>" + e[ind[j]] + "</td></tr>";
+          }
+          str = str + "</tbody></table>";
+        }
+        str = str + "</div>";
+        jQuery('#'+target).append(str);
+      });
+    }
+
+}
+
+function openDetail( target ) {
+	var t = jQuery(target).attr('detailtarget');
+	var patientid = jQuery(target).attr('patientid');
+	var tmpFolder = jQuery(target).attr('tmpDir');
+        var sender    = jQuery(target).attr('sender');
+	var bucket    = jQuery(target).find('.proctitle').text();
+        var number    = jQuery(target).find('.number').text();
+
+	var h = parseInt(jQuery('#'+t).css('height'));
+	if (h > 0 && boxselected == target) { // already open, close it now - or switch to new entry
+	   jQuery('.rowdetail').children().remove();
+	   jQuery('.rowdetail').animate({
+   		   height: 0
+	   });
+   	   if (typeof(logTimer) !== 'undefined')
+	      clearInterval(logTimer);
+           jQuery(target).removeClass('activeBox');
+	   boxselected = null;
+	   return;
+        }
+	boxselected = target;
+
+	// find one from before which was marked active
+ 	jQuery('.box, .activeBox').removeClass('activeBox');
+
+	// close the detail from before (we should delete all the content first)
+        jQuery('.rowdetail').each(function(index, r) {
+	    if (parseInt(jQuery(r).css('height')) > 0) {
+		jQuery(r).children().remove();
+   		jQuery(r).animate({ height: 0 });
+	    }
+	});
+	jQuery('#'+t).css('height', 'auto').animate({
+		height: 300
+	});
+  	jQuery(target).addClass('activeBox');
+  	if (typeof(logTimer) !== 'undefined')
+	   clearInterval(logTimer);
+    showDetails( t, patientid, tmpFolder, sender, bucket, number );
+}
+
+
+var patternList = {};
+
 jQuery(document).ready(function() {
-    //jQuery('#changeSetup').dialog({  modal: true, autoOpen: false });
-    //jQuery('#setup').click(function() {
-    //    jQuery('#changeSetup').dialog( "open" );
-    //});
+
     $("#searchClear").click(function(){
 	$("#search").val('');
         search();
     });
-
+    jQuery(window).resize(function() {
+	if (typeof(allData) !== 'undefined' && allData.length > 0) {
+           fillInProjects( allData );
+	}
+    });
     jQuery('#RemoveStudies').click(function() {
 	jQuery('#removestudiestable').children().remove();
         jQuery.getJSON('/code/php/getArchive.php', function(data) {
@@ -67,15 +294,15 @@ jQuery(document).ready(function() {
         // now search for patient id's that start with the letter
         if ( jQuery(this).text() == "CLEAR" ) {
 	    // display all entries
-            jQuery('#projects li').each(function(index) {
+            jQuery('#projects2 div .box').each(function(index) {
 		jQuery(this).show();
 	    });
             jQuery('#search').val("");
 	} else {
 	    var letter = jQuery(this).text();
-            jQuery('#projects li').each(function(index) {
+            jQuery('#projects2 div .box').each(function(index) {
                 var t = jQuery(this).attr('patientid');
-	        if (t.indexOf(letter) == 0) {
+	        if (t.indexOf(letter.toLowerCase()) == 0) {
 		    jQuery(this).show();
 		} else {
 		    jQuery(this).hide();
@@ -99,6 +326,12 @@ jQuery(document).ready(function() {
             jQuery('#installed-buckets-list-large').append("<li class=\"table-row row" + i + "\">AETitle: \"" + aetitle + "\", Name: \"" 
 							   + name + "\"<br/><small>" + desc +
 						           "</small>" + "</li>");
+
+	    // lets create a picture for each bucket
+	    var pattern = Trianglify({
+		width: 250, height: 150, cell_size: 20, seed: aetitle });
+	    patternList[aetitle] = pattern.png();
+
             if (typeof(aetitle) !== 'undefined') { 
               jQuery.get('/code/php/getLicense.php', { operation: "query", feature: aetitle }, function(num){
                 return function(data) {
@@ -198,54 +431,14 @@ jQuery(document).ready(function() {
         });
     });
 
+    jQuery('#projects2').on("click", ".box", function() {
+	openDetail( this );
+    });
+
     jQuery.getJSON('/code/php/getScratch.php', function(data) {
-        jQuery('.number-of-studies').html(data.length);
-	    jQuery.each(data, function(i,d) {
-	      var time = "";
-  	      if (d['processingLast']<60*60) {
-  		  time = " <span class='label label-info'> "
-		      + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
-		    + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 60min ago)</span>":"")
-		    + "</span>";
-	 	  if (d['processingLast']<10*60) {
-		      time = " <span class='label label-warning'> "
-		      + "<span class='processingLogSize'>" + (d['processingLogSize']?d['processingLogSize'] + "byte":"") + "</span>"
-		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 10min ago)</span>":"")
-		      + "</span>";
-	          }
-	 	  if (d['processingLast']<60) {
-		      time = " <span class='label label-danger'> "
-			  + "<span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
-		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min. (updated less than 1min ago)</span>":"")
-		      + "</span>";
-	          }
-	      } else {
-		  time = " <span class='processingLogSize'>" + (d['processingLogSize']?(d['processingLogSize']/1024).toFixed(2) + "kbyte":"") + "</span>"
-		      + (d['processingTime']?" <span class='processingTime'>" + (d['processingTime']/60.0).toFixed(2) + "min.</span>":"")
-		      + "</span>";
-	      }
-	
-          jQuery('#projects').append("<li patientid=\"" + d['pid'] + "\">"
-				       +"<button type=\"button\" title=\"remove this entry\" class=\"pull-right btn btn-warning remove-process-data\" data=\""
-				       +d['scratchdir']
-				       +"\" onclick=\"removeThis('"+d['scratchdir']+"')\"><span class=\"glyphicon glyphicon-trash\"></span></button>"
-				       +"<a title=\"If output has been generated click to download as zip\" class=\"pull-right btn btn-info btn-small\" href='/code/php/getOutputZip.php?folder="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-cloud-download\"></span> OUTPUT</a>"
-				       +"<a title=\"View\" class=\"pull-right btn btn-info btn-small\" href='/code/web/viewer.php?case="+d['scratchdir']+"'><span class=\"glyphicon glyphicon-eye-open\"></span> VIEW</a>"
-                                       +"<h4 title=\"Patient ID\">"
-				       +"<span class=\"label label-default\">" + zeroPad(i,3) + "</span>&nbsp;"
-				       +d['pid']
-                                       +"&nbsp;<small>["+d['received']+"]</small>"
-				       +"</h4>"
-                                       +"<a class=\"label label-info\" title=\"Link to processing log file\" target='_logfile' href='/scratch/"
-				       +d['scratchdir']+"/processing.log'> <span class=\"glyphicon glyphicon-hand-right\"></span>  Logfile: "
-				       +d['AETitleCalled']
-				       +" <- "
-				       +d['AETitleCaller']
-				       +"</a>"
-				       + time
-				       +"</li>");
-            
-	    });
+        allData = data;
+        fillInProjects( data );
+
         search();
         setTimeout( function(data) { timeOverview(data); }, 200, data );
 
@@ -258,7 +451,7 @@ jQuery(document).ready(function() {
             var entry = jQuery(this);
             entry.addClass('notthere');
             jQuery.each(data, function(i,d) {
-                if (d['pid'].indexOf(letter) == 0) {
+                if (d['pid'].indexOf(letter.toLowerCase()) == 0) {
                     entry.removeClass('notthere');
                     return false;
                 } 
@@ -351,14 +544,18 @@ function timeOverview( data ) {
 
 function search() {
 	var term = jQuery('#search').val();
-        jQuery('#projects li').each(function() {
+/*        jQuery('#projects li').each(function() {
+	    jQuery(this).show();
+	});  */
+        jQuery('#projects2 div').each(function() {
 	    jQuery(this).show();
 	});
+
         if (term == "") {
 	    return true;
 	}
         var re = new RegExp(term);
-	jQuery('#projects li').each(function() {
+/*	jQuery('#projects div').each(function() {
             var hide = true;
             var c = jQuery(this).children();
             for (var i = 0; i < c.length; i++) {
@@ -383,5 +580,37 @@ function search() {
 	    }
             if (hide == true)
 		jQuery(this).hide();
+	}); */
+	jQuery('#projects2 div').each(function() {
+            var hide = true;
+
+            var c = jQuery(this).children(); // all the entries in a single row
+            for (var i = 0; i < c.length; i++) {
+		var b = c[i];
+  	        jQuery.each(b.attributes, function(index, elem) {
+ 		   if (elem.value.match(re) != null) {
+		       hide = false;
+		   }
+	        });
+		var v = jQuery(b).val();
+                v = v.replace(/\ +/g,' ')
+		if (v.match(re) != null) {
+                    hide = false;
+		}
+		var v = jQuery(b).text();
+                v = v.replace(/\ +/g,' ')
+		if (v.match(re) != null) {
+                    hide = false;
+		}
+		var v = jQuery(b).attr("href");
+		if (typeof(v) !== 'undefined') {
+                  v = v.replace(/\ +/g,' ')
+		  if (v.match(re) != null) {
+                    hide = false;
+		  }
+		}
+	    }
+            if (hide == true)
+		jQuery(c).hide();
 	});
 }

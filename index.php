@@ -14,6 +14,10 @@
 <link rel="stylesheet" href="/code/web/css/cal-heatmap.css" />
 <!-- ----------------------------- -->
 
+<script type="text/javascript" src="/code/web/js/moment.min.js"></script>
+
+<script type="text/javascript" src="/code/web/js/trianglify.min.js"></script>
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -115,6 +119,11 @@
              <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
           </ul>
         </div>
+      </div>
+      <div class="row-fluid">
+        <div class="col-sm-12 col-xm-12 col-xs-12">
+          <div id="projects2"></div>
+	</div>
       </div>
       <div class="row-fluid">
         <div class="col-sm-12 col-xm-12 col-xs-12">
