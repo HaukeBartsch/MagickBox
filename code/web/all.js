@@ -91,6 +91,9 @@ function fillInProjects( data ) {
             str = str + "</div>";
             trow.append(str);
         }
+        // and one more for the last row
+	jQuery('#projects2').append("<div id=\"rowdetail-"+rowcounter+"\" class=\"rowdetail\"></div>");
+
 	// and open the currently open detail again
 	if (boxselected != null) {
 	    console.log("show this box again " + boxselected);
