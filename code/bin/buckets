@@ -306,6 +306,10 @@ echo "\`date\`: use \${DATA} and \${OUTPUT} as directories for processing" >> \$
 read s1 < <(date +'%s')
 JOB=\$(sudo /usr/bin/docker run -d -v "\${DATA}":/input -v "\${OUTPUT}":/output $what /bin/bash -l -c "/root/work.sh /input /output" )
 JOB=\`echo \$JOB | cut -c1-8\`
+if [ -z "\$JOB" ]; then
+   echo "Error: could not run docker, this might happen if processing cannot sudo or use docker" >> \$log
+   echo "  use something like this: sudo visudo and add ALL=(ALL) NOPASSWD: ALL" >> \$log
+fi
 echo "\`date\`: ID for docker job is \"\$JOB\"" >> \$log
 sleep 10
 
