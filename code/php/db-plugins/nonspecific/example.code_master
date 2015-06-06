@@ -7,6 +7,7 @@
 #
 # How it works:
 # Check if the argument has a specific name, read and parse, echo parsed data as json.
+# The json structure needs to be a single object with key: value pairs.
 #
 # In order to enable this file rename to end with ".code".
 #
