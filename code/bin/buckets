@@ -314,7 +314,7 @@ echo "\`date\`: ID for docker job is \"\$JOB\"" >> \$log
 sleep 10
 
 EX=1
-while [ $EX -eq 1 ]; do
+while [ \$EX -eq 1 ]; do
   sudo /usr/bin/docker logs \$JOB > \${OUTPUT}/../processing.log
   sleep 10
   EX=\$(sudo /usr/bin/docker ps | grep \$JOB | wc -l)
