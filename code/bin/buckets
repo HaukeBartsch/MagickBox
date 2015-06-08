@@ -178,7 +178,7 @@ EOF
 # File MI.txt contains a single number. The following code will convert this 
 # number to a json string, echo the string and exit.
 if [ "\$name" == "MI.txt" ]; then
-  data=`cat "\$1"`
+  data=\`cat "\$1"\`
   cmd="{ \"MI\": [ \$data ] }"
   echo \$cmd
   exit
