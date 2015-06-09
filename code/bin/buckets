@@ -70,8 +70,8 @@ do
       force=1
       ;;
       *)
-	echo "unknown option"
-	exit 1
+      echo "unknown option"
+      exit 1
       ;;
   esac
   shift
@@ -94,17 +94,19 @@ if [ $what == "01" ] || [ $what == "02" ]; then
    exit 1
 fi
 
-# open the editor for the bucket
+# open - start the bucket container
 if [ "$open" = 1 ]; then
   which docker > /dev/null
   if [ ! $? -eq 0 ]; then
-     echo "Could not call docker on this system, this is required to create an MB container"
+     echo "Error: Could not call 'docker' on this system, this is required to create an MB container."
+     echo "  Install docker first - on windows/macos you can use boot2docker, Linux systems can"
+     echo "  natively run docker containers - if they support it."
      exit 1
   fi
   # check if that container already exists
   RUNNING=$(docker inspect $what 2> /dev/null)
   if [ ! $? -eq 0 ]; then
-     echo "Error: Bucket does not exist. Please create a container first using create."
+     echo "Error: Bucket does not exist. Please create a container first using \"buckets create\"."
      exit 1
   fi
   # could check if the container has our file structure to make sure (todo)
@@ -120,13 +122,13 @@ fi
 if [ "$create" = 1 ]; then
   which docker > /dev/null
   if [ ! $? -eq 0 ]; then
-     echo "Could not call docker on this system, this is required to create an MB container"
+     echo "Could not find the docker executable on this system, this is required to create an MB container"
      exit 1
   fi
   # create a shell container now
   RUNNING=$(docker inspect $what 2> /dev/null)
   if [ $? -eq 0 ]; then
-     echo "Error: A container with the name \"$what\" exists already. Please make the name of the container unique."
+     echo "Error: A container with the name \"$what\" exists already. Please make the name of the new container unique."
      exit 1
   fi
   echo "Creating new container..."  
@@ -173,6 +175,11 @@ EOF
 # echo the data as a json string.
 # The json formatted string needs to be a single object with key value pairs:
 #   { "key1": "value1", "key2": "value2" }
+# Limitations:
+# This script will be run outside of your container, it therefore has to be self-contained
+# and cannot use any of the programs installed inside your bucket. Add those computations
+# if they are required to the end of the processing bucket. This plugin only needs to echo
+# the results.
 #
 
 # File MI.txt contains a single number. The following code will convert this 
@@ -207,25 +214,36 @@ EOF
   echo ""
   echo "Done! A new bucket has been created (\"$what\")."
   echo "Start testing it by:"
+  echo "  buckets open ${what}"
+  echo "or use the docker container tools:"
   echo "  docker run -i -t ${what} /bin/bash"
-  echo "and edit the work.sh and info.json scripts in:"
+  echo "and edit the work.sh, info.json and db-plugin.code scripts in:"
   echo "  vi /root/work.sh"
   echo "  vi /root/storage/info.json"
+  echo "  vi /root/storage/db-plugin.code"
   echo ""
 
   exit 0
 fi
 
+# test if we are inside MagickBox
+if [ ! -d /data/streams ]; then
+   echo "Error: Did not find standard directory structure for MagickBox. MagickBox bucket install and remove can only be run"
+   echo "       inside a MagickBox machine."
+   exit 1
+fi
+
 # this next step requires jq
 JQ=`which jq`
 if [ $? -eq 1 ]; then
-   echo "Error: this script requires jq, lets try to download the executable..."
+   echo "Error: this script requires jq, lets try to download the executable (this will work for Linux64bit only)..."
    # try to download jq
    WG=`which wget`
    if [ $? -eq 1 ]; then
-      echo "Tried to download jq but could not (no wget, giving up now...)"
+      echo "Tried to download jq but could not (no wget found, giving up now...)"
       exit 1
    fi
+   # this only works on linux 64bit
    wget http://stedolan.github.io/jq/download/linux64/jq 2> /dev/null
    if [ ! -f jq ]; then
       echo "Error: could not download jq, giving up"
@@ -236,7 +254,7 @@ if [ $? -eq 1 ]; then
 fi
 
 if [ "$EUID" -ne 0 ]; then
-   echo "Please run as root using sudo (for install or remove)..."
+   echo "Please run as root using sudo (for install or remove we have to be able to add to /etc/monit)..."
    exit 1
 fi
 
@@ -276,7 +294,8 @@ if [ "$install" == 1 ]; then
    GEARMAN=`which gearman`
    cat >$bucket/gearman-worker.sh <<EOF
 #!/bin/sh
-# gearman worker created by MB
+# gearman worker service script created by MB
+# `date`
 
 pidfile=/data/.pids/gearman-worker-bucket${AETitle}.pid
 
@@ -315,16 +334,16 @@ EOF
   cat >$bucket/work.sh <<EOF
 #!/bin/bash -l
 #
-# This script is called by other scripts using the gearman${AETitle} worker.
+# This script is called by MagickBox using the gearman${AETitle} worker.
 # ${Description}
-# (installed by bucket on $DATESTR)
+# (installed by buckets on $DATESTR)
 
 log=/data/logs/bucket${AETitle}.log
 
 if [ \$# -eq 0 ]
 then
-   echo "usage: work.sh <DICOM directory>"
-   echo "usage: work.sh <DICOM directory>" >> \$log
+   echo "usage: work.sh \"<input directory> <output directory>\""
+   echo "usage: work.sh \"<input directory> <output directory>\"" >> \$log
    exit 1
 fi
 
@@ -352,7 +371,7 @@ JOB=\$(sudo /usr/bin/docker run -d -v "\${DATA}":/input -v "\${OUTPUT}":/output 
 JOB=\`echo \$JOB | cut -c1-8\`
 if [ -z "\$JOB" ]; then
    echo "Error: could not run docker, this might happen if processing cannot sudo or use docker" >> \$log
-   echo "  use something like this: 'sudo visudo' and add ALL=(ALL) NOPASSWD: ALL" >> \$log
+   echo "  use something like this: 'sudo visudo' and add \"ALL=(ALL) NOPASSWD: ALL\"" >> \$log
 fi
 echo "\`date\`: ID for docker job is \"\$JOB\"" >> \$log
 sleep 10
@@ -386,7 +405,7 @@ EOF
   fi
 
   # done with install
-  echo "Done with install"
+  echo "Installation done"
   exit 0
 fi
 
@@ -397,21 +416,23 @@ if [ "$remove" == 1 ]; then
      echo -n "Found a directory \"$bucket\". Delete? (Yes/No) "
      read yesno
      if [ $yesno == "Yes" ]; then
-        echo "Delete directory..."
+        echo "Delete \"$bucket\" directory..."
         /bin/rm -rf $bucket
         # and remove the monit file
 	f=/etc/monit/conf.d/processing-${AETitle}.conf
-	echo "Delete monit file at \"$f\"."
-        sudo /bin/rm -rf $f
-	# and reload monit again
-	sudo monit reload
+	if [ -f "$f" ]; then
+          echo "Delete monit file at \"$f\"."
+          sudo /bin/rm -rf $f
+  	  # and reload monit again
+	  sudo monit reload
+        fi
         # delete the plugins for this module
 	if [ -d /data/code/php/db-plugins/${AETitle} ]; then
            echo "Detected plugins directory for this AETitle, attempt to delete now..."
            sudo /bin/rmdir -rf /data/code/php/db-plugins/${AETitle}
         fi
      else
-        echo "directory not deleted..."
+        echo "directory not deleted."
      fi
   else
      echo "The bucket \"$bucket\" could not be found. Nothing is done."
