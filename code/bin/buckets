@@ -111,11 +111,14 @@ if [ "$open" = 1 ]; then
   fi
   # could check if the container has our file structure to make sure (todo)
 
+  echo ""
   echo "Exit the shell to delete this session, make sure to commit your work from another terminal (see docker documentation)."
-  echo " /root/work.sh           - called by MagickBox to process data"
-  echo " /root/storage/info.json - description of the bucket with AETitle used to identify the bucket"
-  echo " /root/storage/db-plugin.code - called by MagickBox after processing, extracts measures"
-  docker run -i -t ${what} /bin/bash
+  echo "  /root/work.sh           - called by MagickBox to process data"
+  echo "  /root/storage/info.json - description of the bucket with AETitle used to identify the bucket"
+  echo "  /root/storage/db-plugin.code - called by MagickBox after processing, extracts measures"
+  echo ""
+  echo "The current directory is mounted inside the bucket in /local. Copy from files into the bucket from there."
+  docker run -i -t -v `pwd`:/local ${what} /bin/bash
   exit 0
 fi
 
