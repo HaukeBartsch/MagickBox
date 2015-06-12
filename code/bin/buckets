@@ -233,6 +233,11 @@ if [ ! -d /data/streams ]; then
    exit 1
 fi
 
+if [ "$EUID" -ne 0 ]; then
+   echo "Please run as root using sudo (for install or remove we have to be able to add to /etc/monit)..."
+   exit 1
+fi
+
 # this next step requires jq
 JQ=`which jq`
 if [ $? -eq 1 ]; then
@@ -244,18 +249,18 @@ if [ $? -eq 1 ]; then
       exit 1
    fi
    # this only works on linux 64bit
+   oldpw=`pwd`
+   cd /usr/bin
    wget http://stedolan.github.io/jq/download/linux64/jq 2> /dev/null
    if [ ! -f jq ]; then
       echo "Error: could not download jq, giving up"
       exit 1
+   else
+   	  echo "Installed jq in /usr/bin/"
    fi
    chmod gou+rx jq
-   JQ=./jq
-fi
-
-if [ "$EUID" -ne 0 ]; then
-   echo "Please run as root using sudo (for install or remove we have to be able to add to /etc/monit)..."
-   exit 1
+   JQ=/usr/bin/jq
+   cd "$oldpw"
 fi
 
 RUNNING=$(docker inspect $what 2> /dev/null)
@@ -267,6 +272,12 @@ fi
 # ok we have a container
 echo "Found the container image \"$what\". Query for included items."
 # first one we need is /root/storage/info.json
+# check if we can find that file
+CHECKFILE=$(docker run $what /bin/bash -c "test -f /root/storage/info.json; echo $?")
+if [ $CHECKFILE = "0" ]; then
+   echo "Error: This might not be a MagickBox bucket (no /root/storage/info.json found)"
+   exit 1
+fi
 INFO=$(docker run $what /bin/bash -c "cat /root/storage/info.json;exit")
 echo "We found this information:"
 echo $INFO | $JQ "."
@@ -429,7 +440,7 @@ if [ "$remove" == 1 ]; then
         # delete the plugins for this module
 	if [ -d /data/code/php/db-plugins/${AETitle} ]; then
            echo "Detected plugins directory for this AETitle, attempt to delete now..."
-           sudo /bin/rmdir -rf /data/code/php/db-plugins/${AETitle}
+           sudo /bin/rm -rf /data/code/php/db-plugins/${AETitle}
         fi
      else
         echo "directory not deleted."
