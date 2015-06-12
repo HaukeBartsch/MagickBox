@@ -40,12 +40,6 @@ cat <<EOF
 EOF
 ) > $WORKINGDIR/info.json
 
-echo "`date`: Process bucket01 (send to DCM4CHEE)" >> /data/logs/bucket01.log
-
-# DCM4CHEE for save keeping
-# /usr/bin/storescu -aet "Processing" -aec "DCM4CHEE" +r +sd XXX.XXX.XXX.XXX 11111 $WORKINGDIR
-# /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -b -- "${WORKINGDIR}/INPUT"
-
 echo "`date`: Process bucket01 (processing...)" >> /data/logs/bucket01.log
 
 # check the license
@@ -58,6 +52,7 @@ echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /da
 
 read s1 < <(date +'%s')
 $found = 0
+GEARMAN=`which gearman`
 for stream in $( ls -d /data/streams/* ); do
   if [ -f $stream/info.json ]; then
       enabled=`cat $stream/info.json | jq ".enabled"`
@@ -65,7 +60,7 @@ for stream in $( ls -d /data/streams/* ); do
          AETitle=`cat $stream/info.json | jq ".AETitle"`
          if [ $AETitleCalled = $AETitle ]; then
            echo "start stream $AETitle..." >> /data/logs/bucket01.log
-           /usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket${AETitle} -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+           $GEARMAN -h 127.0.0.1 -p 4730 -f bucket${AETitle} -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 	   found=1
            break;
          fi
