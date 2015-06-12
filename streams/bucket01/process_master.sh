@@ -58,9 +58,10 @@ for stream in $( ls -d /data/streams/* ); do
       enabled=`cat $stream/info.json | jq ".enabled"`
       if [ "$enabled" == "1" ]; then
          AETitle=`cat $stream/info.json | jq ".AETitle"`
-         if [ $AETitleCalled = $AETitle ]; then
+         AETitlei1=`cat $stream/info.json | jq ".AETitle" | sed 's/\"//g'`
+          if [ $AETitleCalled = $AETitle ]; then
            echo "start stream $AETitle..." >> /data/logs/bucket01.log
-           $GEARMAN -h 127.0.0.1 -p 4730 -f bucket${AETitle} -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
+           $GEARMAN -h 127.0.0.1 -p 4730 -f bucket${AETitle1} -- "${WORKINGDIR}/INPUT ${WORKINGDIR}/OUTPUT"
 	   found=1
            break;
          fi
