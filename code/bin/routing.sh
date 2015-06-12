@@ -156,7 +156,7 @@ def main(argv):
                 OUTPUTDIRECTORY = filterDICOM( OUTPUTDIRECTORY, which )
                 logging.info('  Instead of original OUTPUT send now files from: ' + OUTPUTDIRECTORY)
 
-              workstr = "/usr/local/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
+              workstr = "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- \"" + OUTPUTDIRECTORY + " " + IP + " " + PORT + " " + AETitleSender + " " + AETitleTo + "\" &"
               logging.info('  ROUTE: ' + workstr)
               try:
                 try:
