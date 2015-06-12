@@ -274,7 +274,7 @@ echo "Found the container image \"$what\". Query for included items."
 # first one we need is /root/storage/info.json
 # check if we can find that file
 CHECKFILE=$(docker run $what /bin/bash -c "test -f /root/storage/info.json; echo $?")
-if [ $CHECKFILE = "0" ]; then
+if [ ! $CHECKFILE = "0" ]; then
    echo "Error: This might not be a MagickBox bucket (no /root/storage/info.json found)"
    exit 1
 fi
