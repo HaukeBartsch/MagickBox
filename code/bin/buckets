@@ -148,7 +148,7 @@ EOF
   cat >$DIR/work.sh <<EOF
 #!/bin/bash
 
-if [ $# -ne 2 ];
+if [ \$# -ne 2 ];
 then
    echo "NAME:"
    echo "  $what - created by buckets (`date +"%D"`)"
