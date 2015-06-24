@@ -57,23 +57,19 @@
            $files = glob($measfn.'*.json');
            foreach ($files as $file) {
 	      # check if this is a directory
-            #$ar[count($ar)-1]['measures'] = 'found file: '.$file. ' found '.count($files).' files that match .json'; 
               if ( is_readable($file) ) {
                  $c = file_get_contents($file);
                  if ( $c == FALSE ) {
-                    #echo ("could not read info.json ". $fn);
                     continue;
                  }
                  $dat = json_decode($c, TRUE);
                  if (array_key_exists('measures', $ar[count($ar)-1])) {
-                   $ar[count($ar)-1]['measures'][$file] = $dat;
+                   $ar[count($ar)-1]['measures'][basename($file,'.json')] = $dat;
                  } else {
-   	           $ar[count($ar)-1]['measures'] = array($file => $dat);
+   	           $ar[count($ar)-1]['measures'] = array(basename($file,'.json') => $dat);
                  }
               }
            }
-       } else {
-         $ar[count($ar)-1]['measures'] = 'could not find AETitleCaller'; 
        }
   }
 
