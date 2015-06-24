@@ -11,6 +11,12 @@
 
 
 DIR=/data/scratch/.arrived
+if [ ! -d "$DIR" ]; then
+  mkdir -p "$DIR"
+  chmod 777 "$DIR"
+fi
+
+
 # only done if at least that old (in seconds)
 oldtime=15
 

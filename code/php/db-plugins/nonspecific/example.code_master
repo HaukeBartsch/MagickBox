@@ -1,17 +1,25 @@
 #!/bin/bash
 
 #
-# check if argument has a specific name, read and parse, return json
-# (rename this file to end with ".code" to enable it)
+# An example plugin that will be called at the end of processing. It can extract
+# quantitative measures from files and save them as flat structured json
+# files. This will make them readable by MagickBox.
+#
+# How it works:
+# Check if the argument has a specific name, read and parse, echo parsed data as json.
+# The json structure needs to be a single object with key: value pairs.
+#
+# In order to enable this file rename to end with ".code".
 #
 
+# This example can accept two different file names.
 name=`basename "$1"`
-if [ "$name" != "MI.txt" ] && [ "$name" != "Left.txt" ] && [ "$name" != "Right.txt" ] && [ "$name" != "SeriesInfo.txt" ]; then
+if [ "$name" != "MI.txt" ] && [ "$name" != "SeriesInfo.txt" ]; then
   exit -1
 fi
 
 #
-# If file name is MI.txt return the single value inside.
+# File MI.txt contains a single MI value (number).
 #
 
 if [ "$name" == "MI.txt" ]; then
@@ -22,49 +30,7 @@ if [ "$name" == "MI.txt" ]; then
 fi
 
 #
-# If the file name is Left.txt create json as a return argument.
-#
-
-header=( Unclassified WhiteMatter GrayMatter 3rdVentricle 4thVentricle 5thVenctricle LateralVentricle InferiorLateralVentricle InteriorCSF CerebellarWhiteMatter CerebellarGrayMatter Hippocampus Amygdala Thalamus Caudate Putamen Pallidum VentralDiencephalon NucleusAccumbens Brainstem ExteriorCSF WMHypoIntensity Other )
-
-if [ "$name" == "Left.txt" ]; then
-  data=(`cat "$1"`)
-  cmd="{"
-  al="${#header[@]}"
-  al=$(( $al - 1 ))
-  for i in "${!header[@]}"; do
-    cmd=`printf "%s \"Left%s\": \"%s\"" "$cmd" "${header[$i]}" "${data[$i]}"`
-    if [ "$i" -lt "$al" ]; then
-       cmd="${cmd},"
-    fi
-  done
-  cmd="$cmd }"
-  echo $cmd
-  exit
-fi
-
-#
-# Same is the file name is "Right.txt"
-#
-
-if [ "$name" == "Right.txt" ]; then
-  data=(`cat "$1"`)
-  cmd="{"
-  al="${#header[@]}"
-  al=$(( $al - 1 ))
-  for i in "${!header[@]}"; do
-    cmd=`printf "%s \"Right%s\": \"%s\"" "$cmd" "${header[$i]}" "${data[$i]}"`
-    if [ "$i" -lt "$al" ]; then
-       cmd="${cmd},"
-    fi
-  done
-  cmd="$cmd }"
-  echo $cmd
-  exit
-fi
-
-#
-# SeriesInfo.txt is a file with several lines.
+# SeriesInfo.txt is a file with several lines, each line contains the value of a known quantity.
 #
 
 header=( FilePath ScannerManufacturer ScannerType SeriesDescription NumberOfImages )
