@@ -39,24 +39,15 @@
 					<h1>Magick Box</h1>
 					<h3>Algorithms to the data</h3>
 					<p>
-						<small>Created by <a href="http://mmil.ucsd.edu">Hauke Bartsch, Nate White, Anders Dale</a> / <a href="http://mmil.ucsd.edu">contact: hbartsch@ucsd.edu</a></small>
+					  <small>Created by <a href="http://mmil.ucsd.edu">Hauke Bartsch, Nate White, Anders Dale</a> / <a href="http://mmil.ucsd.edu">contact: hbartsch@ucsd.edu</a></small>
 					</p>
 				</section>
 
 				<section>
 					<h2>M-B</h2>
 					<p>
-						A computer that receives DICOM data - performs a computation - and sends you the results back.
+					  Software that receives data - performs a computation - and sends you the results back.
 					</p>
-                                        <p>&nbsp;</p>
-                                        <p>
-                                           Black-box recipe
-                                           <ol>
-                                              <li>DICOM push from PACS/OsiriX/storescu</li>
-                                              <li>A "bucket" processes the data (INPUT)</li>  
-                                              <li>Result (OUTPUT) is send back using DICOM push</li>
-                                           </ol>
-                                        </p>
 
 					<aside class="notes">
 						.
@@ -64,11 +55,22 @@
 				</section>
 
 				<section>
-					<h2>Tour</h2>
+                                        <h2>Black-box recipe</h2>
+                                        <p>
+                                           <ol>
+                                              <li>DICOM push or mb command line utility sends data</li>
+                                              <li>A "bucket" processes the data</li>  
+                                              <li>Result is send back using DICOM push or using mb</li>
+                                           </ol>
+                                        </p>
+                                </section>
+
+				<section>
+					<h2>Links</h2>
 					<ul>
 						<li><a href="/index.php">Processing Overview</a></li>
+						<li><a href="http://magickbox.readthedocs.org/en/latest/">Read the Docs</a></li>
 						<li><a href="/code/bucketstore/index.php">Bucket Store</a></li>
-						<li><a href="http://137.110.172.43:1234/dcm4chee-web3/">Built-in PACS (DCM4CHEE)</a></li>
 					</ul>
 				</section>
 
