@@ -54,21 +54,22 @@
       <div class="row-fluid">
         <hr>
         <h2>Bucket API</h2>
-        <p>New buckets can be defined using the attached template. Download the file and unpack into a temporary directory. Copy all your processing scripts into the directory and adjust the info.json file using a text editor.</p>
+        <p>New buckets can be defined using the 'buckets' script which is part of MagickBox. Download the file and run it to see a list of options. Create and open a new bucket and copy the processing scripts into the bucket. Adjust the included info.json file using a text editor.</p>
         <pre>
         {
           "name": "MyPackage",
+          "AETitle": "MYPROC",
           "install": "mypackage.tgz",
-          "version": "0.0.1"
+          "version": "0.0.1",
+          "enabled": 1
         }</pre>
         
-        <a class="btn btn-primary" role="button" href="/code/bucketstore/bucketAPI.tgz" id="download-bucket-API">Bucket API Template<br/>Linux 64bit, glibc 4.7</a>
       </div>
  
       <div class="row-fluid">
         <hr>
         <footer>
-            <p>&copy; Multi-modal imaging laboratory, 2013</p>
+            <p>&copy; Multi-modal imaging laboratory, 2015</p>
         </footer>
       </div>
     </div>
