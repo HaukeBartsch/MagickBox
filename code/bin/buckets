@@ -4,7 +4,7 @@
 # We want to be able to install and deinstall a bucket based
 # on its docker file only. 
 # Users install a bucket by specifying the name of a docker file.
-# The container will contain the files required to install this
+# The container will contain the files required to install the
 # container (using buckets) to a MagickBox machine.
 #
 
@@ -24,22 +24,23 @@ then
    echo ""
    echo "COMMANDS:"
    echo ""
-   echo "  install <bucket>"
-   echo "    This requires an existing docker image (can be created with bucket create) and needs to run inside"
-   echo "    a MagickBox machine."
-   echo ""
-   echo "  remove <bucket>"
-   echo "    This will not remove the docker container image, only MB local files."
-   echo ""
    echo "  create <bucket>"
    echo "    This should work on any system that supports docker. It creates an initial MB"
    echo "    docker image which can be used with bucket install."
    echo ""
    echo "  open <bucket>"
    echo "    A call to start the bucket with an interactive shell for development purposes."
+   echo "    The current working directory will be linked inside the bucket to /local."
    echo ""
    echo "  run <bucket> <input directory> <output directory>"
    echo "    Pretend to be a MagickBox and run the bucket locally. Useful for offline computation and debugging."
+   echo ""
+   echo "  install <bucket>"
+   echo "    This requires an existing docker image (can be created with bucket create) and needs to run inside"
+   echo "    a MagickBox machine."
+   echo ""
+   echo "  remove <bucket>"
+   echo "    This will not remove the docker container image, only MB local files."
    echo ""
    exit 1
 fi
@@ -78,6 +79,10 @@ do
       run)
       run=1
       what="$2"
+      if [[ $# < 4 ]] ; then
+         echo "Error: Not enough parameters, requires input and output directories"
+         exit 1
+      fi
       dirin=`readlink -f "$3"`
       dirout=`readlink -f "$4"`
       shift
@@ -93,7 +98,7 @@ do
       ;;
   esac
   shift
-done 
+done
 
 if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ] && [ "$open" == 0 ] && [ "$run" == 0 ]
 then
@@ -147,14 +152,14 @@ if [ "$run" = 1 ]; then
      echo "Could not find the docker executable on this system, this is required to run a bucket"
      exit 1
   fi
-  # create a shell container now
+  # check if the bucket exists
   RUNNING=$(docker inspect $what 2> /dev/null)
   if [ $? -eq 1 ]; then
      echo "Error: A container with the name \"$what\" does not exist."
      exit 1
   fi
   # run in the foreground
-  docker run -v "$dirin":/input -v "$dirout":/output -v `dirname $0`/memory:/memory $what /bin/bash -c "/root/work.sh /input /output" 
+  docker run -v "$dirin":/input -v "$dirout":/output $what /bin/bash -c "/root/work.sh /input /output"
   exit 0
 fi
 
