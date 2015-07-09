@@ -6,7 +6,7 @@
 # Users install a bucket by specifying the name of a docker file.
 # The container will contain the files required to install this
 # container (using buckets) to a MagickBox machine.
-# 
+#
 
 if [ $# -eq 0 ]
 then
@@ -23,15 +23,23 @@ then
    echo "  processing buckets. Such a bucket can contain a program like FreeSurfer or another processing pipeline."
    echo ""
    echo "COMMANDS:"
-   echo "  install <docker image name>"
-   echo "    This requires an existing docker image (can be created with bucket create)."
-   echo "  remove <docker image name>"
+   echo ""
+   echo "  install <bucket>"
+   echo "    This requires an existing docker image (can be created with bucket create) and needs to run inside"
+   echo "    a MagickBox machine."
+   echo ""
+   echo "  remove <bucket>"
    echo "    This will not remove the docker container image, only MB local files."
-   echo "  create <docker image name>"
+   echo ""
+   echo "  create <bucket>"
    echo "    This should work on any system that supports docker. It creates an initial MB"
    echo "    docker image which can be used with bucket install."
-   echo "  open <docker image name>"
+   echo ""
+   echo "  open <bucket>"
    echo "    A call to start the bucket with an interactive shell for development purposes."
+   echo ""
+   echo "  run <bucket> <input directory> <output directory>"
+   echo "    Pretend to be a MagickBox and run the bucket locally. Useful for offline computation and debugging."
    echo ""
    exit 1
 fi
@@ -41,6 +49,7 @@ create=0
 install=0
 remove=0
 open=0
+run=0
 while [[ $# > 0 ]]
 do
   key="$1"
@@ -66,6 +75,15 @@ do
       what="$2"
       shift
       ;;
+      run)
+      run=1
+      what="$2"
+      dirin=`readlink -f "$3"`
+      dirout=`readlink -f "$4"`
+      shift
+      shift
+      shift
+      ;;
       force|-f)
       force=1
       ;;
@@ -77,9 +95,9 @@ do
   shift
 done 
 
-if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ] && [ "$open" == 0 ]
+if [ "$install" == 0 ] && [ "$remove" == 0 ] && [ "$create" == 0 ] && [ "$open" == 0 ] && [ "$run" == 0 ]
 then
-   echo "Error: either install or removed or create, it needs to be one of them"
+   echo "Error: unknown command"
    exit 1
 fi
 
@@ -94,7 +112,7 @@ if [ $what == "01" ] || [ $what == "02" ]; then
    exit 1
 fi
 
-# open - start the bucket container
+# open - start the bucket
 if [ "$open" = 1 ]; then
   which docker > /dev/null
   if [ ! $? -eq 0 ]; then
@@ -116,22 +134,40 @@ if [ "$open" = 1 ]; then
   echo "  /root/work.sh           - called by MagickBox to process data"
   echo "  /root/storage/info.json - description of the bucket with AETitle used to identify the bucket"
   echo "  /root/storage/db-plugin.code - called by MagickBox after processing, extracts measures"
+  echo "  /root/storage/memory/        - permanent storage for bucket (/memory), application can read and write"
   echo ""
   echo "The current directory is mounted inside the bucket in /local. Copy from files into the bucket from there."
   docker run -i -t -v `pwd`:/local ${what} /bin/bash
   exit 0
 fi
 
+if [ "$run" = 1 ]; then
+  which docker > /dev/null
+  if [ ! $? -eq 0 ]; then
+     echo "Could not find the docker executable on this system, this is required to run a bucket"
+     exit 1
+  fi
+  # create a shell container now
+  RUNNING=$(docker inspect $what 2> /dev/null)
+  if [ $? -eq 1 ]; then
+     echo "Error: A container with the name \"$what\" does not exist."
+     exit 1
+  fi
+  # run in the foreground
+  docker run -v "$dirin":/input -v "$dirout":/output -v `dirname $0`/memory:/memory $what /bin/bash -c "/root/work.sh /input /output" 
+  exit 0
+fi
+
 if [ "$create" = 1 ]; then
   which docker > /dev/null
   if [ ! $? -eq 0 ]; then
-     echo "Could not find the docker executable on this system, this is required to create an MB container"
+     echo "Could not find the docker executable on this system, this is required to create a MB container"
      exit 1
   fi
   # create a shell container now
   RUNNING=$(docker inspect $what 2> /dev/null)
   if [ $? -eq 0 ]; then
-     echo "Error: A container with the name \"$what\" exists already. Please make the name of the new container unique."
+     echo "Error: A container with the name \"$what\" exists already. Make the name of the new container unique."
      exit 1
   fi
   echo "Creating new container..."  
@@ -205,9 +241,10 @@ EOF
 ##############################################
 FROM ubuntu
 
-RUN mkdir -p /root/storage/
+RUN mkdir -p /root/storage/; mkdir -p /root/storage/memory
 COPY info.json /root/storage/
 COPY work.sh /root/
+RUN chmod gou+rx /root/work.sh
 COPY db-plugin.code /root/storage/
 EOF
 
@@ -216,6 +253,7 @@ EOF
   echo ""
   echo ""
   echo "Done! A new bucket has been created (\"$what\")."
+  echo ""
   echo "Start testing it by:"
   echo "  buckets open ${what}"
   echo "or use the docker container tools:"
@@ -225,13 +263,17 @@ EOF
   echo "  vi /root/storage/info.json"
   echo "  vi /root/storage/db-plugin.code"
   echo ""
+  echo "Place files that should survive a restart into:"
+  echo "  /root/storage/memory/"
+  echo ""
 
   exit 0
 fi
 
 # test if we are inside MagickBox
 if [ ! -d /data/streams ]; then
-   echo "Error: Did not find standard directory structure for MagickBox. MagickBox bucket install and remove can only be run"
+   echo "Error: Did not find standard directory structure for MagickBox."
+   echo "       MagickBox bucket install and remove can only be run from"
    echo "       inside a MagickBox machine."
    exit 1
 fi
@@ -381,7 +423,7 @@ mkdir -p \${OUTPUT}
 echo "\`date\`: use \${DATA} and \${OUTPUT} as directories for processing" >> \$log
 
 read s1 < <(date +'%s')
-JOB=\$(sudo /usr/bin/docker run -d -v "\${DATA}":/input -v "\${OUTPUT}":/output $what /bin/bash -l -c "/root/work.sh /input /output" )
+JOB=\$(sudo /usr/bin/docker run -d -v "\${DATA}":/input -v "\${OUTPUT}":/output -v \`dirname $0\`/memory:/memory $what /bin/bash -l -c "/root/work.sh /input /output" )
 JOB=\`echo \$JOB | cut -c1-8\`
 if [ -z "\$JOB" ]; then
    echo "Error: could not run docker, this might happen if processing cannot sudo or use docker" >> \$log
@@ -417,8 +459,18 @@ EOF
      mkdir -p /data/code/php/db-plugins/${AETitle}
      echo $PLUGIN > /data/code/php/db-plugins/${AETitle}/db-plugins.code
   fi
+  # create memory directory to keep permanent files accessible to containers (database files etc.)
+  MEMORY=$(docker run $what /bin/bash -c "if [ -d /root/storage/memory ] ; then echo 1; fi; exit")
+  if [ "$MEMORY" == "1" ]; then
+     echo "Found a memory folder, copy content to /data/streams/bucket${AETitle}/memory/ now..."
+     # create a folder for this plugin based on the AETitle
+     mkdir -p /data/streams/bucket${AETitle}/memory
+     $(docker run -v /data/streams/bucket${AETitle}/memory:/memory $what /bin/bash -c "cp -R /root/storage/memory/* /memory/ && exit")
+     ls -la /data/streams/bucket${AETitle}/memory/
+  fi
 
   # done with install
+  echo ""
   echo "Installation done"
   exit 0
 fi
