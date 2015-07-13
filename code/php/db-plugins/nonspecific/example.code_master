@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+# An example plugin that will be called at the end of processing. It can extract
+# quantitative measures from files and save them as flat structured json
+# files. This will make them readable by MagickBox.
+#
+# How it works:
+# Check if the argument has a specific name, read and parse, echo parsed data as json.
+# The json structure needs to be a single object with key: value pairs.
+#
+# In order to enable this file rename to end with ".code".
+#
+
+# This example can accept two different file names.
+name=`basename "$1"`
+if [ "$name" != "MI.txt" ] && [ "$name" != "SeriesInfo.txt" ]; then
+  exit -1
+fi
+
+#
+# File MI.txt contains a single MI value (number).
+#
+
+if [ "$name" == "MI.txt" ]; then
+  data=`cat "$1"`
+  cmd="{ \"MI\": [ $data ] }"
+  echo $cmd
+  exit
+fi
+
+#
+# SeriesInfo.txt is a file with several lines, each line contains the value of a known quantity.
+#
+
+header=( FilePath ScannerManufacturer ScannerType SeriesDescription NumberOfImages )
+
+if [ "$name" == "SeriesInfo.txt" ]; then
+  OLDIFS=$IFS
+  IFS=$'\n'
+  data=(`cat "$1"`)
+  IFS=$OLDIFS
+  cmd="{"
+  al="${#header[@]}"
+  al=$(( $al - 1 ))
+  for i in "${!header[@]}"; do
+    cmd=`printf "%s \"%s\": \"%s\"" "$cmd" "${header[$i]}" "${data[$i]}"`
+    if [ "$i" -lt "$al" ]; then
+       cmd="${cmd},"
+    fi
+  done
+  cmd="$cmd }"
+  echo $cmd
+  exit
+fi

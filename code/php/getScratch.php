@@ -49,7 +49,28 @@
        $ar[count($ar)-1]['processingTime'] = -(filemtime($fn)-$fileinfo['mtime']);
        $ar[count($ar)-1]['processingLogSize'] = $fileinfo['size'];
        $ar[count($ar)-1]['processingLast'] = time() - $fileinfo['mtime'];
-       
+
+       # we can add now processing results to the output 
+       # we expect them to be in /data/db/<AETitleCaller>/<scratchdir>/<somestring>.json
+       if (array_key_exists('AETitleCaller', $cont)) {
+           $measfn = '/data/db/'.$cont['AETitleCaller'].'/'.$ar[count($ar)-1]['scratchdir'].'/';
+           $files = glob($measfn.'*.json');
+           foreach ($files as $file) {
+	      # check if this is a directory
+              if ( is_readable($file) ) {
+                 $c = file_get_contents($file);
+                 if ( $c == FALSE ) {
+                    continue;
+                 }
+                 $dat = json_decode($c, TRUE);
+                 if (array_key_exists('measures', $ar[count($ar)-1])) {
+                   $ar[count($ar)-1]['measures'][basename($file,'.json')] = $dat;
+                 } else {
+   	           $ar[count($ar)-1]['measures'] = array(basename($file,'.json') => $dat);
+                 }
+              }
+           }
+       }
   }
 
   echo json_encode($ar);

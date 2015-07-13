@@ -14,7 +14,8 @@ chmod -R 777 ${od}
 port=1234
 pidfile=/data/.pids/storescpd.pid
 # the following script will get the aetitle of the caller, the called aetitle and the path to the data as arguments
-scriptfile=/data/streams/bucket01/process.sh
+#scriptfile=/data/streams/bucket01/process.sh
+scriptfile=/data/code/bin/receiveSingleFile.sh
 
 case $1 in
     'start')
@@ -22,9 +23,9 @@ case $1 in
 	if [ ! -d "$od" ]; then
 	    mkdir $od
 	fi
-	/usr/bin/storescp --eostudy-timeout $tos \
+	/usr/bin/storescp --fork \
 	    --write-xfer-little \
-	    --exec-on-eostudy "$scriptfile '#a' '#c' '#r' '#p'" \
+	    --exec-on-reception "$scriptfile '#a' '#c' '#r' '#p' '#f' &" \
   	    --sort-on-study-uid scp \
 	    --log-config /data/code/bin/logger.cfg \
 	    --output-directory "$od" \

@@ -26,10 +26,20 @@
      foreach (new RecursiveIteratorIterator($di,RecursiveIteratorIterator::SELF_FIRST,RecursiveIteratorIterator::CATCH_GET_CHILD) as $filename => $file) {
         if (is_dir($filename))
           continue;
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-        if ($extension == 'dcm') {
+        // check if the file is a DICOM file
+        $fp = fopen($filename, 'r');
+        fseek($fp, 128);
+        $t = fread($fp, 4);
+        fclose($fp);
+        echo (" // read the following characters: " . $t . " for file " . $filename ."\n");
+        if ( $t == "DICM" ) {
           echo(" files.push(\"/" . implode("/",array_splice(explode("/",$filename),2)) . "\");\n");
         }
+
+//        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+//        if ($extension == 'dcm') {
+//          echo(" files.push(\"/" . implode("/",array_splice(explode("/",$filename),2)) . "\");\n");
+//        }
      }
      echo ("</script>");
   } else {
