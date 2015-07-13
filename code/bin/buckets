@@ -11,7 +11,7 @@
 if [ $# -eq 0 ]
 then
    echo "NAME:"
-   echo "  buckets - processing buckets for MagickBox"
+   echo "  buckets - processing containers for MagickBox"
    echo ""
    echo "AUTHOR:"
    echo "  Hauke Bartsch - <HaukeBartsch@gmail.com>"
@@ -20,7 +20,7 @@ then
    echo "  buckets command [command options]"
    echo ""
    echo "  This script automates some procedures to create and install MagickBox (github.com/HaukeBartsch/MagickBox)"
-   echo "  processing buckets. Such a bucket can contain a program like FreeSurfer or another processing pipeline."
+   echo "  processing containers (buckets). Such a bucket can contain a program like FreeSurfer or another processing pipeline."
    echo ""
    echo "COMMANDS:"
    echo ""
@@ -40,7 +40,8 @@ then
    echo "    a MagickBox machine."
    echo ""
    echo "  remove <bucket>"
-   echo "    This will not remove the docker container image, only MB local files."
+   echo "    This will not remove the docker container image, only MB local files. Needs to run inside"
+   echo "    a MagickBox machine."
    echo ""
    exit 1
 fi
