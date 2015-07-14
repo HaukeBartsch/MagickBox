@@ -141,8 +141,12 @@ if [ "$open" = 1 ]; then
   echo "  /root/storage/db-plugin.code - called by MagickBox after processing, extracts measures"
   echo "  /root/storage/memory/        - permanent storage for bucket (/memory), application can read and write"
   echo ""
+  echo "This bucket contains a web-based text editor. Navigate with your web-browser to its interface at"
+  echo "  http://localhost:9090"
+  echo ""
   echo "The current directory is mounted inside the bucket in /local. Copy from files into the bucket from there."
-  docker run -i -t -v `pwd`:/local ${what} /bin/bash
+  xdg-open http://localhost:9090 &
+  docker run -i -t -p 9090:9090 -v `pwd`:/local ${what} /bin/bash
   exit 0
 fi
 
@@ -238,6 +242,10 @@ EOF
 
   cwd=`pwd`
   cd $DIR
+  # download the editor
+  wget https://github.com/HaukeBartsch/editor/raw/master/binary/Linux64/editor
+
+  # create the docker file
   cat >$DIR/Dockerfile <<EOF
 ##############################################
 #
@@ -249,7 +257,8 @@ FROM ubuntu
 RUN mkdir -p /root/storage/; mkdir -p /root/storage/memory
 COPY info.json /root/storage/
 COPY work.sh /root/
-RUN chmod gou+rx /root/work.sh
+COPY editor /root/storage/
+RUN chmod +rx /root/work.sh; chmod +rx /root/storage/editor; echo "if [ ! -z \"\\\$PS1\" ]; then /root/storage/editor open > /dev/null 2>&1 & fi" >>~/.bashrc
 COPY db-plugin.code /root/storage/
 EOF
 
@@ -308,7 +317,7 @@ if [ $? -eq 1 ]; then
    else
    	  echo "Installed jq in /usr/bin/"
    fi
-   chmod gou+rx jq
+   chmod +rx jq
    JQ=/usr/bin/jq
    cd "$oldpw"
 fi
@@ -378,7 +387,7 @@ case \$1 in
 esac
 exit 0
 EOF
-   chmod gou+rx $bucket/gearman-worker.sh
+   chmod +rx $bucket/gearman-worker.sh
 
    # In case we need more than one worker we could create more of these with different names...
 
