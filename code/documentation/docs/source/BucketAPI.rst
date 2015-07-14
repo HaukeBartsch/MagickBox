@@ -12,10 +12,16 @@ Note: The instructions to develop a bucket work on Linux, MacOS and Windows/cygw
 Create
 =======
 
-Name your bucket using lower-case characters and numbers only. Create one by downloading the "buckets" script, make it executable and run its 'create' command::
+Name your bucket using lower-case characters and numbers only. Create one by downloading the "buckets" script::
 
  wget https://raw.githubusercontent.com/HaukeBartsch/MagickBox/master/code/bin/buckets
- chmod gou+rx buckets
+
+Make the script executable::
+
+ chmod +x buckets
+
+And run its 'create' command::
+
  ./buckets create mytestbucket
 
 This will create "mytestbucket" as an almost empty bucket with some MagickBox special sauce. The bucket contains already its own documentation. Edit it by starting the bucket (open) and change the contained info.json file using the built-in editor vi (or install your own editor of choice using apt-get)::
