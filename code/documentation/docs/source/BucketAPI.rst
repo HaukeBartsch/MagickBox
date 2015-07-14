@@ -4,9 +4,9 @@
 Bucket development
 *******************
 
-A bucket is a portable light-weight container based (on docker) for MR image analysis pipelines. A bucket runs in the same way a program is executed. If data is available the bucket will start, perform its function and quit. This page explains the 'buckets' development program that is used to create, run and install buckets.
+A bucket is a portable light-weight container (based on docker) for MR image analysis pipelines. A bucket runs in the same way a program is executed. If data is available the bucket will start, perform its function and quit. This page explains the 'buckets' development program that is used to create, run and install buckets.
 
-Note: The instructions to develop a bucket should work on Linux, MacOS and Windows (cygwin) systems that have docker or boot2docker installed.
+Note: The instructions to develop a bucket work on Linux, MacOS and Windows/cygwin systems only. You need to have docker or boot2docker installed.
 
 
 Create
