@@ -24,22 +24,20 @@ And run its 'create' command::
 
  ./buckets create mytestbucket
 
-This will create "mytestbucket" as an almost empty bucket with some MagickBox special sauce. The bucket contains already its own documentation. Edit it by starting the bucket (open) and change the contained info.json file using the built-in editor vi (or install your own editor of choice using apt-get)::
+This will create "mytestbucket" as an almost empty bucket with some MagickBox special sauce. The bucket contains already its own documentation and a basic configuration. Edit the setup by starting the bucket using the "open" command. It should start an editor (github.com/HaukeBartsch/editor) inside the bucket open a web-browser that points it it (http://localhost:9090)::
 
  ./buckets open mytestbucket
- vi /root/storage/info.json
 
-Set the application entity title (AETitle) to be something short and unique. This string is later used to address this processing bucket. Store your changes using a second terminal (remember to commit your changes after you edited any file inside the bucket)::
+Set the application entity title of info.json (AETitle) to be something short and unique. This string is later used to address this processing bucket. Store your changes inside the bucket using a second terminal. Remember to commit your changes after you edited any file inside the bucket.
 
  docker ps
  docker commit <running image id> mytestbucket
 
-Now it is time to install your program into the bucket. The program will receive input data in an /input directory and it can produce output data in /output. The bucket is based on ubuntu so you can install a large number of existing programs simply by calling apt-get.
+Now it is time to install your program into the bucket. The program will receive input data in an /input directory and it can produce output data in /output. The bucket is based on ubuntu so you can install a large number of existing programs simply by calling ubuntu's package manager apt-get.
 
-To link up your program and the MagickBox processing entry point /root/work.sh edit that script and have it execute your program given the input and output directories::
+To link up your program and the MagickBox processing entry point work.sh edit that script using the web-editor and have it execute your program given the input and output directories::
 
  ./bucket open mytestbucket
- vi /root/work.sh
 
 The 'open' command will also create a link to your local directory inside the bucket. If your program is not avialable from one of the apt repositories you can copy the files into your local directory. That directory is available inside the bucket as /local/. Only use this connection to copy data into the bucket during installation of your program. The directory will not be available if the bucket runs inside the MagickBox environment.
 
@@ -52,20 +50,16 @@ Test your bucket by specifying an input and output directory for the 'run' comma
 
 After a successful run you should see your results appear in the directory you specified as the output folder. This is also a great way to locally run a computation on a limited number of cases.
 
-Optionally you can include a plugin that extracts measurements from your output files. Measures exported this way will be available to MagickBox. Useful measures include demographic information or for example measures for volumes of interest. An example plugin file is included with your bucket. Edit the file by::
-
- ./bucket open mytestbucket
- vi /root/storage/db-plugin.code
-
+Optionally you can include a plugin that extracts measurements from your output files. Measures exported this way will be available to MagickBox. Useful measures include demographic information or for example measures for volumes of interest. An example plugin file is included with your bucket and listed in the web editor page.
 
 Install
 ========
 
-After developing a bucket and successful local testing it can be integrated into a MagickBox machine. If you don't do your development inside MagickBox start by creating a tar-file that represents the content of your bucket::
+After developing a bucket and successful local testing using run it can be integrated into a MagickBox machine. If you don't do your development inside MagickBox start by creating a tar-file that represents the content of your bucket::
 
  docker export <id of running docker container> > mytestbucket.tar
 
-Copy this file to a MagickBox machine and import the bucket using docker followed by "buckets install"::
+Copy this file to your MagickBox machine and import the bucket using docker followed by "buckets install mytestbucket"::
  
  cat mytestbucket.tar | docker import - mytestbucket
  /data/code/bin/buckets install mytestbucket
