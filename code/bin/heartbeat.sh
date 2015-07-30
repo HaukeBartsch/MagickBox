@@ -13,8 +13,8 @@
 
 # read in the configuration file
 . /data/code/setup.sh
-PARENTIP=10.0.2.15
-PARENTPORT=1234
+#PARENTIP=10.0.2.15
+#PARENTPORT=1234
 
 log=/data/logs/heartbeat.log
 
