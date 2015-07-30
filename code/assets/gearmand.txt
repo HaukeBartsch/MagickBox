@@ -1,0 +1,5 @@
+Display system gearmand with:
+
+sudo update-rc.d -f gearman-job-server remove
+
+Monit will use the start script in /data/code/bin/gearmand.sh instead. Make sure that the /data/.pids/ file can be written.
