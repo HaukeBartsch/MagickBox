@@ -1,0 +1,24 @@
+[
+  { "type" : "T1", 
+    "description" : "A T1 weighted image is classified if its from GE and is EFGRE3D",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+		    "value": "^GE MEDICAL SYSTEMS" 
+      },{ 
+        "tag": [ "0x19", "0x109e"],
+		    "value": "EFGRE3D"
+      }
+    ]  
+  },
+  { "type" : "T2",
+    "description" : "A T2 weighted image",
+    "rules" : [
+      {
+        "tag": [ "0x19", "0x109c" ],
+        "operator": "regexp",
+        "value": "Cube"
+      }
+    ]
+  }
+]
