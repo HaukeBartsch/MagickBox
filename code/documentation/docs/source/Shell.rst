@@ -8,13 +8,13 @@ The MagickBox command shell is used to query, send, receive, and remove jobs fro
 
 You can download the command shell executable (mb) for your platform here:
 
-* Linux (MD5 = 764a386128376368528cdd6e66f15487)
-	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/LinuxAMD64/mb
+    * Linux (MD5 = 764a386128376368528cdd6e66f15487)
+    wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/LinuxAMD64/mb
 
-* MacOSX (MD5 = 916df7853de9d82f6ec7a3b20a3d0c9e)
-	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/MacOSX/mb
+    * MacOSX (MD5 = 916df7853de9d82f6ec7a3b20a3d0c9e)
+    wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/MacOSX/mb
 
-* Windows (MD5 = 68b9e25fef9f351eca91be531e2f033d)
+    * Windows (MD5 = 68b9e25fef9f351eca91be531e2f033d)
 	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/Windows/mb.exe
 
 This is the basic help page of the application::
@@ -22,22 +22,24 @@ This is the basic help page of the application::
 	NAME:
 	   mb - MagickBox command shell for query, send, retrieve, and deletion of data.
 	
-	   Setup: Start by listing known MagickBox instances (queryMachines). Identify your machines
-	     and add them using 'activeMachines add'. They will be used for all future commands.
+	   Setup: Start by listing known MagickBox instances (queryMachines). Identify
+	     your machine and add them using 'activeMachines add'. They will be used
+		 for all future commands.
 	
-	     Add your own identity using the setSender command. You can also add your projects name
-	     (see example below) to make it easier to identify your session later.
+	     Add your own identity using the setSender command. You can also add your 
+		 projects name (see example below) to make it easier to identify your 
+		 session later.
 	
-	   Most calls return textual output in JSON format that can be processed by tools
-	   such as jq (http://stedolan.github.io/jq/).
+	   Most calls return textual output in JSON format that can be processed by 
+	   tools such as jq (http://stedolan.github.io/jq/).
 	
-	   Regular expressions are used to identify individual sessions. They can be supplied as
-	   an additional argument to commands like list, log, push, pull, and remove.
-	   Only if a session matches, the command will be applied.
+	   Regular expressions are used to identify individual sessions. They can 
+	   be supplied as an additional argument to commands like list, log, push, 
+	   pull, and remove. Only if a session matches, the command will be applied.
 	
-	   If data is send (push) and there is more than 1 machine available that provide that type of processing
-	   one of them will be selected based on load. Commands such as 'list' will return the machine and port
-	   used for that session.
+	   If data is send (push) and there is more than 1 machine available that 
+	   provide that type of processing one of them will be selected based on load. 
+	   Commands such as 'list' will return the machine and port used for that session.
 	
 	   Example:
 	     > mb setSender "hauke:testproject"
@@ -59,19 +61,24 @@ This is the basic help page of the application::
 	COMMANDS:
 	   pull, g		Retrieve matching jobs output [pull <regular expression>]
 	   pull-input, pi	Retrieve matching jobs input [pull-input <regular expression>]
-	   push, p     		Send a directory for processing [push <aetitle> <dicom directory> [<arguments>]]
+	   push, p     		Send a directory for processing [push <aetitle> 
+	   					<dicom directory> [<arguments>]]
 	   remove, r		     Remove data [remove <regular expression>]
 	   list, l 		     Show list of matching jobs [list [regular expression]]
-	   log, l		     	  Show processing log of matching jobs [log [regular expression]]
+	   log, l		     	  Show processing log of matching jobs 
+	   						  [log [regular expression]]
 	   queryMachines, q		  Display list of known MagickBox instances [queryMachines]
-	   setSender, w	  		  Specify a string identifying the sender [setSender [<sender>]]
-	   setSetting 			  Get or overwrite a program setting [setSetting [<name> | <name> <value>]]
+	   setSender, w	  		  Specify a string identifying the sender 
+	   						  [setSender [<sender>]]
+	   setSetting 			  Get or overwrite a program setting [setSetting 
+	   					      [<name> | <name> <value>]]
 	   computeModules, c		  Get list of buckets for the active machines
 	   activeMachines, a		  Get list of active magick box machines
 	   help, h	   		  Shows a list of commands or help for one command
 	   
 	GLOBAL OPTIONS:
-	   --config-sender	Identify yourself, value is used as AETitleCaller [--config-sender <string>]
+	   --config-sender	Identify yourself, value is used as AETitleCaller 
+	   			        [--config-sender <string>]
 	   --help, -h			 show help
 	   --version, -v		 print the version
 	

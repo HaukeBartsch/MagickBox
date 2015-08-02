@@ -113,8 +113,10 @@ value can have the following form:
 
     * "tag" : [ <key from series level json> ]
     For example the tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
+    
     * "tag" : [ <dicom group hex code>, <dicom tag hex code> ]
     This way the Manufacturer can be addressed as "tag" : [ "0x08", "0x70" ]
+    
     * "tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
     If a third argument is supplied the returned tag is assumed to be a vector and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed by this as "tag" : [ "0x43", "0x1039", 1 ].
  
@@ -123,12 +125,16 @@ by the optional tag "operator". The following tests are available:
  
     * "operator" : "regexp"
     Default regular expression match (does not have to be supplied).
+    
     * "operator" : "=="
     Tests for equal value of the tag of the current DICOM file in the series and the value in the rule.
+    
     * "operator" : "!="
     True of the values are not the same (convertes values to floating point first).
+    
     * "operator" : "<"
     True if value in the DICOM file is smaller.
+    
     * "operator" : ">"
     True if value in the DICOM file is greater.
     
