@@ -174,7 +174,7 @@ class ProcessSingleFile(Daemon):
         def classify(self,dataset,data):
                 # read the classify rules
                 if self.classify_rules == 0:
-                        print "Warning: no classify rules found, ClassifyType tag will be empty"
+                        print "Warning: no classify rules found in %s, ClassifyType tag will be empty" % self.rulesFile
                         return ""
                 for rule in range(len(self.classify_rules)):
                         t = self.classify_rules[rule]['type']
@@ -188,7 +188,6 @@ class ProcessSingleFile(Daemon):
                                         v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
                                 elif len(r['tag']) == 3:
                                         v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value[int(r['tag'][2],0)]
-                                        print "found a value of v: %s " % v
                                 else:
                                         print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
                                 if not "operator" in r:

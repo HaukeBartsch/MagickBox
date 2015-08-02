@@ -6,18 +6,22 @@ Classification of DICOM Files
 
 This module is specific to DICOM file import via storescp. It is not available if DICOM files are send using mb.
 
-The DICOM import is build to support high-volume DICOM ingestion with advanced classification and post-processing steps. 
-As DICOM files arrive they are copied to the /data/scratch/archive/<study instance UID>/ directory. This directory
-structure is the only place that incoming files are stored. 
+The DICOM import is build to support high-volume DICOM ingestion with advanced DICOM series classification. 
+As DICOM files arrive they are copied to a /data/scratch/archive/<Study Instance UID>/ directory. This directory
+structure is the place that incoming files are stored permanently.
 
 Views are alternative directory structures that contain 
-versions of the input data suitable for particular purposes such as Quality Control and processing. Such directory structures
+versions of the input data suitable for particular purposes such as quality control and processing. Such directory structures
 (/data/scratch/views/raw) provide sub-directory structures on the series level and extract DICOM tags from the data. Views are
-created in parallel with the data import. This allows for accelerated processing buckets with series level access.
+created in parallel with the data import using a daemon process  (processSingleFile.py). This allows for accelerated processing
+buckets with access to series level information before a secondary DICOM parse operation.
+
+Views/raw
+=========
 
 The views/raw structure contains a folder named after the StudyInstanceUID which is unique for each study. Inside this folder are
-folders for each series as SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains the following
-DICOM tags derived from the imported series::
+folders for each series named using the SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains
+the following DICOM tags derived from the imported series::
 
   {
     "ClassifyType": "T1", 
@@ -42,13 +46,15 @@ DICOM tags derived from the imported series::
 
 The content of this structure is likely to change in the future. Most of the entries reflect directly 
 DICOM tags on the series level. The "NumFiles" tag is added to reflect the current number of files in the
-series directory (stored as SOPInstanceUID).
+series directory. The series level directories contain symbolic links to the data stored in the archive folder
+to limit the number of copy operation on the file system level.
 
 ClassifyType
 =============
 
 The tag called "ClassifyType" is derived from rules that specify how to detect a particular class of scan
-from the availble DICOM tags in each file. The rule file classifyRules.json has the following structure::
+from the availble DICOM tags in each series. The test is executed for each incoming DICOM files of the series.
+The rule file classifyRules.json stores the control structure for classification and has the following structure::
 
   [
     { "type" : "T1", 
@@ -96,24 +102,24 @@ from the availble DICOM tags in each file. The rule file classifyRules.json has 
   ]
   
   
-Each series type has a name "type" and a short description which is usually ignored and only used as a means to document.
-The rules for each type are a collection of statements that all have to be try for a scan to be classified as the "type".
-The order of the rules is importants as a successful classification will stop all further attempts of validating that
-particular series. 
+Each series type has a name "type" and a short description which is usually ignored and only used as a means to document what the classification tries to implement.
+The rules for each type are a collection of statements that all have to be true for a scan to be classified as "type".
+The order of the rules is important as a successful classification will stop all further attempts of validating that
+particular series - until the next file for the series is received.
 
 Each rule contains at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
 each files tag value to the one supplied in "value" is assumed to be a regular expression match (python search). The "tag"
-value can have the following form::
+value can have the following form:
 
-   * "tag" : [ <key from series level json> ]
-     For example the tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
-   * "tag" : [ <dicom group hex code>, <dicom tag hex code> ]
-     This way the Manufacturer can be addressed as "tag" : [ "0x08", "0x70" ]
-   * "tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
-     If a third argument is supplied the returned tag is assumed to be a vector and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed by this as "tag" : [ "0x43", "0x1039", 1 ].
+    * "tag" : [ <key from series level json> ]
+    For example the tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
+    * "tag" : [ <dicom group hex code>, <dicom tag hex code> ]
+    This way the Manufacturer can be addressed as "tag" : [ "0x08", "0x70" ]
+    * "tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
+    If a third argument is supplied the returned tag is assumed to be a vector and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed by this as "tag" : [ "0x43", "0x1039", 1 ].
  
- Instead of just using regular expressions tag values can also be interpreted as floating point values. This is forced
- by the optional tag "operator". The following tests are available::
+Instead of just using regular expressions tag values can also be interpreted as floating point values. This is forced
+by the optional tag "operator". The following tests are available:
  
     * "operator" : "regexp"
     Default regular expression match (does not have to be supplied).
