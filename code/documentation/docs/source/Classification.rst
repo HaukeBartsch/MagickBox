@@ -20,7 +20,7 @@ Views/raw
 =========
 
 The views/raw structure contains a folder named after the StudyInstanceUID which is unique for each study. Inside this folder are
-folders for each series named using the SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains
+folders for each series named after the SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains
 the following DICOM tags derived from the imported series::
 
   {
@@ -44,10 +44,10 @@ the following DICOM tags derived from the imported series::
     "StudyInstanceUID": "1.2.840.113619.6.283.4.679947340.3258.1405103835.996"  
   }
 
-The content of this structure is likely to change in the future. Most of the entries reflect directly 
+The content of this structure is likely to change in the future. Most of the entries reflect
 DICOM tags on the series level. The "NumFiles" tag is added to reflect the current number of files in the
 series directory. The series level directories contain symbolic links to the data stored in the archive folder
-to limit the number of copy operation on the file system level.
+to limit the number of copy operations and file duplications.
 
 ClassifyType
 =============
@@ -108,24 +108,21 @@ The order of the rules is important as a successful classification will stop all
 particular series - until the next file for the series is received.
 
 Each rule contains at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
-each files tag value to the one supplied in "value" is assumed to be a regular expression match (python search). The "tag"
-value can have the following form:
+each incoming DICOM files tag value to the one supplied in the "value" field of the rule is assumed to be a regular expression
+match (python search). The "tag" value can have the following structure:
 
     * "tag" : [ <key from series level json> ]
-    For example the tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
+    The tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
     
     * "tag" : [ <dicom group hex code>, <dicom tag hex code> ]
-    This way the Manufacturer can be addressed as "tag" : [ "0x08", "0x70" ]
+    The Manufacturer tag can be addressed as "tag" : [ "0x08", "0x70" ]
     
     * "tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
-    If a third argument is supplied the returned tag is assumed to be a vector and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed by this as "tag" : [ "0x43", "0x1039", 1 ].
+    If a third argument is supplied the returned tag is assumed to have a vector value and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed this way as "tag" : [ "0x43", "0x1039", "0" ].
  
 Instead of just using regular expressions tag values can also be interpreted as floating point values. This is forced
-by the optional tag "operator". The following tests are available:
+by the optional tag "operator". The following operator tests are available:
  
-    * "operator" : "regexp"
-    Default regular expression match (does not have to be supplied).
-    
     * "operator" : "=="
     Tests for equal value of the tag of the current DICOM file in the series and the value in the rule.
     
@@ -137,7 +134,9 @@ by the optional tag "operator". The following tests are available:
     
     * "operator" : ">"
     True if value in the DICOM file is greater.
-    
+
+    * "operator" : "regexp"
+    Default non-numeric regular expression match (does not have to be supplied).    
     
   Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series)
 the outcome of the classification will depend on the order in which files are received.
