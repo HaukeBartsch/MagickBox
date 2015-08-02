@@ -120,8 +120,8 @@ match (python search). The "tag" value can have the following structure:
     If a third argument is supplied the returned tag is assumed to have a vector value and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed this way as "tag" : [ "0x43", "0x1039", "0" ].
  
 Instead of just using regular expressions tag values can also be interpreted as floating point values. This is forced
-by the optional tag "operator". The following operator tests are available:
- 
+by the optional tag "operator". The following operators are available:
+
     * "operator" : "=="
     Tests for equal value of the tag of the current DICOM file in the series and the value in the rule.
     
@@ -135,6 +135,6 @@ by the optional tag "operator". The following operator tests are available:
     True if value in the DICOM file is greater.
 
     * "operator" : "regexp"
-    Default non-numeric regular expression match (does not have to be supplied).    
+    Default (non-numeric) regular expression match.
     
   Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received.
