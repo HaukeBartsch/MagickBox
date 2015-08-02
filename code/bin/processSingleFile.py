@@ -182,7 +182,15 @@ class ProcessSingleFile(Daemon):
                         for entry in range(len(self.classify_rules[rule]['rules'])):
                                 r = self.classify_rules[rule]['rules'][entry]
                                 # check if this regular expression matches the current type t
-                                v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
+                                if len(r['tag']) == 1:
+                                        v = data[r['tag'][0]]
+                                elif len(r['tag']) == 2:
+                                        v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
+                                elif len(r['tag']) == 3:
+                                        v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value[int(r['tag'][2],0)]
+                                        print "found a value of v: %s " % v
+                                else:
+                                        print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
                                 if not "operator" in r:
                                         r["operator"] = "regexp"  # default value
                                 op = r["operator"]
@@ -193,7 +201,11 @@ class ProcessSingleFile(Daemon):
                                            ok = False
                                            break
                                 elif op == "==":
-                                        if not r['value'] == v:
+                                        if not float(r['value']) == float(v):
+                                           ok = False
+                                           break
+                                elif op == "!=":
+                                        if not float(r['value']) != float(v):
                                            ok = False
                                            break
                                 elif op == "<":
@@ -282,9 +294,10 @@ class ProcessSingleFile(Daemon):
                                 if os.path.exists(fn3):
                                         with open(fn3, 'r') as f:
                                                 data = json.load(f)
-                                data['ClassifyType'] = self.classify(dataset, data)
                                 data['StudyInstanceUID'] = dataset.StudyInstanceUID
                                 data['NumFiles'] = str( int(data['NumFiles']) + 1 )
+                                # do this last, it could use values in data for classification
+                                data['ClassifyType'] = self.classify(dataset, data)
                                 with open(fn3,'w') as f:
                                         json.dump(data,f,indent=2,sort_keys=True)
                 rp.close()

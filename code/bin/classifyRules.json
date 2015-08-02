@@ -8,17 +8,37 @@
       },{ 
         "tag": [ "0x19", "0x109e"],
 		    "value": "EFGRE3D"
+      },{ 
+        "tag": [ "NumFiles" ],
+        "operator": ">",
+		    "value": "100"
       }
     ]  
   },
   { "type" : "T2",
     "description" : "A T2 weighted image",
     "rules" : [
-      {
+      { 
+        "tag": [ "0x08", "0x70"],
+		    "value": "^GE MEDICAL SYSTEMS" 
+      },{
         "tag": [ "0x19", "0x109c" ],
         "operator": "regexp",
         "value": "Cube"
       }
     ]
-  }
+  },
+  { "type" : "fMRI",
+    "description" : "fMRI",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+		    "value": "^GE MEDICAL SYSTEMS" 
+      },{
+        "tag": [ "0x43", "0x1039", "0" ],
+        "operator": "==",
+        "value": "4000"
+      }
+    ]
+  }  
 ]

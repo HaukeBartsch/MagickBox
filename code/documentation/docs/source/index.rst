@@ -18,5 +18,6 @@ Contents:
    Shell
    LargeProjects
    Routing
-   BucketAPI   
+   BucketAPI
+   Classification  
 
