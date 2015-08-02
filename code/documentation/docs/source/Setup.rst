@@ -13,9 +13,9 @@ In order to setup a new MagickBox follow the steps outlined below.
    * setup the virtual machines to start when the host computer starts (/Library/LaunchDaemon/ scripts)
 
 
-******************************
+
 Setup of MagickBox without VM
-******************************
+=============================
 
 MagickBox can also run natively on a Linux system. This requires the following packages to be installed.
 

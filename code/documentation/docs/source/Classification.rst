@@ -4,7 +4,7 @@
 Classification of DICOM Files
 *****************************
 
-This module is specific to DICOM file import via storescp. It is not available if DICOM files are send using mb.
+  This module is specific to DICOM file import via storescp. It is not available if DICOM files are send using mb.
 
 The DICOM import is build to support high-volume DICOM ingestion with advanced DICOM series classification. 
 As DICOM files arrive they are copied to a /data/scratch/archive/<Study Instance UID>/ directory. This directory
@@ -87,7 +87,7 @@ The rule file classifyRules.json stores the control structure for classification
       ]
     },
     { "type" : "fMRI",
-      "description" : "fMRI",
+      "description" : "fMRI detected by used b-value",
       "rules" : [
         { 
           "tag": [ "0x08", "0x70"]  ,
@@ -139,5 +139,5 @@ by the optional tag "operator". The following tests are available:
     True if value in the DICOM file is greater.
     
     
-Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series)
+  Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series)
 the outcome of the classification will depend on the order in which files are received.
