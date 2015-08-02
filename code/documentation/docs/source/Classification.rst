@@ -7,17 +7,16 @@ Classification of DICOM Files
   This module is specific to DICOM file import via storescp. It is not available if DICOM files are send using mb.
 
 The DICOM import is build to support high-volume DICOM ingestion with advanced DICOM series classification. 
-As DICOM files arrive they are copied to a /data/scratch/archive/<Study Instance UID>/ directory. This directory
-structure is the place that incoming files are stored permanently.
+As DICOM files arrive they are copied to a /data/scratch/archive/<Study Instance UID>/ directory for permanent storage.
+
+Views/raw
+=========
 
 Views are alternative directory structures that contain 
 versions of the input data suitable for particular purposes such as quality control and processing. Such directory structures
 (/data/scratch/views/raw) provide sub-directory structures on the series level and extract DICOM tags from the data. Views are
 created in parallel with the data import using a daemon process  (processSingleFile.py). This allows for accelerated processing
 buckets with access to series level information before a secondary DICOM parse operation.
-
-Views/raw
-=========
 
 The views/raw structure contains a folder named after the StudyInstanceUID which is unique for each study. Inside this folder are
 folders for each series named after the SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains
@@ -138,5 +137,4 @@ by the optional tag "operator". The following operator tests are available:
     * "operator" : "regexp"
     Default non-numeric regular expression match (does not have to be supplied).    
     
-  Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series)
-the outcome of the classification will depend on the order in which files are received.
+  Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received.
