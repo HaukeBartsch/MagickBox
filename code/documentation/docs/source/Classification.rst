@@ -52,8 +52,8 @@ to limit the number of copy operations and file duplications.
 ClassifyType
 =============
 
-The tag called "ClassifyType" is derived from rules that specify how to detect a particular class of scan
-from the availble DICOM tags in each series. The test is executed for each incoming DICOM files of the series.
+The tag called "ClassifyType" is derived from rules that specify how a particular class of scans
+can be detected from the availble DICOM tags. The test is executed for each incoming DICOM file in the series.
 The rule file classifyRules.json stores the control structure for classification and has the following structure::
 
   [
