@@ -182,12 +182,22 @@ class ProcessSingleFile(Daemon):
                         for entry in range(len(self.classify_rules[rule]['rules'])):
                                 r = self.classify_rules[rule]['rules'][entry]
                                 # check if this regular expression matches the current type t
+                                taghere = True
                                 if len(r['tag']) == 1:
-                                        v = data[r['tag'][0]]
+                                        if not r['tag'][0] in data:
+                                                taghere = False
+                                        else:
+                                                v = data[r['tag'][0]]
                                 elif len(r['tag']) == 2:
-                                        v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
+                                        if not ( int(r['tag'][0],0), int(r['tag'][1],0) ) in dataset:
+                                                taghere = False
+                                        else:
+                                                v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
                                 elif len(r['tag']) == 3:
-                                        v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value[int(r['tag'][2],0)]
+                                        if not ( int(r['tag'][0],0), int(r['tag'][1],0) ) in dataset:
+                                                taghere = False
+                                        else:
+                                                v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value[int(r['tag'][2],0)]
                                 else:
                                         print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
                                 if not "operator" in r:
