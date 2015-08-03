@@ -135,6 +135,12 @@ by the optional tag "operator". The following operators are available:
 "operator" : ">"
   True if value in the DICOM file is greater.
 
+"operator" : "exist"
+  True if the tag exists (can be empty).
+
+"operator" : "notexist"
+  True if the tag does not exist.
+
 "operator" : "regexp"
   Default (non-numeric) regular expression match.
     

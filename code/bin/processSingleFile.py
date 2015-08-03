@@ -215,6 +215,14 @@ class ProcessSingleFile(Daemon):
                                         if not float(r['value']) < float(v):
                                            ok = False
                                            break
+                                elif op == "exist":
+					if not tagthere:
+                                           ok = False
+                                           break
+                                elif op == "notexist":
+					if tagthere:
+                                           ok = False
+                                           break
                                 else:
                                         ok = False
                                         break
