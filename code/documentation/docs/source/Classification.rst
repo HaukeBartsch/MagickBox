@@ -21,7 +21,7 @@ Views/raw
 
 The views/raw structure contains a folder named after the StudyInstanceUID which is unique for each study. Inside this folder are
 folders for each series named using the SeriesInstanceUID. Together with the series directory a <SeriesInstanceUID>.json contains
-the following DICOM tags derived from the imported series::
+the following DICOM tags derived from the imported series (series level json)::
 
   {
     "ClassifyType": "T1", 
@@ -53,7 +53,7 @@ ClassifyType
 =============
 
 The tag called "ClassifyType" is derived from rules that specify how to detect a particular class of scan
-from the availble DICOM tags in each series. The test is executed for each incoming DICOM files of the series.
+from the available DICOM tags in each series. The test is executed for each incoming DICOM file of the series.
 The rule file classifyRules.json stores the control structure for classification and has the following structure::
 
   [
