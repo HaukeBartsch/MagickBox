@@ -15,7 +15,7 @@ You can download the command shell executable (mb) for your platform here:
     wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/MacOSX/mb
 
     * Windows (MD5 = 68b9e25fef9f351eca91be531e2f033d)
-	wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/Windows/mb.exe
+    wget https://github.com/HaukeBartsch/MagickBox/raw/master/code/mb-shell/Windows/mb.exe
 
 This is the basic help page of the application::
 
@@ -67,7 +67,8 @@ This is the basic help page of the application::
 	   list, l 		     Show list of matching jobs [list [regular expression]]
 	   log, l		     	  Show processing log of matching jobs 
 	   						  [log [regular expression]]
-	   queryMachines, q		  Display list of known MagickBox instances [queryMachines]
+	   queryMachines, q		  Display list of known MagickBox instances 
+                                          [queryMachines]
 	   setSender, w	  		  Specify a string identifying the sender 
 	   						  [setSender [<sender>]]
 	   setSetting 			  Get or overwrite a program setting [setSetting 
