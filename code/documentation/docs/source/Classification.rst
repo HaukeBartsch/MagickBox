@@ -110,31 +110,32 @@ Each rule contains at least the tags "tag" and "value". If only these two tags a
 each incoming DICOM files tag value to the one supplied in the "value" field of the rule is assumed to be a regular expression
 match (python search). The "tag" value can have the following structure:
 
-    * "tag" : [ <key from series level json> ]
-    The tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
+"tag" : [ <key from series level json> ]
+  The tag can describe the number of DICOM slices in this series as "tag": [ "NumFiles" ].
     
-    * "tag" : [ <dicom group hex code>, <dicom tag hex code> ]
-    The Manufacturer tag can be addressed as "tag" : [ "0x08", "0x70" ]
+"tag" : [ <dicom group hex code>, <dicom tag hex code> ]
+  The Manufacturer tag can be addressed as "tag" : [ "0x08", "0x70" ]
     
-    * "tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
-    If a third argument is supplied the returned tag is assumed to have a vector value and the specific index from that array is used. The b-value for GE diffusion weighted images can be addressed this way as "tag" : [ "0x43", "0x1039", "0" ].
+"tag" : [ <dicom group hex code>, <dicom tag hex code>, <vector index> ]
+  If a third argument is supplied the returned tag is assumed to have a vector value and the specific index from that array is used. 
+  The b-value for GE diffusion weighted images can be addressed this way as "tag" : [ "0x43", "0x1039", "0" ].
  
 Instead of just using regular expressions tag values can also be interpreted as floating point values. This is forced
 by the optional tag "operator". The following operators are available:
 
-    * "operator" : "=="
-    Tests for equal value of the tag of the current DICOM file in the series and the value in the rule.
+"operator" : "=="
+  Tests for equal value of the tag of the current DICOM file in the series and the value in the rule.
     
-    * "operator" : "!="
-    True of the values are not the same (convertes values to floating point first).
+"operator" : "!="
+  True of the values are not the same (convertes values to floating point first).
     
-    * "operator" : "<"
-    True if value in the DICOM file is smaller.
+"operator" : "<"
+  True if value in the DICOM file is smaller.
     
-    * "operator" : ">"
-    True if value in the DICOM file is greater.
+"operator" : ">"
+  True if value in the DICOM file is greater.
 
-    * "operator" : "regexp"
-    Default (non-numeric) regular expression match.
+"operator" : "regexp"
+  Default (non-numeric) regular expression match.
     
-  Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received.
+Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received.
