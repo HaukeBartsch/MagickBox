@@ -1,26 +1,66 @@
 [
-  { "type" : "T1", 
+  { "type" : "GE",
+    "description" : "This scan is from GE",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+        "value": "^GE MEDICAL"
+      }
+    ]  
+  },
+  {
+  	"type" : "sag",
+  	"description": "A sagittal scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [0,1,0,0,0,-1],
+  	      "operator": "approx"
+  	    }
+  	]
+  },
+  {
+  	"type" : "axial",
+  	"description": "An axial scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [1,0,0,0,1,0],
+  	      "operator": "approx",
+	      "approxLevel": "0.0004"
+  	    }
+  	]
+  },
+  {
+  	"type" : "coronal",
+  	"description": "A coronal scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [1,0,0,0,0,-1],
+  	      "operator": "approx"
+  	    }
+  	]
+  },
+  { "type" : "T1",
     "description" : "A T1 weighted image is classified if its from GE and is EFGRE3D",
     "rules" : [
       { 
         "tag": [ "0x08", "0x70"],
-		    "value": "^GE MEDICAL SYSTEMS" 
+        "value": "^GE MEDICAL SYSTEMS" 
       },{ 
         "tag": [ "0x19", "0x109e"],
-		    "value": "EFGRE3D"
+        "value": "EFGRE3D"
       },{ 
         "tag": [ "NumFiles" ],
         "operator": ">",
-		    "value": "100"
+        "value": "100"
       }
-    ]  
+    ]
   },
   { "type" : "T2",
     "description" : "A T2 weighted image",
     "rules" : [
       { 
         "tag": [ "0x08", "0x70"],
-		    "value": "^GE MEDICAL SYSTEMS" 
+        "value": "^GE MEDICAL SYSTEMS" 
       },{
         "tag": [ "0x19", "0x109c" ],
         "operator": "regexp",
@@ -33,7 +73,7 @@
     "rules" : [
       { 
         "tag": [ "0x08", "0x70"],
-		    "value": "^GE MEDICAL SYSTEMS" 
+        "value": "^GE MEDICAL SYSTEMS" 
       },{
         "tag": [ "0x43", "0x1039", "0" ],
         "operator": "==",

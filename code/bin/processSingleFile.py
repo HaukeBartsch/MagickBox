@@ -163,7 +163,7 @@ class Daemon:
 
 class ProcessSingleFile(Daemon):
         def init(self):
-                    self.classify_rules    = 0
+                    self.classify_rules = 0
                     self.rulesFile = '/data/code/bin/classifyRules.json'
                     if os.path.exists(self.rulesFile):
                             with open(self.rulesFile,'r') as f:
@@ -172,10 +172,11 @@ class ProcessSingleFile(Daemon):
                             print "Warning: no /data/code/bin/classifyRules.json file could be found"
  
         def classify(self,dataset,data):
+                classifyTypes = []
                 # read the classify rules
                 if self.classify_rules == 0:
                         print "Warning: no classify rules found in %s, ClassifyType tag will be empty" % self.rulesFile
-                        return ""
+                        return classifyTypes
                 for rule in range(len(self.classify_rules)):
                         t = self.classify_rules[rule]['type']
                         ok = True
@@ -233,14 +234,29 @@ class ProcessSingleFile(Daemon):
 					if tagthere:
                                            ok = False
                                            break
+                                elif op == "approx":
+                                        # check each numerical entry if its close to a specific value
+                                        approxLevel = 1e-4
+                                        if 'approxLevel' in r:
+                                                approxLevel = float(r['approxLevel'])
+                                        if isinstance( v, list ) and isinstance(r['value'], list) and len(v) == len(r['value']):
+                                                for i in range(len(v)):
+                                                        if abs(float(v[i])-float(r['value'][i])) > approxLevel:
+                                                                ok = False
+                                                                break
+                                        if isinstance( v, (int, float) ):
+                                                if abs(float(v)-float(r['value'])) > approxLevel:
+                                                        ok = False
+                                                        break
+                                                
                                 else:
                                         ok = False
                                         break
                                            
                         # ok nobody failed, this is it
                         if ok:
-                          return t
-                return ""
+                           classifyTypes.append(t)
+                return classifyTypes
                                 
         def run(self):
                 try:
@@ -288,33 +304,82 @@ class ProcessSingleFile(Daemon):
                                   continue # don't  do anything because the file exists already
                                 # lets store some data in a series specific file
                                 fn3 = os.path.join(outdir, dataset.StudyInstanceUID, dataset.SeriesInstanceUID) + ".json"
-                                data = { 'StudyInstanceUID' : dataset.StudyInstanceUID,
-                                         'SeriesInstanceUID' : dataset.SeriesInstanceUID,
-                                         'PatientID' : dataset.PatientID,
-                                         'PatientName' : dataset.PatientName,
-                                         'StudyDate' : dataset.StudyDate,
-                                         'StudyDescription' : dataset.StudyDescription,
-                                         'SeriesDescription': dataset.SeriesDescription,
-                                         'EchoTime' : str(dataset.EchoTime),
-                                         'RepetitionTime' :str(dataset.RepetitionTime),
-                                         'NumFiles' : str(0)
-                                }
+                                data = {}
+                                try:
+                                        data['Manufacturer'] = dataset.Manufacturer
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['StudyInstanceUID'] = dataset.StudyInstanceUID
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['SeriesInstanceUID'] = dataset.SeriesInstanceUID
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['PatientID'] = dataset.PatientID
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['PatientName'] = dataset.PatientName
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['StudyDate'] = dataset.StudyDate
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['StudyDescription'] = dataset.StudyDescription
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['SeriesDescription'] = dataset.SeriesDescription
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['EchoTime'] = str(dataset.EchoTime)
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['RepetitionTime'] = str(dataset.RepetitionTime)
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['SeriesNumber'] = str(dataset.SeriesNumber)
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['InstanceNumber'] = str(dataset.InstanceNumber)
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['SliceThickness'] = str(dataset[0x18,0x50].value)
+                                except KeyError:
+                                        pass
+                                try:
+                                        data['SliceSpacing'] = str(dataset[0x18,0x88].value)
+                                except KeyError:
+                                        pass
+                                data['NumFiles'] = str(0)
                                 try:
                                          data['Private0019_10BB'] = str(dataset[0x0019,0x10BB].value)
                                 except KeyError:
                                         pass
                                 try:
-                                        vals = dataset[0x0043,0x1039].value
-                                        data['Private0043_1039'] = vals
+                                        data['Private0043_1039'] = dataset[0x0043,0x1039].value
                                 except KeyError:
                                         pass
+
                                 if os.path.exists(fn3):
                                         with open(fn3, 'r') as f:
                                                 data = json.load(f)
+                                if not 'ClassifyType' in data:
+                                        data['ClassifyType'] = []
                                 data['StudyInstanceUID'] = dataset.StudyInstanceUID
                                 data['NumFiles'] = str( int(data['NumFiles']) + 1 )
-                                # do this last, it could use values in data for classification
-                                data['ClassifyType'] = self.classify(dataset, data)
+                                # add new types as they are found (this will create all type that map to any of the images in the series)
+                                data['ClassifyType'] = data['ClassifyType'] + list(set(self.classify(dataset, data)) - set(data['ClassifyType']))
                                 with open(fn3,'w') as f:
                                         json.dump(data,f,indent=2,sort_keys=True)
                 rp.close()

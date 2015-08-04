@@ -23,7 +23,7 @@ folders for each series named using the SeriesInstanceUID. Together with the ser
 the following DICOM tags derived from the imported series (series level json)::
 
   {
-    "ClassifyType": "T1", 
+    "ClassifyType": ["T1"], 
     "EchoTime": "2.984", 
     "NumFiles": "166", 
     "PatientID": "P0979_03_001", 
@@ -57,10 +57,28 @@ can be detected from the availble DICOM tags. The test is executed for each inco
 The rule file classifyRules.json stores the control structure for classification and has the following structure::
 
   [
-    { "type" : "T1", 
+    { "type" : "GE",
+      "description" : "Scanner is GE",
+      "rules" : [
+        {
+	   "tag" : [ "0x08", "0x70"],
+	   "value": "^GE MEDICAL SYSTEMS" 
+        } 
+      ]
+    },{ "type" : "axial",
+      "description": "An axial scan",
+      "rules" : [
+        {
+	   "tag" : [ "0x20","0x37" ],
+	   "value" : [1,0,0,0,1,0],
+	   "operator": "approx",
+	   "approxLevel": "0.0004"
+	}
+      ]
+   },{ "type" : "T1",
       "description" : "A T1 weighted image is classified if its from GE and is EFGRE3D",
       "rules" : [
-        { 
+        {
           "tag": [ "0x08", "0x70"],
 	  	    "value": "^GE MEDICAL SYSTEMS" 
         },{ 
@@ -104,8 +122,7 @@ The rule file classifyRules.json stores the control structure for classification
   
 Each series type has a name "type" and a short description which is usually ignored and only used as a means to document what the classification tries to implement.
 The rules for each type are a collection of statements that all have to be true for a scan to be classified as "type".
-The order of the rules is important as a successful classification will stop all further attempts of validating that
-particular series - until the next file for the series is received.
+The order of the rules is not important. Every successful classification will add its type to the returned array.
 
 Each rule contains at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
 each incoming DICOM files tag value to the one supplied in the "value" field of the rule is assumed to be a regular expression
@@ -142,6 +159,9 @@ by the optional tag "operator". The following operators are available:
 "operator" : "notexist"
   True if the tag does not exist.
 
+"operator" : "approx"
+  True if the numerical values of the tag are sufficiently close to the target values. How close can be controlled by an "approxLevel" variable in the rule.
+  
 "operator" : "regexp"
   Default (non-numeric) regular expression match.
     
