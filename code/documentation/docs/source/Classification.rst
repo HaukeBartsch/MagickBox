@@ -187,8 +187,8 @@ by the optional tag "operator". The following operators are available:
   True if the tag does not exist.
 
 "operator" : "approx"
-  True if the numerical values of the tag are sufficiently close to the target values. How close can be controlled by an "approxLevel" variable in the rule.
-  
+  True if the numerical values of the tag are sufficiently close to the target values. How close can be controlled by an "approxLevel" variable in the rule. The above example uses this to test if the Image Orientation Patient tag that contains the direction cosines for the positive row axis are close enough to be called either axial, sagittal or coronal. A series might contain more than one orientation (like a localizer scan). In this case all three rules might apply as images for that series are classified.
+
 "operator" : "regexp"
   Default (non-numeric) regular expression match.
     
