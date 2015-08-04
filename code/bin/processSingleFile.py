@@ -168,9 +168,40 @@ class ProcessSingleFile(Daemon):
                     if os.path.exists(self.rulesFile):
                             with open(self.rulesFile,'r') as f:
                                     self.classify_rules = json.load(f)
+                            # we should resolve dependencies between rules, this could introduce a problem with termination,
+                            # Todo: add a check to the program to make sure that the rules are ok
+                            # we need to be able to reference a specific rule (id tag?)
+                            self.classify_rules = self.resolveClassifyRules(self.classify_rules)
+                            
                     else:
                             print "Warning: no /data/code/bin/classifyRules.json file could be found"
- 
+
+        def resolveClassifyRules(self, classify_rules ):
+                # add recursively rules back until no more changes can be done
+                for attempt in range(100):
+                        didChange = False
+                        for rule in range(len(classify_rules)):
+                                for entry in range(len(classify_rules[rule]['rules'])):
+                                        r = classify_rules[rule]['rules'][entry]
+                                        if "rule" in r:
+                                                # find the rule with that ID
+                                                findID = False
+                                                for rule2 in range(len(classify_rules)):
+                                                        if "id" in classify_rules[rule2] and classify_rules[rule2]['id'] == r['rule']:
+                                                                # found the id this rule refers to
+                                                                # copy the rules and append instead of the reference rule
+                                                                findID = True
+                                                                classify_rules[rule]['rules'].remove(r)
+                                                                classify_rules[rule]['rules'].extend(classify_rules[rule2]['rules'])
+                                                                didChange = True
+                                                if not findID:
+                                                        print "Error: could not find a rule with ID %s" % r['rule']
+                                                        continue
+                                
+                        if not didChange:
+                                break
+                return classify_rules
+                
         def classify(self,dataset,data):
                 classifyTypes = []
                 # read the classify rules
@@ -401,6 +432,9 @@ if __name__ == "__main__":
                         daemon.stop()
                 elif 'restart' == sys.argv[1]:
                         daemon.restart()
+                elif 'test' == sys.argv[1]:
+                        r = daemon.resolveClassifyRules( daemon.classify_rules )
+                        print json.dumps(r, sort_keys=True, indent=2)
                 else:
                         print "Unknown command"
                         sys.exit(2)
@@ -412,5 +446,6 @@ if __name__ == "__main__":
         else:
                 print "Process a single DICOM file fast using a daemon process that creates symbolic links."
                 print "Use 'start' to start the daemon in the background. Send file names for processing using 'send'."
-                print "Usage: %s start|stop|restart|send" % sys.argv[0]
+                print "Test the rules by running test."
+                print "Usage: %s start|stop|restart|send|test" % sys.argv[0]
                 sys.exit(2)

@@ -67,6 +67,7 @@ The rule file classifyRules.json stores the control structure for classification
 
   [
     { "type" : "GE",
+      "id" : "GEBYMANUFACTURER",
       "description" : "Scanner is GE",
       "rules" : [
         {
@@ -84,12 +85,28 @@ The rule file classifyRules.json stores the control structure for classification
 	   "approxLevel": "0.0004"
 	}
       ]
-   },{ "type" : "T1",
+    },{ "type" : "axial",
+      "description": "An axial scan",
+      "rules" : [
+         { "tag" : [ "0x20","0x37" ],
+           "value" : [1,0,0,0,1,0], 
+           "operator": "approx",
+           "approxLevel": "0.0004"
+         }
+      ]
+    },{ "type" : "coronal",
+      "description": "A coronal scan",
+      "rules" : [
+         { "tag" : [ "0x20","0x37" ],
+           "value" : [1,0,0,0,0,-1],
+           "operator": "approx"
+         }
+      ]
+    },{ "type" : "T1",
       "description" : "A T1 weighted image is classified if its from GE and is EFGRE3D",
       "rules" : [
         {
-          "tag": [ "0x08", "0x70"],
-	  	    "value": "^GE MEDICAL SYSTEMS" 
+          "rule" : "GEBYMANUFACTURER"
         },{ 
           "tag": [ "0x19", "0x109e"],
 	  	    "value": "EFGRE3D"
@@ -104,8 +121,7 @@ The rule file classifyRules.json stores the control structure for classification
       "description" : "A T2 weighted image",
       "rules" : [
        { 
-          "tag": [ "0x08", "0x70"],
-  		    "value": "^GE MEDICAL SYSTEMS" 
+          "rule" : "GEBYMANUFACTURER"
         },{
           "tag": [ "0x19", "0x109c" ],
           "operator": "regexp",
@@ -117,8 +133,7 @@ The rule file classifyRules.json stores the control structure for classification
       "description" : "fMRI detected by used b-value",
       "rules" : [
         { 
-          "tag": [ "0x08", "0x70"]  ,
-		      "value": "^GE MEDICAL SYSTEMS" 
+          "rule": "GEBYMANUFACTURER"
         },{
           "tag": [ "0x43", "0x1039", "0" ],
           "operator": "==",
@@ -133,7 +148,10 @@ Each series type has a name "type" and a short description which is usually igno
 The rules for each type are a collection of statements that all have to be true for a scan to be classified as "type".
 The order of the rules is not important. Every successful classification will add its type to the returned array.
 
-Each rule contains at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
+Each rule can contain a reference to another rule (key "rule" with value "id"). This allows for an hierarchical classification of rules. In the example above the rule for
+detecting if a scan was done on a scanner from GE is referenced in types "T2", "T1", and "fMRI". For debugging a call to "processSingleFile.py test" will list the resolved rules on the command line.
+
+Non-referencing rules contain at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
 each incoming DICOM files tag value to the one supplied in the "value" field of the rule is assumed to be a regular expression
 match (python search). The "tag" value can have the following structure:
 
