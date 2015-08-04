@@ -311,68 +311,68 @@ class ProcessSingleFile(Daemon):
                                 data = {}
                                 try:
                                         data['Manufacturer'] = dataset.Manufacturer
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['StudyInstanceUID'] = dataset.StudyInstanceUID
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['SeriesInstanceUID'] = dataset.SeriesInstanceUID
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['PatientID'] = dataset.PatientID
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['PatientName'] = dataset.PatientName
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['StudyDate'] = dataset.StudyDate
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['StudyDescription'] = dataset.StudyDescription
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['SeriesDescription'] = dataset.SeriesDescription
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['EchoTime'] = str(dataset.EchoTime)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['RepetitionTime'] = str(dataset.RepetitionTime)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['SeriesNumber'] = str(dataset.SeriesNumber)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['InstanceNumber'] = str(dataset.InstanceNumber)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['SliceThickness'] = str(dataset[0x18,0x50].value)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['SliceSpacing'] = str(dataset[0x18,0x88].value)
-                                except KeyError:
+                                except:
                                         pass
                                 data['NumFiles'] = str(0)
                                 try:
                                          data['Private0019_10BB'] = str(dataset[0x0019,0x10BB].value)
-                                except KeyError:
+                                except:
                                         pass
                                 try:
                                         data['Private0043_1039'] = dataset[0x0043,0x1039].value
-                                except KeyError:
+                                except:
                                         pass
 
                                 if os.path.exists(fn3):
