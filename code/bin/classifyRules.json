@@ -39,8 +39,35 @@
   	    }
   	]
   },
+  {
+	"type" : "T1",
+	"description" : "T1 according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "T1"
+	    }
+	]
+  },
+  {
+	"type" : "T2",
+	"description" : "T2 according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "T2"
+	    }
+	]
+  },
+  {
+	"type" : "DTI",
+	"description" : "DTI according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "DIFFUSION"
+	    }
+	]
+  },
   { "type" : "T1",
-    "description" : "A T1 weighted image is classified if its from GE and is EFGRE3D",
+    "description" : "A T1 weighted image from GE and as EFGRE3D",
     "rules" : [
       { 
         "tag": [ "0x08", "0x70"],

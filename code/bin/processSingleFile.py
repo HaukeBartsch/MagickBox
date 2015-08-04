@@ -184,6 +184,7 @@ class ProcessSingleFile(Daemon):
                                 r = self.classify_rules[rule]['rules'][entry]
                                 # check if this regular expression matches the current type t
                                 taghere = True
+                                v = ''
                                 if len(r['tag']) == 1:
                                         if not r['tag'][0] in data:
                                                 taghere = False
@@ -202,9 +203,16 @@ class ProcessSingleFile(Daemon):
                                 else:
                                         print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
                                 if not "operator" in r:
+                                        #print "Did not find an operator value in \"%s\"" % self.classify_rules[rule]['description']
                                         r["operator"] = "regexp"  # default value
+                                #else:
+                                #        print "Did find an operator value in \"%s\"" % self.classify_rules[rule]['description']
                                 op = r["operator"]
-                                if  op == "regexp":
+                                if op == "notexist":
+					if tagthere:
+                                           ok = False
+                                           break
+                                elif  op == "regexp":
                                         pattern = re.compile(r['value'])
                                         if not pattern.search(v):
                                            # this pattern failed, fail the whole type and continue with the next
@@ -228,10 +236,6 @@ class ProcessSingleFile(Daemon):
                                            break
                                 elif op == "exist":
 					if not tagthere:
-                                           ok = False
-                                           break
-                                elif op == "notexist":
-					if tagthere:
                                            ok = False
                                            break
                                 elif op == "approx":
