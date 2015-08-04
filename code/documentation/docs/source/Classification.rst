@@ -23,24 +23,33 @@ folders for each series named using the SeriesInstanceUID. Together with the ser
 the following DICOM tags derived from the imported series (series level json)::
 
   {
-    "ClassifyType": ["T1"], 
-    "EchoTime": "2.984", 
-    "NumFiles": "166", 
-    "PatientID": "P0979_03_001", 
-    "PatientName": "P0979_03_001", 
-    "Private0019_10BB": "1.000000", 
+    "ClassifyType": [
+	"GE",
+        "sag",
+	"T1"
+    ],
+    "EchoTime": "2.984",
+    "InstanceNumber": "3",
+    "Manufacturer": "GE MEDICAL SYSTEMS",
+    "NumFiles": "166",
+    "PatientID": "P0979_03_001",
+    "PatientName": "P0979_03_001",
+    "Private0019_10BB": "1.000000",
     "Private0043_1039": [
-      400, 
-      0, 
-      0, 
-      0
-    ], 
-    "RepetitionTime": "7.38", 
-    "SeriesDescription": "IRSPGR_PROMO", 
-    "SeriesInstanceUID": "1.2.840.113619.2.283.6945.3146400.18515.1404745836.841", 
-    "StudyDate": "20140711", 
-    "StudyDescription": "PLING",   
-    "StudyInstanceUID": "1.2.840.113619.6.283.4.679947340.3258.1405103835.996"  
+	400,
+	0,
+	0,
+	0
+    ],
+    "RepetitionTime": "7.38",
+    "SeriesDescription": "IRSPGR_PROMO",
+    "SeriesInstanceUID": "1.2.840.113619.2.283.6945.3146400.18515.1404745836.841",
+    "SeriesNumber": "3",
+    "SliceSpacing": "1.2",
+    "SliceThickness": "1.2",
+    "StudyDate": "20140711",
+    "StudyDescription": "PLING",
+    "StudyInstanceUID": "1.2.840.113619.6.283.4.679947340.3258.1405103835.996"
   }
 
 The content of this structure is likely to change in the future. Most of the entries reflect
