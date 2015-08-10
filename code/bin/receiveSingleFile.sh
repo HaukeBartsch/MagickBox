@@ -40,5 +40,6 @@ echo "$DIR/$FILE" >> "${fn}"
 # Instead just use bash to write to the named pipe
 pipe=/tmp/.processSingleFilePipe
 if [[ -p $pipe ]]; then
+   # this is a named pipe which will block until someome is reading from it
    echo "$DIR/$FILE" >$pipe
 fi
