@@ -250,21 +250,33 @@ class ProcessSingleFile(Daemon):
                                            ok = False
                                            break
                                 elif op == "==":
-                                        if not float(r['value']) == float(v):
-                                           ok = False
-                                           break
+					try:
+                                          if not float(r['value']) == float(v):
+                                             ok = False
+                                             break
+					except ValueError:
+					  pass
                                 elif op == "!=":
-                                        if not float(r['value']) != float(v):
-                                           ok = False
-                                           break
+					try:
+                                          if not float(r['value']) != float(v):
+                                             ok = False
+                                             break
+					except ValueError:
+					  pass
                                 elif op == "<":
-                                        if not float(r['value']) > float(v):
-                                           ok = False
-                                           break
+                                        try:
+                                          if not float(r['value']) > float(v):
+                                             ok = False
+                                             break
+					except ValueError:
+					  pass
                                 elif op == ">":
-                                        if not float(r['value']) < float(v):
-                                           ok = False
-                                           break
+                                        try:
+                                          if not float(r['value']) < float(v):
+                                             ok = False
+                                             break
+					except ValueError:
+					  pass
                                 elif op == "exist":
 					if not tagthere:
                                            ok = False
