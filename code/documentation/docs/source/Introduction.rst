@@ -35,6 +35,11 @@ The web interface is available at:
 
 Images to be processed should be sent to port 11113 on the host IP, using OsiriX or storescu (part of the dcmtk toolkit).
 
+.. figure:: static/MagickBoxWebInterface.jpg
+
+    Web-interface of MagickBox with timeline and processing jobs..
+
+
 
 Processing Streams
 ==================

@@ -1,0 +1,111 @@
+[
+  { "type" : "GE",
+    "id" : "GEBYMANUFACTURER",
+    "description" : "This scan is from GE",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+        "value": "^GE MEDICAL"
+      }
+    ]  
+  },
+  {
+  	"type" : "sag",
+  	"description": "A sagittal scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [0,1,0,0,0,-1],
+  	      "operator": "approx"
+  	    }
+  	]
+  },
+  {
+  	"type" : "axial",
+  	"description": "An axial scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [1,0,0,0,1,0],
+  	      "operator": "approx",
+	      "approxLevel": "0.0004"
+  	    }
+  	]
+  },
+  {
+  	"type" : "coronal",
+  	"description": "A coronal scan",
+  	"rules" : [
+  	    { "tag" : [ "0x20","0x37" ],
+  	      "value" : [1,0,0,0,0,-1],
+  	      "operator": "approx"
+  	    }
+  	]
+  },
+  {
+	"type" : "T1",
+	"description" : "T1 according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "T1"
+	    }
+	]
+  },
+  {
+	"type" : "T2",
+	"description" : "T2 according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "T2"
+	    }
+	]
+  },
+  {
+	"type" : "DTI",
+	"description" : "DTI according to new DICOM tags",
+	"rules" : [
+	    { "tag" : [ "0x08", "0x9209" ],
+	      "value" : "DIFFUSION"
+	    }
+	]
+  },
+  { "type" : "T1",
+    "description" : "A T1 weighted image from GE and as EFGRE3D",
+    "rules" : [
+      {
+	"rule" : "GEBYMANUFACTURER"
+      },{ 
+        "tag": [ "0x19", "0x109e"],
+        "value": "EFGRE3D"
+      },{ 
+        "tag": [ "NumFiles" ],
+        "operator": ">",
+        "value": "100"
+      }
+    ]
+  },
+  { "type" : "T2",
+    "description" : "A T2 weighted image",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+        "value": "^GE MEDICAL SYSTEMS" 
+      },{
+        "tag": [ "0x19", "0x109c" ],
+        "operator": "regexp",
+        "value": "Cube"
+      }
+    ]
+  },
+  { "type" : "fMRI",
+    "description" : "fMRI",
+    "rules" : [
+      { 
+        "tag": [ "0x08", "0x70"],
+        "value": "^GE MEDICAL SYSTEMS" 
+      },{
+        "tag": [ "0x43", "0x1039", "0" ],
+        "operator": "==",
+        "value": "4000"
+      }
+    ]
+  }  
+]

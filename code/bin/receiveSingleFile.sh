@@ -33,3 +33,13 @@ WORKINGDIR=/data/scratch/.arrived
 fn=`echo "${WORKINGDIR}/$AETitleCaller $AETitleCalled $CallerIP $SDIR" | sed -e 's/\"//g'`
 echo "$DIR/$FILE" >> "${fn}"
 #echo "$fn" >> /data/logs/receivedSingleFile.log
+
+# tell the orig2raw script processSingleFile.py that we got a new file
+# We can do this using python ... but that will take too much system resources
+#    /data/code/bin/processSingleFile.py send "$DIR/$FILE"
+# Instead just use bash to write to the named pipe
+pipe=/tmp/.processSingleFilePipe
+if [[ -p $pipe ]]; then
+   # this is a named pipe which will block until someome is reading from it
+   echo "$DIR/$FILE" >$pipe
+fi
