@@ -19,7 +19,7 @@ INP=$1
 INP=( $INP )
 DATA=${INP[0]}
 SERVER=${PARENTIP}
-# DCM4CHEE port
+# default port
 PORT=11111
 
 echo "`date`: start processing \"${INP[*]}\"" >> /data/logs/bucket02.log
@@ -34,7 +34,7 @@ then
 fi
 
 AETitleSender="Processing"
-AETitleTo="DCM4CHEE"
+AETitleTo="UNKNOWN"
 
 if [ ${#INP[@]} -eq 5 ]
 then
@@ -69,11 +69,17 @@ do
 done
 echo "`date`: send DICOM files from ${TEMP}" >> /data/logs/bucket02.log
 
-/usr/bin/storescu -aet $AETitleSender -aec $AETitleTo -nh -xy +r +sd $SERVER $PORT $TEMP >> /data/logs/bucket02.log
+/usr/bin/storescu -aet $AETitleSender -aec $AETitleTo -nh -xy +r +sd $SERVER $PORT $TEMP >> /data/logs/bucket02.log 2>&1
 if [ $? -ne 0 ]
 then
   echo "`date`: error on send \"$DATA\" to \"${AETitleTo}\"" >> /data/logs/bucket02.log
   logger "Error: could not send \"$DATA\" to \"${AETitleTo}\""
+  # keep a log of stuff that fails
+  mkdir -p /data/scratch/sendfailed/
+  errorFile=`echo ${DATA} | sed -e 's/\//_/g'`
+  echo "/usr/bin/gearman -h 127.0.0.1 -p 4730 -f bucket02 -- $@" > /data/scratch/sendfailed/$errorFile
+  echo "Keep track of failed: /data/scratch/sendfailed/$errorFile" >> /data/logs/bucket02.log
+  logger "Keep track of failed: /data/scratch/sendfailed/$errorFile"
 else
   echo "`date`: send files to \"${AETitleTo}\" ($DATA) done" >> /data/logs/bucket02.log
   logger "send files to \"${AETitleTo}\" ($DATA) done"
