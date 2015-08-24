@@ -141,6 +141,11 @@ sweep () {
    # next remove all archive data that do not have a reference in tmp anymore
    if hash realpath 2>/dev/null; then
      ls -d /data/scratch/tmp.*/INPUT | xargs realpath | sort | uniq > /tmp/tmpreferenced
+     # we have to add the directories in waiting (in .arrived but not yet in tmp)
+     # otherwise we would delete them by accident
+     if [ "$(ls -A /data/scratch/.arrived)" ]; then
+       ls -Ad /data/scratch/.arrived/* | cut -d' ' -f4 | xargs -i echo /data/scratch/archive/{} >> /tmp/tmpreferenced
+     fi
      ls -d /data/scratch/archive/* > /tmp/inarchive
      notreferenced=`grep -v -f /tmp/tmpreferenced /tmp/inarchive`
      #echo "REMOVE: archive data not referenced in /data/scratch/tmp.* anymore \"$notreferenced\"" >> $log
@@ -163,7 +168,7 @@ sweep () {
    sudo docker images -q --filter "dangling=true" | sudo xargs docker rmi
 }
 
-mkdir -p /var/run/magickbox
+#mkdir -p /var/run/magickbox
 
 # The following section takes care of not starting this script more than once 
 # in a row. If for example it takes too long to run a single iteration this 
