@@ -51,8 +51,10 @@ fi
 echo "`date`: can run this job $lic ($CallerIP requested $AETitleCalled)" >> /data/logs/bucket01.log
 
 read s1 < <(date +'%s')
-$found = 0
+found=0
 GEARMAN=`which gearman`
+# make sure jq is installed
+# make sure that "enabled": 1 is in each active bucket (no double quotes around 1)
 for stream in $( ls -d /data/streams/* ); do
   if [ -f $stream/info.json ]; then
       enabled=`cat $stream/info.json | jq ".enabled"`
