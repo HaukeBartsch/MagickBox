@@ -89,6 +89,14 @@ class Daemon:
                     if pid:
                             message = "pidfile %s already exist. Daemon already running?\n"
                             sys.stderr.write(message % self.pidfile)
+                            # Maybe the pid file exits - but the process is not running (crashed).
+                            try:
+                                    os.kill(pid, 0)
+                            except OSError:
+                                    # The process does not exist, forget the pid and wait to be restarted..
+                                    pid = None
+                                    os.remove(self.pidfile)
+
                             sys.exit(1)
                             
                     # Start the daemon
