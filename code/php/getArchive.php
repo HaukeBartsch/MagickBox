@@ -109,9 +109,20 @@ function addLog( $message ) {
             $studyDate = $matches[1];
          }
 
+         $ret = array();
+         $lastLine = exec('/usr/bin/dcmdump +P "StudyDescription" '.$archiveDir.'/'.$file, $ret);
+	 $matches = array();
+         $ok = preg_match("/.*\[([^\]]+).*/",$ret[0], $matches);
+         if ( ! $ok ) {
+            $studyDescription = "";
+	    //print_r($matches);          
+         } else {
+            $studyDescription = $matches[1];
+         }
+
          $siuid = basename($archiveDir);
          $ar[] = array( "PatientID" => $patientid, "AccessionNumber" => $accession, 
-	                "SIUID" => $siuid, "StudyDate" => $studyDate, "PatientName" => $patientname );
+	                "SIUID" => $siuid, "StudyDate" => $studyDate, "PatientName" => $patientname, "StudyDescription" => $studyDescription );
          break; // only look at the first file
        }
   }

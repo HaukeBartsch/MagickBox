@@ -230,6 +230,7 @@
                 <th>Accession</th>
                 <th>StudyDate</th>
                 <th>PatientName</th>
+                <th>StudyDescription</th>
 		<th>SIUID</th>
              </thead>
              <tbody id="removestudiestable">

@@ -269,6 +269,7 @@ jQuery(document).ready(function() {
 		str += "<td>" + data[i]['AccessionNumber'] + "</td>";
 		str += "<td>" + data[i]['StudyDate'] + "</td>";
 		str += "<td>" + data[i]['PatientName'] + "</td>";
+		str += "<td>" + data[i]['StudyDescription'] + "</td>";
 		str += "<td>" + data[i]['SIUID'] + "</td>";
 		str += "<td><button class=\"btn btn-default\" onclick=\"removeArchive('"+data[i]['SIUID']+"');\" val=\""+data[i]['SIUID']+"\">Delete Study</button></td>";
                 str += "</tr>";
