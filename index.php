@@ -63,7 +63,6 @@
                   <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
                   <li><a id="RemoveStudies" data-toggle="modal" href="#removeStudies">List Studies</a></li>
                   <li><a id="rlog" data-toggle="modal" href="#routingLog">Routing Log</a></li>
-                  <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
             </li>
           </ul>
