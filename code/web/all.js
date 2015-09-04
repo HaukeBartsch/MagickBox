@@ -336,10 +336,14 @@ jQuery(document).ready(function() {
 		width: 250, height: 150, cell_size: 20, seed: aetitle });
 	    patternList[aetitle] = pattern.png();
 
-            if (typeof(aetitle) !== 'undefined') { 
-              jQuery.get('/code/php/getLicense.php', { operation: "query", feature: aetitle }, function(num){
+            if (typeof(aetitle) !== 'undefined') {
+              jQuery.getJSON('/code/php/getLicense.php', { operation: "query", feature: aetitle }, function(num) {
                 return function(data) {
-                  jQuery('.row'+num).append(" <span class=\"label label-info\" title=\"Number of available sessions\">" + data.contingent + "</span>");
+                    jQuery('.row'+num).append(" <span class=\"label label-info\" title=\"Number of available sessions\">" + data.contingent + "</span>");
+		    console.log("we are in" + data.message);
+		    if (typeof(data.message) !== 'undefined') {
+			jQuery('.row'+num).append(" <span class=\"label label-warning\" title=\"Message\">" + data.message + "</span>");
+		    }
                 };
               }(i), "jsonp");
             }
