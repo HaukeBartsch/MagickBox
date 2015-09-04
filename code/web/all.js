@@ -342,7 +342,7 @@ jQuery(document).ready(function() {
                     jQuery('.row'+num).append(" <span class=\"label label-info\" title=\"Number of available sessions\">" + data.contingent + "</span>");
 		    console.log("we are in" + data.message);
 		    if (typeof(data.message) !== 'undefined') {
-			jQuery('.row'+num).append(" <span class=\"label label-warning\" title=\"Message\">" + data.message + "</span>");
+			jQuery('.row'+num).append("<br> <span class=\"label label-warning\" title=\"Message\">" + data.message + "</span>");
 		    }
                 };
               }(i), "jsonp");
