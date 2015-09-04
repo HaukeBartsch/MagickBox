@@ -8,8 +8,9 @@
        $info = json_decode( file_get_contents( $value."/info.json" ), true);
        //$v = end(split("/", $value));
        $v = $info['name'];
-       
-       $ddirs[] = $info;
+       if(array_key_exists('enabled', $info) && $info['enabled'] == 1) {
+         $ddirs[] = $info;       
+       }
      }
   }
   $vals = $ddirs;
