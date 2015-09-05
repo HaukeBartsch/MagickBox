@@ -4,7 +4,7 @@ Create a daemon process that listens to send messages and reads a DICOM file,
 extracts the header information and creates a Study/Series symbolic link structure.
 """
 
-import sys, os, time, atexit, stat
+import sys, os, time, atexit, stat, tempfile
 import dicom, json, re
 from signal import SIGTERM
 from dicom.filereader import InvalidDicomError
@@ -69,11 +69,15 @@ class Daemon:
                     file(self.pidfile,'w+').write("%s\n" % pid)
                     
         def delpid(self):
-                    os.remove(self.pidfile)
-
+                    try:
+                            os.remove(self.pidfile)
+                    except:
+                            pass
         def delpipe(self):
-                    os.remove(self.pipename)
-                            
+                    try:
+                            os.remove(self.pipename)
+                    except:
+                            pass
         def start(self):
                     """
                     Start the daemon
@@ -191,7 +195,8 @@ class ProcessSingleFile(Daemon):
                         for rule in range(len(classify_rules)):
                                 for entry in range(len(classify_rules[rule]['rules'])):
                                         r = classify_rules[rule]['rules'][entry]
-                                        if "rule" in r:
+                                        if ("rule" in r) or ("notrule" in r):
+                                                negate = ("notrule" in r)
                                                 # find the rule with that ID
                                                 findID = False
                                                 for rule2 in range(len(classify_rules)):
@@ -200,7 +205,11 @@ class ProcessSingleFile(Daemon):
                                                                 # copy the rules and append instead of the reference rule
                                                                 findID = True
                                                                 classify_rules[rule]['rules'].remove(r)
-                                                                classify_rules[rule]['rules'].extend(classify_rules[rule2]['rules'])
+                                                                cr = classify_rules[rule2]['rules']
+                                                                if negate:
+                                                                        # add the negate flag to this rule
+                                                                        cr['negate'] = "yes"
+                                                                classify_rules[rule]['rules'].extend(cr)
                                                                 didChange = True
                                                 if not findID:
                                                         print "Error: could not find a rule with ID %s" % r['rule']
@@ -451,11 +460,19 @@ class ProcessSingleFile(Daemon):
 # the second is the named pipe in /tmp/.processSingleFile
 #  Hauke,    July 2015               
 if __name__ == "__main__":
-        daemon = ProcessSingleFile('/data/.pids/processSingleFile.pid')
+        pidfilename = '/data/.pids/processSingleFile.pid'
+        p = os.path.abspath(pidfilename)
+        if not os.path.exists(p):
+                pidfilename = tempfile.gettempdir() + '/processSingleFile.pid'
+        daemon = ProcessSingleFile(pidfilename)
         daemon.init()
         if len(sys.argv) == 2:
                 if 'start' == sys.argv[1]:
-                        daemon.start()
+                        try:
+                                daemon.start()
+                        except:
+                                print "Error: could not create processing daemon: ", sys.exc_info()[0]
+                                sys.exit(-1)
                 elif 'stop' == sys.argv[1]:
                         daemon.stop()
                 elif 'restart' == sys.argv[1]:
