@@ -4,7 +4,7 @@ Create a daemon process that listens to send messages and reads a DICOM file,
 extracts the header information and creates a Study/Series symbolic link structure.
 """
 
-import sys, os, time, atexit, stat, tempfile
+import sys, os, time, atexit, stat, tempfile, copy
 import dicom, json, re
 from signal import SIGTERM
 from dicom.filereader import InvalidDicomError
@@ -195,30 +195,58 @@ class ProcessSingleFile(Daemon):
                         for rule in range(len(classify_rules)):
                                 for entry in range(len(classify_rules[rule]['rules'])):
                                         r = classify_rules[rule]['rules'][entry]
-                                        if ("rule" in r) or ("notrule" in r):
-                                                negate = ("notrule" in r)
+					negate = ("notrule" in r)
+					ruleornotrule = "rule"
+					if negate:
+						ruleornotrule = "notrule"
+                                        if ruleornotrule in r:
                                                 # find the rule with that ID
                                                 findID = False
                                                 for rule2 in range(len(classify_rules)):
-                                                        if "id" in classify_rules[rule2] and classify_rules[rule2]['id'] == r['rule']:
+                                                        if "id" in classify_rules[rule2] and classify_rules[rule2]['id'] == r[ruleornotrule]:
                                                                 # found the id this rule refers to
                                                                 # copy the rules and append instead of the reference rule
                                                                 findID = True
                                                                 classify_rules[rule]['rules'].remove(r)
-                                                                cr = classify_rules[rule2]['rules']
+                                                                cr = copy.deepcopy(classify_rules[rule2]['rules'])
                                                                 if negate:
                                                                         # add the negate flag to this rule
-                                                                        cr['negate'] = "yes"
+                                                                        for i in cr:
+										i['negate'] = "yes"
                                                                 classify_rules[rule]['rules'].extend(cr)
                                                                 didChange = True
                                                 if not findID:
-                                                        print "Error: could not find a rule with ID %s" % r['rule']
+                                                        print "Error: could not find a rule with ID %s" % r[ruleornotrule]
                                                         continue
                                 
                         if not didChange:
                                 break
                 return classify_rules
                 
+	def resolveValue(self,tag,dataset,data):
+		# a value can be a tag (array of string length 1) or a tag (array of string length 2) or a specific index into a tag (array of string length 3)
+		v = ''
+		taghere = True
+		if len(tag) == 1:
+			if not tag[0] in data:
+				taghere = False
+			else:
+				v = data[tag[0]]
+		elif len(tag) == 2:
+			if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
+				taghere = False
+			else:
+				v = dataset[int(tag[0],0), int(tag[1],0)].value
+		elif len(tag) == 3:
+			if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
+				taghere = False
+			else:
+				v = dataset[int(tag[0],0), int(tag[1],0)].value[int(tag[2],0)]
+		else:
+			raise ValueError('Error: tag with unknown structure, should be 1, 2, or 3 entries in array')
+			print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
+		return taghere, v
+			
         def classify(self,dataset,data):
                 classifyTypes = []
                 # read the classify rules
@@ -230,72 +258,70 @@ class ProcessSingleFile(Daemon):
                         ok = True
                         for entry in range(len(self.classify_rules[rule]['rules'])):
                                 r = self.classify_rules[rule]['rules'][entry]
+				# we could have a negated rule here
+				def isnegate(x): return x
+				if ('negate' in r) and (r['negate'] == "yes"):
+					def isnegate(x): return not x
                                 # check if this regular expression matches the current type t
                                 taghere = True
-                                v = ''
-                                if len(r['tag']) == 1:
-                                        if not r['tag'][0] in data:
-                                                taghere = False
-                                        else:
-                                                v = data[r['tag'][0]]
-                                elif len(r['tag']) == 2:
-                                        if not ( int(r['tag'][0],0), int(r['tag'][1],0) ) in dataset:
-                                                taghere = False
-                                        else:
-                                                v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value
-                                elif len(r['tag']) == 3:
-                                        if not ( int(r['tag'][0],0), int(r['tag'][1],0) ) in dataset:
-                                                taghere = False
-                                        else:
-                                                v = dataset[int(r['tag'][0],0), int(r['tag'][1],0)].value[int(r['tag'][2],0)]
-                                else:
-                                        print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
+				try:
+					taghere, v = self.resolveValue(r['tag'],dataset,data)
+				except ValueError:
+					continue
+				# the 'value' could in some cases be a tag, that would allow for relative comparisons in the classification
+				v2 = r['value']
+				try:
+					taghere2, v2 = self.resolveValue(v2,dataset,data)
+					taghere = taghere and taghere2
+				except ValueError:
+					v2 = r['value']
+
+				#print "compare: ", v, "<->", v2
+
                                 if not "operator" in r:
                                         #print "Did not find an operator value in \"%s\"" % self.classify_rules[rule]['description']
                                         r["operator"] = "regexp"  # default value
-                                #else:
-                                #        print "Did find an operator value in \"%s\"" % self.classify_rules[rule]['description']
                                 op = r["operator"]
                                 if op == "notexist":
-					if tagthere:
+					if isnegate(tagthere):
                                            ok = False
                                            break
                                 elif  op == "regexp":
-                                        pattern = re.compile(r['value'])
-                                        if not pattern.search(v):
+                                        pattern = re.compile(v2)
+                                        if isnegate(not pattern.search(v)):
                                            # this pattern failed, fail the whole type and continue with the next
                                            ok = False
                                            break
                                 elif op == "==":
 					try:
-                                          if not float(r['value']) == float(v):
+                                          if isnegate(not float(v2) == float(v)):
                                              ok = False
                                              break
 					except ValueError:
 					  pass
                                 elif op == "!=":
 					try:
-                                          if not float(r['value']) != float(v):
+                                          if isnegate(not float(v2) != float(v)):
                                              ok = False
                                              break
 					except ValueError:
 					  pass
                                 elif op == "<":
                                         try:
-                                          if not float(r['value']) > float(v):
+                                          if isnegate(not float(v2) > float(v)):
                                              ok = False
                                              break
 					except ValueError:
 					  pass
                                 elif op == ">":
                                         try:
-                                          if not float(r['value']) < float(v):
+                                          if isnegate(not float(v2) < float(v)):
                                              ok = False
                                              break
 					except ValueError:
 					  pass
                                 elif op == "exist":
-					if not tagthere:
+					if isnegate(not tagthere):
                                            ok = False
                                            break
                                 elif op == "approx":
@@ -303,20 +329,24 @@ class ProcessSingleFile(Daemon):
                                         approxLevel = 1e-4
                                         if 'approxLevel' in r:
                                                 approxLevel = float(r['approxLevel'])
-                                        if isinstance( v, list ) and isinstance(r['value'], list) and len(v) == len(r['value']):
+					if (not isinstance(v, list)) and (not isinstance( v, (int, float) )):
+						# we get this if there is no value in v, fail in this case
+						ok = False
+						break
+                                        if isinstance( v, list ) and isinstance(v2, list) and len(v) == len(v2):
                                                 for i in range(len(v)):
-                                                        if abs(float(v[i])-float(r['value'][i])) > approxLevel:
+                                                        if isnegate(abs(float(v[i])-float(v2[i])) > approxLevel):
                                                                 ok = False
                                                                 break
                                         if isinstance( v, (int, float) ):
-                                                if abs(float(v)-float(r['value'])) > approxLevel:
+                                                if isnegate(abs(float(v)-float(v2)) > approxLevel):
                                                         ok = False
                                                         break
-                                                
                                 else:
                                         ok = False
                                         break
-                                           
+				#print "compare is ", ok
+                                # ok = isnegate(True)
                         # ok nobody failed, this is it
                         if ok:
                            classifyTypes.append(t)
@@ -364,13 +394,17 @@ class ProcessSingleFile(Daemon):
                                 fn2 = os.path.join(fn, dataset.SOPInstanceUID)
                                 if not os.path.isfile(fn2):
                                   os.symlink(response, fn2)
-                                else:
-                                  continue # don't  do anything because the file exists already
+                                #else:
+                                #  continue # don't  do anything because the file exists already
                                 # lets store some data in a series specific file
                                 fn3 = os.path.join(outdir, dataset.StudyInstanceUID, dataset.SeriesInstanceUID) + ".json"
                                 data = {}
                                 try:
                                         data['Manufacturer'] = dataset.Manufacturer
+                                except:
+                                        pass
+                                try:
+                                        data['Modality'] = dataset.Modality
                                 except:
                                         pass
                                 try:

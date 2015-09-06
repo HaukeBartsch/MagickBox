@@ -30,7 +30,11 @@ FILE=$5
 #echo "got something" >> /data/logs/receivedSingleFile.log
 
 WORKINGDIR=/data/scratch/.arrived
-fn=`echo "${WORKINGDIR}/$AETitleCaller $AETitleCalled $CallerIP $SDIR" | sed -e 's/\"//g'`
+# not using sed should make this script faster
+# before: fn=`echo "${WORKINGDIR}/$AETitleCaller $AETitleCalled $CallerIP $SDIR" | sed -e 's/\"//g'`
+fn=`echo "${WORKINGDIR}/$AETitleCaller $AETitleCalled $CallerIP $SDIR"`
+fn=${fn//\"/}
+
 echo "$DIR/$FILE" >> "${fn}"
 #echo "$fn" >> /data/logs/receivedSingleFile.log
 
