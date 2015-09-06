@@ -270,13 +270,13 @@ class ProcessSingleFile(Daemon):
 					continue
 				# the 'value' could in some cases be a tag, that would allow for relative comparisons in the classification
 				v2 = r['value']
+				taghere2 = True
 				try:
 					taghere2, v2 = self.resolveValue(v2,dataset,data)
-					taghere = taghere and taghere2
 				except ValueError:
 					v2 = r['value']
-
-				#print "compare: ", v, "<->", v2
+				if taghere2 == False:
+					v2 = r['value']
 
                                 if not "operator" in r:
                                         #print "Did not find an operator value in \"%s\"" % self.classify_rules[rule]['description']
@@ -288,6 +288,7 @@ class ProcessSingleFile(Daemon):
                                            break
                                 elif  op == "regexp":
                                         pattern = re.compile(v2)
+					#print "check ", v2 , " in ", v
                                         if isnegate(not pattern.search(v)):
                                            # this pattern failed, fail the whole type and continue with the next
                                            ok = False
@@ -324,6 +325,12 @@ class ProcessSingleFile(Daemon):
 					if isnegate(not tagthere):
                                            ok = False
                                            break
+				elif op == "contains":
+					#print "test if ", v2, " is in ", v
+					if isnegate(v2 not in v):
+						ok = False
+						break
+					#print "Yes, that contains worked"
                                 elif op == "approx":
                                         # check each numerical entry if its close to a specific value
                                         approxLevel = 1e-4
@@ -333,9 +340,11 @@ class ProcessSingleFile(Daemon):
 						# we get this if there is no value in v, fail in this case
 						ok = False
 						break
+					#print "approx with ", v, " and ", v2
                                         if isinstance( v, list ) and isinstance(v2, list) and len(v) == len(v2):
                                                 for i in range(len(v)):
                                                         if isnegate(abs(float(v[i])-float(v2[i])) > approxLevel):
+								#print "approx does not fit here"
                                                                 ok = False
                                                                 break
                                         if isinstance( v, (int, float) ):
@@ -349,7 +358,7 @@ class ProcessSingleFile(Daemon):
                                 # ok = isnegate(True)
                         # ok nobody failed, this is it
                         if ok:
-                           classifyTypes.append(t)
+				classifyTypes.append(t)
                 return classifyTypes
                                 
         def run(self):
