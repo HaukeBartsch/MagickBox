@@ -229,7 +229,10 @@ class ProcessSingleFile(Daemon):
 		taghere = True
 		if len(tag) == 1:
 			if not tag[0] in data:
-				taghere = False
+				if not tag[0] in dataset:
+					taghere = False
+				else:
+					v = dataset[tag[0]]
 			else:
 				v = data[tag[0]]
 		elif len(tag) == 2:
@@ -247,14 +250,17 @@ class ProcessSingleFile(Daemon):
 			print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
 		return taghere, v
 			
-        def classify(self,dataset,data):
-                classifyTypes = []
+        def classify(self,dataset,data,classifyTypes):
                 # read the classify rules
                 if self.classify_rules == 0:
                         print "Warning: no classify rules found in %s, ClassifyType tag will be empty" % self.rulesFile
                         return classifyTypes
                 for rule in range(len(self.classify_rules)):
                         t = self.classify_rules[rule]['type']
+			# if we check on the series level all rules have to be true for every image in the series (remove at the end)
+			seriesLevelCheck = False
+			if ('check' in self.classify_rules[rule]) and (self.classify_rules[rule]['check'] == "SeriesLevel"):
+				seriesLevelCheck = True
                         ok = True
                         for entry in range(len(self.classify_rules[rule]['rules'])):
                                 r = self.classify_rules[rule]['rules'][entry]
@@ -279,7 +285,6 @@ class ProcessSingleFile(Daemon):
 					v2 = r['value']
 
                                 if not "operator" in r:
-                                        #print "Did not find an operator value in \"%s\"" % self.classify_rules[rule]['description']
                                         r["operator"] = "regexp"  # default value
                                 op = r["operator"]
                                 if op == "notexist":
@@ -288,7 +293,6 @@ class ProcessSingleFile(Daemon):
                                            break
                                 elif  op == "regexp":
                                         pattern = re.compile(v2)
-					#print "check ", v2 , " in ", v
                                         if isnegate(not pattern.search(v)):
                                            # this pattern failed, fail the whole type and continue with the next
                                            ok = False
@@ -326,11 +330,9 @@ class ProcessSingleFile(Daemon):
                                            ok = False
                                            break
 				elif op == "contains":
-					#print "test if ", v2, " is in ", v
 					if isnegate(v2 not in v):
 						ok = False
 						break
-					#print "Yes, that contains worked"
                                 elif op == "approx":
                                         # check each numerical entry if its close to a specific value
                                         approxLevel = 1e-4
@@ -340,7 +342,6 @@ class ProcessSingleFile(Daemon):
 						# we get this if there is no value in v, fail in this case
 						ok = False
 						break
-					#print "approx with ", v, " and ", v2
                                         if isinstance( v, list ) and isinstance(v2, list) and len(v) == len(v2):
                                                 for i in range(len(v)):
                                                         if isnegate(abs(float(v[i])-float(v2[i])) > approxLevel):
@@ -354,11 +355,12 @@ class ProcessSingleFile(Daemon):
                                 else:
                                         ok = False
                                         break
-				#print "compare is ", ok
-                                # ok = isnegate(True)
+
                         # ok nobody failed, this is it
                         if ok:
-				classifyTypes.append(t)
+				classifyTypes = classifyTypes + list(set([t]) - set(classifyTypes))
+			if seriesLevelCheck and not ok and (t in classifyTypes):
+				classifyTypes = [y for y in classifyTypes if y != t]
                 return classifyTypes
                                 
         def run(self):
@@ -380,7 +382,6 @@ class ProcessSingleFile(Daemon):
                                 time.sleep(0.1)
                                 continue
                         else:
-                                #print 'Process: %s' % response
                                 try:
                                         dataset = dicom.read_file(response)
                                 except IOError:
@@ -494,7 +495,8 @@ class ProcessSingleFile(Daemon):
                                 data['StudyInstanceUID'] = dataset.StudyInstanceUID
                                 data['NumFiles'] = str( int(data['NumFiles']) + 1 )
                                 # add new types as they are found (this will create all type that map to any of the images in the series)
-                                data['ClassifyType'] = data['ClassifyType'] + list(set(self.classify(dataset, data)) - set(data['ClassifyType']))
+				data['ClassifyType'] = self.classify(dataset, data, data['ClassifyType'])
+                                #data['ClassifyType'] = data['ClassifyType'] + list(set(self.classify(dataset, data)) - set(data['ClassifyType']))
                                 with open(fn3,'w') as f:
                                         json.dump(data,f,indent=2,sort_keys=True)
                 rp.close()

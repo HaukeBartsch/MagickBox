@@ -30,7 +30,7 @@
     ]  
   },
   {
-  	"type" : "sag",
+  	"type" : "sagittal",
         "description": "A sagittal scan",
         "id": "ORIENTATIONSAG",
   	"rules" : [
@@ -69,17 +69,17 @@
       "rules": [
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "axial" ],
+	      "value": "axial" ,
 	      "operator": "contains"
 	  },
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "coronal" ],
+	      "value": "coronal",
 	      "operator": "contains"
 	  },
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "sagittal" ],
+	      "value": "sagittal",
 	      "operator": "contains"
 	  }
       ]
@@ -183,22 +183,23 @@
   {
       "type" : "oblique",
       "description": "Neither coronal, sagittal nor axial",
+      "check": "SeriesLevel",
       "rules": [
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "axial" ],
+	      "value": "axial",
 	      "operator": "contains",
 	      "negate": "yes"
 	  },
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "coronal" ],
+	      "value": "coronal",
 	      "operator": "contains",
 	      "negate": "yes"
 	  },
           {
 	      "tag": [ "ClassifyType" ],
-	      "value": [ "sagittal" ],
+	      "value": "sagittal",
 	      "operator": "contains",
 	      "negate": "yes"
 	  }
