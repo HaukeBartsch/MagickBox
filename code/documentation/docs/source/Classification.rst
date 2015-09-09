@@ -148,8 +148,7 @@ Each series type has a name "type" and a short description which is usually igno
 The rules for each type are a collection of statements that all have to be true for a scan to be classified as "type".
 The order of the rules is not important. Every successful classification will add its type to the returned array.
 
-Each rule can contain a reference to another rule (key "rule" with value "id"). This allows for an hierarchical classification of rules. In the example above the rule for
-detecting if a scan was done on a scanner from GE is referenced in types "T2", "T1", and "fMRI". For debugging a call to "processSingleFile.py test" will list the resolved rules on the command line.
+Each rule can contain a reference to another rule (key "rule" with value "id"). This allows for an hierarchical classification of rules. In the example above the rule for detecting if a scan was done on a scanner from GE is referenced in types "T2", "T1", and "fMRI". For debugging a call to "processSingleFile.py test" will list the resolved rules on the command line.
 
 Non-referencing rules contain at least the tags "tag" and "value". If only these two tags are supplied the operation that compares
 each incoming DICOM files tag value to the one supplied in the "value" field of the rule is assumed to be a regular expression
@@ -186,10 +185,43 @@ by the optional tag "operator". The following operators are available:
 "operator" : "notexist"
   True if the tag does not exist.
 
+"operator" : "contains"
+  True if the value is in the list of values defined by the tag.
+
 "operator" : "approx"
   True if the numerical values of the tag are sufficiently close to the target values. How close can be controlled by an "approxLevel" variable in the rule. The above example uses this to test if the Image Orientation Patient tag that contains the direction cosines for the positive row axis are close enough to be called either axial, sagittal or coronal. A series might contain more than one orientation (like a localizer scan). In this case all three rules might apply as images for that series are classified.
 
 "operator" : "regexp"
   Default (non-numeric) regular expression match.
     
-Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received.
+A single rule can be negated by adding the key "negate" with a value of "yes".
+
+A type can depend on more than one image in the series. For example oblique series are defined as series that are neither coronal, sagittal nor axial. More than one image has to be viewed to be able to make this decission. In order to force a constant update of a type add the key "check" with a value of "SeriesLevel" to the type. Here an example:
+
+   {
+      "type" : "oblique",
+      "description": "Neither coronal, sagittal nor axial",
+      "check": "SeriesLevel",
+      "rules": [
+          {
+              "tag": [ "ClassifyType" ],
+              "value": "axial",
+              "operator": "contains",
+              "negate": "yes"
+          },
+          {
+              "tag": [ "ClassifyType" ],
+              "value": "coronal",
+              "operator": "contains",
+              "negate": "yes"
+          },
+          {
+              "tag": [ "ClassifyType" ],
+              "value": "sagittal",
+              "operator": "contains",
+              "negate": "yes"
+          }
+      ]
+   }
+
+Note: These tests are executed for each file that arrives for a series. If the tags addressed are not series level tags (the same for all files in the series) the outcome of the classification will depend on the order in which files are received. 
