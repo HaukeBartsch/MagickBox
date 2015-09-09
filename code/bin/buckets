@@ -142,7 +142,7 @@ if [ "$open" = 1 ]; then
   echo "  /root/storage/db-plugin.code - called by MagickBox after processing, extracts measures"
   echo "  /root/storage/memory/        - permanent storage for bucket (/memory), application can read and write"
   echo ""
-  echo "This bucket contains a web-based text editor. Navigate with your web-browser to its interface at"
+  echo "This bucket contains a web-based text editor. Navigate with your web-browser to its interface at (reload page)"
   echo "  http://localhost:9090"
   echo ""
   echo "The current directory is mounted inside the bucket in /local. Copy from files into the bucket from there."
@@ -480,7 +480,7 @@ EOF
      echo "Found a memory folder, copy content to /data/streams/bucket${AETitle}/memory/ now..."
      # create a folder for this plugin based on the AETitle
      mkdir -p /data/streams/bucket${AETitle}/memory
-     $(docker run -v /data/streams/bucket${AETitle}/memory:/memory $what /bin/bash -c "cp -R /root/storage/memory/* /memory/ && exit")
+     $(docker run -v /data/streams/bucket${AETitle}/memory:/memory $what /bin/bash -c "cp -R /root/storage/memory/. /memory/ && exit")
      ls -la /data/streams/bucket${AETitle}/memory/
   fi
 
