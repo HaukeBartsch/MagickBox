@@ -14,6 +14,10 @@
 <link rel="stylesheet" href="/code/web/css/cal-heatmap.css" />
 <!-- ----------------------------- -->
 
+<script type="text/javascript" src="/code/web/js/moment.min.js"></script>
+
+<script type="text/javascript" src="/code/web/js/trianglify.min.js"></script>
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -59,7 +63,6 @@
                   <li><a id="setup" data-toggle="modal" href="#changeSetup">Setup</a></li>
                   <li><a id="RemoveStudies" data-toggle="modal" href="#removeStudies">List Studies</a></li>
                   <li><a id="rlog" data-toggle="modal" href="#routingLog">Routing Log</a></li>
-                  <li><a id="restart-services" class="label-info" href="">Restart Services</a></li>
                </ul>
             </li>
           </ul>
@@ -115,6 +118,11 @@
              <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
           </ul>
         </div>
+      </div>
+      <div class="row-fluid">
+        <div class="col-sm-12 col-xm-12 col-xs-12">
+          <div id="projects2"></div>
+	</div>
       </div>
       <div class="row-fluid">
         <div class="col-sm-12 col-xm-12 col-xs-12">
@@ -221,6 +229,7 @@
                 <th>Accession</th>
                 <th>StudyDate</th>
                 <th>PatientName</th>
+                <th>StudyDescription</th>
 		<th>SIUID</th>
              </thead>
              <tbody id="removestudiestable">

@@ -2,7 +2,7 @@
 # filename: gearmand job server
 #
 
-pidfile=/var/run/gearman/gearmand.pid
+pidfile=/data/.pids/gearmand.pid
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 gearmand=`which gearmand`
 

@@ -13,6 +13,18 @@ In order to setup a new MagickBox follow the steps outlined below.
    * setup the virtual machines to start when the host computer starts (/Library/LaunchDaemon/ scripts)
 
 
+
+Setup of MagickBox without VM
+=============================
+
+MagickBox can also run natively on a Linux system. This requires the following packages to be installed.
+
+   * monit - provides monitoring of system services, starts and restarts services
+   * gearman - provides job scheduling capabilities
+   * dcmtk - provides native DICOM connectivity
+   * apache/php5 - web-interface components and endpoints for mb-API calls
+   * python2.7/pydicom - optional if processSingleFiles.py is used to create alternative views for the data
+
 DICOM connectivity
 ==================
 
