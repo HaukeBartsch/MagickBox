@@ -477,6 +477,10 @@ class ProcessSingleFile(Daemon):
                                         data['PulseSequenceName'] = str(dataset[0x19,0x109c].value)
                                 except:
                                         pass
+                                try:
+                                        data['SliceLocation'] = str(dataset[0x20,0x1041].value)
+                                except:
+                                        pass
                                 data['NumFiles'] = str(0)
                                 try:
                                          data['Private0019_10BB'] = str(dataset[0x0019,0x10BB].value)
