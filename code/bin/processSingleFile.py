@@ -538,8 +538,14 @@ if __name__ == "__main__":
                         daemon.send(sys.argv[2])
                 sys.exit(0)
         else:
-                print "Process a single DICOM file fast using a daemon process that creates symbolic links."
+                print "Process DICOM files fast using a daemon process that creates study/series directories with symbolic links."
                 print "Use 'start' to start the daemon in the background. Send file names for processing using 'send'."
-                print "Test the rules by running test."
+                print "Test the rules by running test:"
+                print "   python2.7 %s test" % sys.argv[0]
+                print ""
                 print "Usage: %s start|stop|restart|send|test" % sys.argv[0]
+                print ""
+                print "For a simple test send a DICOM directory by:"
+                print "  find <dicomdir> -type f -print | grep -v .json  | xargs -i echo \"/path/to/input/{}\" >> /tmp/.processSingleFilePipe"
+                print ""
                 sys.exit(2)
