@@ -22,7 +22,13 @@ log=/data/logs/heartbeat.log
 # check if the storescp log file is new enough
 # (Bug: fixes a problem with non-fork send data, echoscu does not work if data is received)
 storelog=/data/logs/storescp.log
-testtime=5
+
+#
+# The time selected here should be timed with the number of seconds storescp will wait and keep
+# the line open in case the sender is slow and sending more images. If echoscu would call with
+# storescp still open its aetitle will overwrite the aetitle of the incoming sender/files.
+#
+testtime=16
 if [ "$(( $(date +"%s") - $(stat -c "%Y" "$storelog") ))" -lt "$testtime" ]; then
    echo "`date` - no try: storescp.log is too new, seems to work" >> $log
    exit 0
