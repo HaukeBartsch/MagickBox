@@ -47,8 +47,8 @@ detect () {
 # The following section takes care of not starting this script more than once 
 # in a row. If for example it takes too long to run a single iteration this 
 # will ensure that no second call to scrub is executed prematurely.
-(
-  flock -n 9 || exit 1
-  # command executed under lock
+#(
+#  flock -n 9 || exit 1
+#  # command executed under lock
   detect
-) 9>/data/.pids/detectStudyArrival.lock
+#) 9>/data/.pids/detectStudyArrival.lock
