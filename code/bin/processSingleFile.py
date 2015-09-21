@@ -481,6 +481,14 @@ class ProcessSingleFile(Daemon):
                                         data['SliceLocation'] = str(dataset[0x20,0x1041].value)
                                 except:
                                         pass
+                                try:
+                                        data['AccessionNumber'] = str(dataset[0x08,0x50].value)
+                                except:
+                                        pass
+                                try:
+                                        data['StudyTime'] = str(dataset[0x08,0x30].value)
+                                except:
+                                        pass
                                 data['NumFiles'] = str(0)
                                 try:
                                          data['Private0019_10BB'] = str(dataset[0x0019,0x10BB].value)
@@ -490,10 +498,23 @@ class ProcessSingleFile(Daemon):
                                         data['Private0043_1039'] = dataset[0x0043,0x1039].value
                                 except:
                                         pass
-
+                                        
+                                # keep the slice location (use the maximum values for all slice locations)
+                                currentSliceLocation = None
+                                try:
+                                        currentSliceLocation = data['SliceLocation']
+                                except:
+                                        pass
                                 if os.path.exists(fn3):
                                         with open(fn3, 'r') as f:
                                                 data = json.load(f)
+
+                                if currentSliceLocation != None:
+                                        try:
+                                                if data['SliceLocation'] > currentSliceLocation:
+                                                        data['SliceLocation'] = currentSliceLocation;
+                                        except:
+                                                pass
                                 if not 'ClassifyType' in data:
                                         data['ClassifyType'] = []
                                 data['StudyInstanceUID'] = dataset.StudyInstanceUID
@@ -538,8 +559,14 @@ if __name__ == "__main__":
                         daemon.send(sys.argv[2])
                 sys.exit(0)
         else:
-                print "Process a single DICOM file fast using a daemon process that creates symbolic links."
+                print "Process DICOM files fast using a daemon process that creates study/series directories with symbolic links."
                 print "Use 'start' to start the daemon in the background. Send file names for processing using 'send'."
-                print "Test the rules by running test."
+                print "Test the rules by running test:"
+                print "   python2.7 %s test" % sys.argv[0]
+                print ""
                 print "Usage: %s start|stop|restart|send|test" % sys.argv[0]
+                print ""
+                print "For a simple test send a DICOM directory by:"
+                print "  find <dicomdir> -type f -print | grep -v .json  | xargs -i echo \"/path/to/input/{}\" >> /tmp/.processSingleFilePipe"
+                print ""
                 sys.exit(2)
