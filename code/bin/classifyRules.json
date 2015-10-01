@@ -205,6 +205,26 @@
 	  }
       ]
   },
+  {	
+      "type" : "PhaseEncodeUD",
+      "description": "Phase encode direction is up/down relative to slice orientation",
+      "rules": [
+          {
+             "tag": [ "0x18", "0x1312" ],
+	     "value": "^COL"
+          }
+      ]
+  },
+  {
+      "type" : "PhaseEncodeLR",
+      "description": "Phase encode direction is left/right relative to slice orientation",
+      "rules": [
+          {
+             "tag": [ "0x18", "0x1312" ],
+	     "value": "^ROW"
+          }
+      ]
+  },
   {
       "type" : "mosaic",
       "description": "Siemens Mosaic format",
