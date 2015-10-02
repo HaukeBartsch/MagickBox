@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Usr/bin/env python
 """
 Create a daemon process that listens to send messages and reads a DICOM file,
 extracts the header information and creates a Study/Series symbolic link structure.
@@ -293,7 +293,11 @@ class ProcessSingleFile(Daemon):
                                            break
                                 elif  op == "regexp":
                                         pattern = re.compile(v2)
-                                        if isnegate(not pattern.search(v)):
+					vstring = v
+					if isinstance(v, (int, float)):
+						#print "v is : ", v, " and v2 is: ", v2
+						vstring = str(v)
+                                        if isnegate(not pattern.search(vstring)):
                                            # this pattern failed, fail the whole type and continue with the next
                                            ok = False
                                            break

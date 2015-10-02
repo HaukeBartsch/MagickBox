@@ -238,5 +238,97 @@
 	     "rule": "SIEMENSBYMANUFACTURER"
 	  }
       ]
+  },
+  {
+      "type" : "GEDTI",
+      "id" : "GEDTI",
+      "description": "GE based MMIL DTI format",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x109c" ],
+             "value": "^epi2_pepolar$"
+          },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
+  },
+  {
+      "type" : "GERSI",
+      "id" : "GERSI",
+      "description": "GE based MMIL RSI format",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x109c" ],
+             "value": "^epi2_pepolarFLEX"
+          },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
+  },
+  {
+      "type" : "rev+forward",
+      "description": "GE based MMIL format for integrated distorion correction",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x10b3" ],
+             "value": "^2"
+          },
+	  {
+	     "rule": "GERSI"
+	  },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
+  },
+  {
+      "type" : "allreversed",
+      "description": "GE based MMIL format for integrated distorion correction",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x10b3" ],
+             "value": "^1"
+          },
+	  {
+	     "rule": "GERSI"
+	  },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
+  },
+  {
+      "type" : "allforward",
+      "description": "GE based MMIL format for integrated distorion correction",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x10b3" ],
+             "value": "^0"
+          },
+	  {
+	     "rule": "GERSI"
+	  },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
+  },
+  {
+      "type" : "forward+reverse",
+      "description": "GE based MMIL format for integrated distorion correction",
+      "rules": [
+          {
+	     "tag": [ "0x19", "0x10b3" ],
+             "value": "^3"
+          },
+	  {
+	     "rule": "GERSI"
+	  },
+	  {
+	     "rule": "GEBYMANUFACTURER"
+	  }
+      ]
   }
 ]
