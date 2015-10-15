@@ -466,6 +466,10 @@ class ProcessSingleFile(Daemon):
                                 except:
                                         pass
                                 try:
+                                        data['ImageType'] = str(dataset[0x08,0x08].value)
+                                except:
+                                        pass
+                                try:
                                         data['SliceSpacing'] = str(dataset[0x18,0x88].value)
                                 except:
                                         pass
