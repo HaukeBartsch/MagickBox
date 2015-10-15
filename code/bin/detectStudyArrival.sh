@@ -31,13 +31,13 @@ detect () {
         continue
     fi
 
-    echo "Detected an old enough job \"$file\"" >> /data/logs/detectStudyArrival.log
+    echo "`date`: Detected an old enough job \"$file\"" >> /data/logs/detectStudyArrival.log
     fileName=$(basename "$file")
     AETitleCaller=`echo "$fileName" | cut -d' ' -f1`
     AETitleCalled=`echo "$fileName" | cut -d' ' -f2`
     CallerIP=`echo "$fileName" | cut -d' ' -f3`
     SDIR=`echo "$fileName" | cut -d' ' -f4`
-    echo "run the following job : \"$AETitleCaller\" \"$AETitleCalled\" $CallerIP /data/scratch/archive/$SDIR" >> /data/logs/detectStudyArrival.log
+    echo "`date`: run the following job : \"$AETitleCaller\" \"$AETitleCalled\" $CallerIP /data/scratch/archive/$SDIR" >> /data/logs/detectStudyArrival.log
     /usr/bin/nohup /data/streams/bucket01/process.sh \"$AETitleCaller\" \"$AETitleCalled\" $CallerIP "/data/scratch/archive/$SDIR" &
     echo "try to delete \"$file\" now" >> /data/logs/detectStudyArrival.log    
     /bin/rm -- "$file"
@@ -49,6 +49,6 @@ detect () {
 # will ensure that no second call to scrub is executed prematurely.
 #(
 #  flock -n 9 || exit 1
-  # command executed under lock
+#  # command executed under lock
   detect
 #) 9>/data/.pids/detectStudyArrival.lock
