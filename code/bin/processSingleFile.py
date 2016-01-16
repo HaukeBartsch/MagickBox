@@ -397,10 +397,12 @@ class ProcessSingleFile(Daemon):
                                 outdir = '/data/scratch/views/raw'
                                 if not os.path.exists(outdir):
                                         os.makedirs(outdir)
-                                infile = os.path.basename(response)        
+                                infile = os.path.basename(response)
                                 fn = os.path.join(outdir, dataset.StudyInstanceUID, dataset.SeriesInstanceUID)
                                 if not os.path.exists(fn):
                                         os.makedirs(fn)
+                                        if not os.path.exists(fn):
+                                                print "Error: creating path ", fn, " did not work"
                                 fn2 = os.path.join(fn, dataset.SOPInstanceUID)
                                 if not os.path.isfile(fn2):
                                   os.symlink(response, fn2)
@@ -463,6 +465,10 @@ class ProcessSingleFile(Daemon):
                                         pass
                                 try:
                                         data['SliceThickness'] = str(dataset[0x18,0x50].value)
+                                except:
+                                        pass
+                                try:
+                                        data['ImageType'] = str(dataset[0x08,0x08].value)
                                 except:
                                         pass
                                 try:
