@@ -519,7 +519,7 @@ class ProcessSingleFile(Daemon):
 
                                 if currentSliceLocation != None:
                                         try:
-                                                if data['SliceLocation'] > currentSliceLocation:
+                                                if float(data['SliceLocation']) > float(currentSliceLocation):
                                                         data['SliceLocation'] = currentSliceLocation;
                                         except:
                                                 pass
