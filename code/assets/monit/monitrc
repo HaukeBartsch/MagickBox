@@ -56,7 +56,7 @@
       username "XXXXXX@gmail.com" password "YYYYYY"
       using tlsv1
       with timeout 30 seconds
-  set alert <account name>@ucsd.edu with reminder on 1000 cycles
+  set alert account-name@gmail.com with reminder on 1000 cycles
 #
 #
 ## By default Monit will drop alert events if no mail servers are available. 
