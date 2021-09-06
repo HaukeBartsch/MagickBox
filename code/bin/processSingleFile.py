@@ -7,7 +7,7 @@ extracts the header information and creates a Study/Series symbolic link structu
 import sys, os, time, atexit, stat, tempfile, copy
 import dicom, json, re
 from signal import SIGTERM
-from pydicom.filereader import InvalidDicomError
+from dicom.filereader import InvalidDicomError
 
 
 class Daemon:
@@ -195,10 +195,10 @@ class ProcessSingleFile(Daemon):
                         for rule in range(len(classify_rules)):
                                 for entry in range(len(classify_rules[rule]['rules'])):
                                         r = classify_rules[rule]['rules'][entry]
-					negate = ("notrule" in r)
-					ruleornotrule = "rule"
-					if negate:
-						ruleornotrule = "notrule"
+                                        negate = ("notrule" in r)
+                                        ruleornotrule = "rule"
+                                        if negate:
+                                                ruleornotrule = "notrule"
                                         if ruleornotrule in r:
                                                 # find the rule with that ID
                                                 findID = False
@@ -212,7 +212,7 @@ class ProcessSingleFile(Daemon):
                                                                 if negate:
                                                                         # add the negate flag to this rule
                                                                         for i in cr:
-										i['negate'] = "yes"
+                                                                                i['negate'] = "yes"
                                                                 classify_rules[rule]['rules'].extend(cr)
                                                                 didChange = True
                                                 if not findID:
@@ -223,33 +223,33 @@ class ProcessSingleFile(Daemon):
                                 break
                 return classify_rules
                 
-	def resolveValue(self,tag,dataset,data):
-		# a value can be a tag (array of string length 1) or a tag (array of string length 2) or a specific index into a tag (array of string length 3)
-		v = ''
-		taghere = True
-		if len(tag) == 1:
-			if not tag[0] in data:
-				if not tag[0] in dataset:
-					taghere = False
-				else:
-					v = dataset[tag[0]]
-			else:
-				v = data[tag[0]]
-		elif len(tag) == 2:
-			if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
-				taghere = False
-			else:
-				v = dataset[int(tag[0],0), int(tag[1],0)].value
-		elif len(tag) == 3:
-			if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
-				taghere = False
-			else:
-				v = dataset[int(tag[0],0), int(tag[1],0)].value[int(tag[2],0)]
-		else:
-			raise ValueError('Error: tag with unknown structure, should be 1, 2, or 3 entries in array')
-			print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
-		return taghere, v
-			
+        def resolveValue(self,tag,dataset,data):
+                # a value can be a tag (array of string length 1) or a tag (array of string length 2) or a specific index into a tag (array of string length 3)
+                v = ''
+                taghere = True
+                if len(tag) == 1:
+                        if not tag[0] in data:
+                                if not tag[0] in dataset:
+                                        taghere = False
+                                else:
+                                        v = dataset[tag[0]]
+                        else:
+                                v = data[tag[0]]
+                elif len(tag) == 2:
+                        if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
+                                taghere = False
+                        else:
+                                v = dataset[int(tag[0],0), int(tag[1],0)].value
+                elif len(tag) == 3:
+                        if not ( int(tag[0],0), int(tag[1],0) ) in dataset:
+                                taghere = False
+                        else:
+                                v = dataset[int(tag[0],0), int(tag[1],0)].value[int(tag[2],0)]
+                else:
+                        raise ValueError('Error: tag with unknown structure, should be 1, 2, or 3 entries in array')
+                        print("Error: tag with unknown structure, should be 1, 2, or 3 entries in array")
+                return taghere, v
+                        
         def classify(self,dataset,data,classifyTypes):
                 # read the classify rules
                 if self.classify_rules == 0:
@@ -257,99 +257,99 @@ class ProcessSingleFile(Daemon):
                         return classifyTypes
                 for rule in range(len(self.classify_rules)):
                         t = self.classify_rules[rule]['type']
-			# if we check on the series level all rules have to be true for every image in the series (remove at the end)
-			seriesLevelCheck = False
-			if ('check' in self.classify_rules[rule]) and (self.classify_rules[rule]['check'] == "SeriesLevel"):
-				seriesLevelCheck = True
+                        # if we check on the series level all rules have to be true for every image in the series (remove at the end)
+                        seriesLevelCheck = False
+                        if ('check' in self.classify_rules[rule]) and (self.classify_rules[rule]['check'] == "SeriesLevel"):
+                                seriesLevelCheck = True
                         ok = True
                         for entry in range(len(self.classify_rules[rule]['rules'])):
                                 r = self.classify_rules[rule]['rules'][entry]
-				# we could have a negated rule here
-				def isnegate(x): return x
-				if ('negate' in r) and (r['negate'] == "yes"):
-					def isnegate(x): return not x
+                                # we could have a negated rule here
+                                def isnegate(x): return x
+                                if ('negate' in r) and (r['negate'] == "yes"):
+                                        def isnegate(x): return not x
                                 # check if this regular expression matches the current type t
                                 taghere = True
-				try:
-					taghere, v = self.resolveValue(r['tag'],dataset,data)
-				except ValueError:
-					continue
-				# the 'value' could in some cases be a tag, that would allow for relative comparisons in the classification
-				v2 = r['value']
-				taghere2 = True
-				try:
-					taghere2, v2 = self.resolveValue(v2,dataset,data)
-				except ValueError:
-					v2 = r['value']
-				if taghere2 == False:
-					v2 = r['value']
+                                try:
+                                        taghere, v = self.resolveValue(r['tag'],dataset,data)
+                                except ValueError:
+                                        continue
+                                # the 'value' could in some cases be a tag, that would allow for relative comparisons in the classification
+                                v2 = r['value']
+                                taghere2 = True
+                                try:
+                                        taghere2, v2 = self.resolveValue(v2,dataset,data)
+                                except ValueError:
+                                        v2 = r['value']
+                                if taghere2 == False:
+                                        v2 = r['value']
 
                                 if not "operator" in r:
                                         r["operator"] = "regexp"  # default value
                                 op = r["operator"]
                                 if op == "notexist":
-					if isnegate(tagthere):
+                                        if isnegate(tagthere):
                                            ok = False
                                            break
                                 elif  op == "regexp":
                                         pattern = re.compile(v2)
-					vstring = v
-					if isinstance(v, (int, float)):
-						#print "v is : ", v, " and v2 is: ", v2
-						vstring = str(v)
+                                        vstring = v
+                                        if isinstance(v, (int, float)):
+                                                #print "v is : ", v, " and v2 is: ", v2
+                                                vstring = str(v)
                                         if isnegate(not pattern.search(vstring)):
                                            # this pattern failed, fail the whole type and continue with the next
                                            ok = False
                                            break
                                 elif op == "==":
-					try:
+                                        try:
                                           if isnegate(not float(v2) == float(v)):
                                              ok = False
                                              break
-					except ValueError:
-					  pass
+                                        except ValueError:
+                                          pass
                                 elif op == "!=":
-					try:
+                                        try:
                                           if isnegate(not float(v2) != float(v)):
                                              ok = False
                                              break
-					except ValueError:
-					  pass
+                                        except ValueError:
+                                          pass
                                 elif op == "<":
                                         try:
                                           if isnegate(not float(v2) > float(v)):
                                              ok = False
                                              break
-					except ValueError:
-					  pass
+                                        except ValueError:
+                                          pass
                                 elif op == ">":
                                         try:
                                           if isnegate(not float(v2) < float(v)):
                                              ok = False
                                              break
-					except ValueError:
-					  pass
+                                        except ValueError:
+                                          pass
                                 elif op == "exist":
-					if isnegate(not tagthere):
+                                        if isnegate(not tagthere):
                                            ok = False
                                            break
-				elif op == "contains":
-					if isnegate(v2 not in v):
-						ok = False
-						break
+                                elif op == "contains":
+                                        if isnegate(v2 not in v):
+                                                ok = False
+                                                break
                                 elif op == "approx":
                                         # check each numerical entry if its close to a specific value
                                         approxLevel = 1e-4
                                         if 'approxLevel' in r:
                                                 approxLevel = float(r['approxLevel'])
-					if (not isinstance(v, list)) and (not isinstance( v, (int, float) )):
-						# we get this if there is no value in v, fail in this case
-						ok = False
-						break
+                                        if (not isinstance(v, list)) and (not isinstance( v, (int, float) )):
+                                                # we get this if there is no value in v, fail in this case
+                                                ok = False
+                                                break
                                         if isinstance( v, list ) and isinstance(v2, list) and len(v) == len(v2):
                                                 for i in range(len(v)):
                                                         if isnegate(abs(float(v[i])-float(v2[i])) > approxLevel):
-								#print "approx does not fit here"
+                                                                #print "approx does not fit here"
                                                                 ok = False
                                                                 break
                                         if isinstance( v, (int, float) ):
@@ -362,9 +362,9 @@ class ProcessSingleFile(Daemon):
 
                         # ok nobody failed, this is it
                         if ok:
-			        classifyTypes = classifyTypes + list(set([t]) - set(classifyTypes))
-			if seriesLevelCheck and not ok and (t in classifyTypes):
-			        classifyTypes = [y for y in classifyTypes if y != t]
+                                classifyTypes = classifyTypes + list(set([t]) - set(classifyTypes))
+                        if seriesLevelCheck and not ok and (t in classifyTypes):
+                                classifyTypes = [y for y in classifyTypes if y != t]
                 return classifyTypes
                                 
         def run(self):
@@ -530,7 +530,7 @@ class ProcessSingleFile(Daemon):
                                 data['StudyInstanceUID'] = dataset.StudyInstanceUID
                                 data['NumFiles'] = str( int(data['NumFiles']) + 1 )
                                 # add new types as they are found (this will create all type that map to any of the images in the series)
-				data['ClassifyType'] = self.classify(dataset, data, data['ClassifyType'])
+                                data['ClassifyType'] = self.classify(dataset, data, data['ClassifyType'])
                                 #data['ClassifyType'] = data['ClassifyType'] + list(set(self.classify(dataset, data)) - set(data['ClassifyType']))
                                 with open(fn3,'w') as f:
                                         json.dump(data,f,indent=2,sort_keys=True)
