@@ -3,7 +3,7 @@ FROM amd64/ubuntu:20.04
 # docker build --no-cache -t magickbox -f ./build/Dockerfile .
 #
 # Run with:
-#   docker run --rm -it -p 80:3000 -p 2813:2813 magickbox
+#   docker run --rm -it -p 80:3000 -p 2813:2813 -v /var/run/docker.sock:/var/run/docker.sock magickbox
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -43,6 +43,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     python \
     python3 \
     python3-pip \
+    docker.io \
     && pip install dicom \
     && apt-get clean \
     && rm /var/www/html/index.html \
@@ -62,8 +63,9 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && touch /var/log/cron.log \
     && cron /var/www/html/code/assets/crontab.txt \
     && chown -R www-data:www-data /var/www/html/ \
-    && useradd -m -s /bin/bash -U processing
-
+    && cp /var/www/html/code/assets/apache2/001-processing.conf /etc/apache2/sites-available/ \
+    && useradd -m -s /bin/bash -U processing \
+    && usermod -a -G docker processing
 
 
 RUN if [ ! -f "$ND_ENTRYPOINT" ]; then \
@@ -84,7 +86,7 @@ RUN if [ ! -f "$ND_ENTRYPOINT" ]; then \
     && echo "<Directory /var/www/html/>\n    Options -Indexes +FollowSymLinks\n    AllowOverride None\n    Require all granted\n</Directory>" >> /etc/apache2/apache2.conf \
     && echo "<FilesMatch \"\\.Rds\$\">\n    Require all denied\n</FilesMatch>" >> /etc/apache2/apache2.conf; \
     fi \
-    && chmod -R 777 /mb-startup.sh
+    && chmod -R 777 $ND_ENTRYPOINT
 
 EXPOSE 80
 ENTRYPOINT ["/mb-startup.sh", "start"]
