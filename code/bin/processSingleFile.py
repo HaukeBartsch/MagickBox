@@ -156,7 +156,7 @@ class Daemon:
                                                         os.remove(self.pidfile)
                                                         os.remove(self.pipename)
                                 else:
-                                            print str(err)
+                                            print(str(err))
                                             sys.exit(1)
                                                         
         def restart(self):
