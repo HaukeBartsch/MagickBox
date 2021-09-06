@@ -7,7 +7,7 @@ extracts the header information and creates a Study/Series symbolic link structu
 import sys, os, time, atexit, stat, tempfile, copy
 import dicom, json, re
 from signal import SIGTERM
-from dicom.filereader import InvalidDicomError
+from pydicom.filereader import InvalidDicomError
 
 
 class Daemon:
@@ -106,7 +106,7 @@ class Daemon:
                     # Start the daemon
                     print(' start the daemon')
                     self.daemonize()
-                    print ' done'
+                    print(' done')
                     self.run()
 
         def send(self,arg):
@@ -121,7 +121,7 @@ class Daemon:
                                     wd.flush()
                                     wd.close()
                             except IOError:
-                                    print 'Error: could not open the pipe %s' % self.pipename
+                                    print('Error: could not open the pipe %s' % self.pipename)
                     else:
                             sys.stderr.write(self.pipename)
                             sys.stderr.write("Error: the connection to the daemon does not exist\n")
@@ -186,7 +186,7 @@ class ProcessSingleFile(Daemon):
                             self.classify_rules = self.resolveClassifyRules(self.classify_rules)
                             
                     else:
-                            print "Warning: no /data/code/bin/classifyRules.json file could be found"
+                            print("Warning: no /data/code/bin/classifyRules.json file could be found")
 
         def resolveClassifyRules(self, classify_rules ):
                 # add recursively rules back until no more changes can be done
@@ -216,7 +216,7 @@ class ProcessSingleFile(Daemon):
                                                                 classify_rules[rule]['rules'].extend(cr)
                                                                 didChange = True
                                                 if not findID:
-                                                        print "Error: could not find a rule with ID %s" % r[ruleornotrule]
+                                                        print("Error: could not find a rule with ID %s" % r[ruleornotrule])
                                                         continue
                                 
                         if not didChange:
@@ -253,7 +253,7 @@ class ProcessSingleFile(Daemon):
         def classify(self,dataset,data,classifyTypes):
                 # read the classify rules
                 if self.classify_rules == 0:
-                        print "Warning: no classify rules found in %s, ClassifyType tag will be empty" % self.rulesFile
+                        print("Warning: no classify rules found in %s, ClassifyType tag will be empty" % self.rulesFile)
                         return classifyTypes
                 for rule in range(len(self.classify_rules)):
                         t = self.classify_rules[rule]['type']
@@ -362,9 +362,9 @@ class ProcessSingleFile(Daemon):
 
                         # ok nobody failed, this is it
                         if ok:
-				classifyTypes = classifyTypes + list(set([t]) - set(classifyTypes))
+			        classifyTypes = classifyTypes + list(set([t]) - set(classifyTypes))
 			if seriesLevelCheck and not ok and (t in classifyTypes):
-				classifyTypes = [y for y in classifyTypes if y != t]
+			        classifyTypes = [y for y in classifyTypes if y != t]
                 return classifyTypes
                                 
         def run(self):
@@ -372,12 +372,12 @@ class ProcessSingleFile(Daemon):
                         os.mkfifo(self.pipename)
                         atexit.register(self.delpipe)
                 except OSError:
-                        print 'OSERROR on creating the named pipe %s' % self.pipename
+                        print('OSERROR on creating the named pipe %s' % self.pipename)
                         pass
                 try:
                         rp = open(self.pipename, 'r')
                 except OSError:
-                        print 'Error: could not open named pipe for reading commands'
+                        print('Error: could not open named pipe for reading commands')
                         sys.exit(1)
                         
                 while True:
@@ -406,7 +406,7 @@ class ProcessSingleFile(Daemon):
                                 if not os.path.exists(fn):
                                         os.makedirs(fn)
                                         if not os.path.exists(fn):
-                                                print "Error: creating path ", fn, " did not work"
+                                                print("Error: creating path ", fn, " did not work")
                                 fn2 = os.path.join(fn, dataset.SOPInstanceUID)
                                 if not os.path.isfile(fn2):
                                   os.symlink(response, fn2)
@@ -551,7 +551,7 @@ if __name__ == "__main__":
                         try:
                                 daemon.start()
                         except:
-                                print "Error: could not create processing daemon: ", sys.exc_info()[0]
+                                print("Error: could not create processing daemon: %s" % sys.exc_info()[0])
                                 sys.exit(-1)
                 elif 'stop' == sys.argv[1]:
                         daemon.stop()
@@ -559,9 +559,9 @@ if __name__ == "__main__":
                         daemon.restart()
                 elif 'test' == sys.argv[1]:
                         r = daemon.resolveClassifyRules( daemon.classify_rules )
-                        print json.dumps(r, sort_keys=True, indent=2)
+                        print(json.dumps(r, sort_keys=True, indent=2))
                 else:
-                        print "Unknown command"
+                        print("Unknown command")
                         sys.exit(2)
                 sys.exit(0)
         elif len(sys.argv) == 3:
@@ -569,14 +569,14 @@ if __name__ == "__main__":
                         daemon.send(sys.argv[2])
                 sys.exit(0)
         else:
-                print "Process DICOM files fast using a daemon process that creates study/series directories with symbolic links."
-                print "Use 'start' to start the daemon in the background. Send file names for processing using 'send'."
-                print "Test the rules by running test:"
-                print "   python2.7 %s test" % sys.argv[0]
-                print ""
-                print "Usage: %s start|stop|restart|send|test" % sys.argv[0]
-                print ""
-                print "For a simple test send a DICOM directory by:"
-                print "  find <dicomdir> -type f -print | grep -v .json  | xargs -i echo \"/path/to/input/{}\" >> /tmp/.processSingleFilePipe"
-                print ""
+                print("Process DICOM files fast using a daemon process that creates study/series directories with symbolic links.")
+                print("Use 'start' to start the daemon in the background. Send file names for processing using 'send'.")
+                print("Test the rules by running test:")
+                print("   python2.7 %s test" % sys.argv[0])
+                print("")
+                print("Usage: %s start|stop|restart|send|test" % sys.argv[0])
+                print("")
+                print("For a simple test send a DICOM directory by:")
+                print("  find <dicomdir> -type f -print | grep -v .json  | xargs -i echo \"/path/to/input/{}\" >> /tmp/.processSingleFilePipe")
+                print("")
                 sys.exit(2)
