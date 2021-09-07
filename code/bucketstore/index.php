@@ -69,7 +69,7 @@
       <div class="row-fluid">
         <hr>
         <footer>
-            <p>&copy; Multi-modal imaging laboratory, 2021</p>
+            <p>&copy; Research Informtion Systems, 2021</p>
         </footer>
       </div>
     </div>
