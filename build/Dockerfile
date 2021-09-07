@@ -71,7 +71,8 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && useradd -m -s /bin/bash -U processing \
     && usermod -a -G docker processing \
     && cp -R /var/www/html/code /data/ \
-    && chown -R www-data:www-data /data/code
+    && chown -R www-data:www-data /data/code \
+    && cp /var/www/html/code/bin/routing_master.json /var/www/html/code/bin/routing.json
 
 
 RUN if [ ! -f "$ND_ENTRYPOINT" ]; then \

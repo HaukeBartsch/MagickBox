@@ -143,7 +143,7 @@
       <hr>
       <div class="row-fluid">
         <footer class="col-sm-12 col-xm-12 col-xs-12">
-            <p>&copy; Multi-Modal Imaging Laboratory, 2013-2015</p>
+            <p>&copy; Research Information Systems, 2013-2021</p>
         </footer>
       </div>
     </div>
