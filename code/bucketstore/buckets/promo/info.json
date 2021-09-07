@@ -4,5 +4,5 @@
   "AETitle": "ProcPromo",
   "version": "0.1",
   "license": "Open/Closed processing bucket",
-  "install": "info.json"
+  "install": "bucketAPI.tgz"
 }
