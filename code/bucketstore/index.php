@@ -4,7 +4,7 @@
     <title>Bucket Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="css/jquery-ui.css" />
     <link href="/code/web/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/code/bucketstore/store.css" rel="stylesheet">
 
