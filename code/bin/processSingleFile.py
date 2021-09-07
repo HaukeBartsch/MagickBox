@@ -133,7 +133,7 @@ class Daemon:
                     """
                     # Get the pid from the pidfile
                     try:
-                            pf = file(self.pidfile,'r')
+                            pf = open(self.pidfile,'r')
                             pid = int(pf.read().strip())
                             pf.close()
                     except IOError:
@@ -288,7 +288,7 @@ class ProcessSingleFile(Daemon):
                                         r["operator"] = "regexp"  # default value
                                 op = r["operator"]
                                 if op == "notexist":
-                                        if isnegate(tagthere):
+                                        if isnegate(tagthere2):
                                            ok = False
                                            break
                                 elif  op == "regexp":
