@@ -58,6 +58,8 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && mkdir -p /data/scratch/archive/ \
     && mkdir /data/scratch/raw/ \
     && chmod 777 /data/.pids/ \
+    && chmod 777 /data/scratch/archive \
+    && chmod 777 /data/scratch/raw \
     && cp /var/www/html/code/assets/monit/processing.conf /etc/monit/conf.d/processing.conf \
     && cp /var/www/html/code/assets/monit/monitrc /etc/monit/monitrc \
     && touch /var/log/cron.log \
