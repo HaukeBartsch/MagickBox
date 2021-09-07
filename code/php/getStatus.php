@@ -2,7 +2,7 @@
 
   // /usr/bin/gearadmin
   // return status values
-  $ok = exec('/usr/local/bin/gearadmin --status', $ret);
+  $ok = exec('/usr/bin/gearadmin --status', $ret);
   $vals = $ret;
   $erg = array();
   foreach ($vals as &$value) {
