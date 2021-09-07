@@ -63,7 +63,6 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && chmod 777 /data/.pids/ \
     && chmod 777 /data/scratch/archive \
     && chmod 777 /data/scratch/raw \
-    && chown -R processing:processing /data/scratch/archive \
     && cp /var/www/html/code/assets/monit/processing.conf /etc/monit/conf.d/processing.conf \
     && cp /var/www/html/code/assets/monit/monitrc /etc/monit/monitrc \
     && touch /var/log/cron.log \
@@ -73,6 +72,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && ln -s /etc/apache2/sites-available/001-processing.conf /etc/apache2/sites-enabled/001-processing.conf \
     && useradd -m -s /bin/bash -U processing \
     && usermod -a -G docker processing \
+    && chown -R processing:processing /data/scratch/archive \
     && cp -R /var/www/html/code /data/ \
     && chown -R www-data:www-data /data/code \
     && cp /var/www/html/code/bin/routing_master.json /var/www/html/code/bin/routing.json
