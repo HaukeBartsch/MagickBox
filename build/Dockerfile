@@ -44,7 +44,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     python3 \
     python3-pip \
     docker.io \
-    && pip install dicom \
+    && pip install pydicom \
     && apt-get clean \
     && rm /var/www/html/index.html \
     && cd /var/www/html/ \

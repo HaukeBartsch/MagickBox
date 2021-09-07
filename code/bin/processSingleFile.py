@@ -5,9 +5,9 @@ extracts the header information and creates a Study/Series symbolic link structu
 """
 
 import sys, os, time, atexit, stat, tempfile, copy
-import dicom, json, re
+import pydicom, json, re
 from signal import SIGTERM
-from dicom.filereader import InvalidDicomError
+from pydicom.filereader import InvalidDicomError
 
 
 class Daemon:
@@ -66,7 +66,7 @@ class Daemon:
                     # write pidfile
                     atexit.register(self.delpid)
                     pid = str(os.getpid())
-                    file(self.pidfile,'w+').write("%s\n" % pid)
+                    open(self.pidfile,'w+').write("%s\n" % pid)
                     
         def delpid(self):
                     try:
@@ -84,7 +84,7 @@ class Daemon:
                     """
                     # Check for a pidfile to see if the daemon already runs
                     try:
-                                pf = file(self.pidfile,'r')
+                                pf = open(self.pidfile,'r')
                                 pid = int(pf.read().strip())
                                 pf.close()
                     except IOError:
@@ -387,7 +387,7 @@ class ProcessSingleFile(Daemon):
                                 continue
                         else:
                                 try:
-                                        dataset = dicom.read_file(response)
+                                        dataset = pydicom.read_file(response)
                                 except IOError:
                                         print("Could not find file:", response)
                                         continue
