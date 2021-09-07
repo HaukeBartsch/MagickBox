@@ -23,11 +23,12 @@ case $1 in
 	if [ ! -d "$od" ]; then
 	    mkdir $od
 	fi
+	# we should specify a log level here to make this work:
+	# 	    --log-config /data/code/bin/logger.cfg
 	/usr/bin/storescp --fork \
 	    --write-xfer-little \
 	    --exec-on-reception "$scriptfile '#a' '#c' '#r' '#p' '#f' &" \
   	    --sort-on-study-uid scp \
-	    --log-config /data/code/bin/logger.cfg \
 	    --output-directory "$od" \
 	    $port & &>/data/logs/storescpd.log
 	pid=$!
