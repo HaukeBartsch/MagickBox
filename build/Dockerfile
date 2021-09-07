@@ -57,6 +57,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && cp -R /var/www/html/streams /data/ \
     && mkdir -p /data/.pids/ \
     && mkdir -p /data/logs/ \
+    && chmod 777 /data/logs/ \
     && mkdir -p /data/scratch/archive/ \
     && mkdir /data/scratch/raw/ \
     && chmod 777 /data/.pids/ \
@@ -68,6 +69,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && cron /var/www/html/code/assets/crontab.txt \
     && chown -R www-data:www-data /var/www/html/ \
     && cp /var/www/html/code/assets/apache2/001-processing.conf /etc/apache2/sites-available/ \
+    && ln -s /etc/apache2/sites-available/001-processing.conf /etc/apache2/sites-enabled/001-processing.conf \
     && useradd -m -s /bin/bash -U processing \
     && usermod -a -G docker processing \
     && cp -R /var/www/html/code /data/ \
