@@ -43,7 +43,8 @@
    $dirs = array_filter(glob('/data/code/bucketstore/buckets/*'), 'is_dir');
    echo "<script type='text/javascript'>var numBuckets = ".count($dirs).";</script>";
    foreach ($dirs as $d) {
-      $vals = json_decode( file_get_contents( $d."/info.json"), true);
+      $d2 = replace($d, '/data', '');
+      $vals = json_decode( file_get_contents( $d2."/info.json"), true);
       echo "<li class='bucket'><div class='text'>".$vals['name']." - (v". $vals['version'] . ") <br/><a href='".$d."/".$vals['install']."'>DOWNLOAD</a></div></li>";
    }
 ?>

@@ -3,7 +3,7 @@ FROM amd64/ubuntu:20.04
 # docker build --no-cache -t magickbox -f ./build/Dockerfile .
 #
 # Run with:
-#   docker run --rm -it -p 3000:80 -p 2813:2813 -v /var/run/docker.sock:/var/run/docker.sock magickbox
+#   docker run --rm -it -p 3000:80 -p 2813:2813 -p 11113:11113 -v /var/run/docker.sock:/var/run/docker.sock magickbox
 #   open localhost:3000
 
 
