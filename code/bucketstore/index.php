@@ -54,7 +54,7 @@
       <div class="row-fluid">
         <hr>
         <h2>Bucket API</h2>
-        <p>New buckets can be defined using the 'buckets' script which is part of MagickBox. Download the file and run it to see a list of options. Create and open a new bucket and copy the processing scripts into the bucket. Adjust the included info.json file using a text editor.</p>
+        <p>New buckets can be defined using the <a href="/code/bin/buckets">'buckets'</a> shell-script, which is part of MagickBox. Download the file and run it to see a list of options. Create and open a new bucket and copy the processing scripts into the bucket. Adjust the included info.json file using a text editor.</p>
         <pre>
         {
           "name": "MyPackage",
@@ -69,7 +69,7 @@
       <div class="row-fluid">
         <hr>
         <footer>
-            <p>&copy; Multi-modal imaging laboratory, 2015</p>
+            <p>&copy; Multi-modal imaging laboratory, 2021</p>
         </footer>
       </div>
     </div>
