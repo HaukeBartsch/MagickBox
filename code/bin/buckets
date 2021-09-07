@@ -59,12 +59,12 @@ do
   case $key in
       install)
       install=1
-      what="$2"
+      what=`echo "$2" | tr '[:upper:]' '[:lower:]'`
       shift
       ;;
       remove)
       remove=1
-      what="$2"
+      what=`echo "$2" | tr '[:upper:]' '[:lower:]'`
       shift
       ;;
       create)
@@ -74,12 +74,12 @@ do
       ;;
       open)
       open=1
-      what="$2"
+      what=`echo "$2" | tr '[:upper:]' '[:lower:]'`
       shift
       ;;
       run)
       run=1
-      what="$2"
+      what=`echo "$2" | tr '[:upper:]' '[:lower:]'`
       if [[ $# < 4 ]] ; then
          echo "Error: Not enough parameters, requires input and output directories"
          exit 1
