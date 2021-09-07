@@ -69,7 +69,9 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
     && chown -R www-data:www-data /var/www/html/ \
     && cp /var/www/html/code/assets/apache2/001-processing.conf /etc/apache2/sites-available/ \
     && useradd -m -s /bin/bash -U processing \
-    && usermod -a -G docker processing
+    && usermod -a -G docker processing \
+    && cp -R /var/www/html/code /data/ \
+    && chown -R www-data:www-data /data/code
 
 
 RUN if [ ! -f "$ND_ENTRYPOINT" ]; then \
