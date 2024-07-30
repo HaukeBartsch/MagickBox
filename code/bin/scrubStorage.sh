@@ -130,8 +130,10 @@ scrubList () {
 # there are some left-over directories that we can remove
 # there are also some docker containers we can clean out
 sweep () {
-   # first remove invisible tmp directories - a directory is invisible if if does not contain info.json
-   for u in `ls -d /data/scratch/tmp.*`; do 
+   # first remove invisible tmp directories - a directory is invisible if it does not contain info.json
+   # Careful this could be incoming data. Wait for a couple of minutes (+59) before deleting a folder.
+   # for u in `ls -d /data/scratch/tmp.*`; do
+   for u in `find /data/scratch/ -name "tmp.*" -maxdepth 1 -mmin +59 -print`; do
       if [ ! -e $u/info.json ]; then
          echo "REMOVE: invisible directory $u\n" >> $log
          sudo \rm -f -R $u;
