@@ -1,0 +1,35 @@
+Restriction Spectrum Imaging (RSI) for Prostate Cancer.
+
+Core Developers:
+  Nate White, Hauke Bartch
+  
+  
+Description: Restriction Spectrum Imaging (RSI) is an advanced diffusion magnetic resonance imaging (DWI) technique for imaging various cancers in vivo [1].
+
+
+Specifications:
+
+Inputs:
+
+1) DWI data
+  1 b=0 voluume
+  1 b=0 volume (reverse PE direction)
+  6 b=500 volumes,
+  6 b=1500 volumes,
+  15 b=4000 volumes.
+
+2) T2 data
+  Axial T2 volume.
+  
+Outputs:
+
+1) RSI cellularity map (color-coded fused)
+2) RSI cellularity map (grayscale native space)
+
+Example Output:
+
+[insert images here]
+
+
+Publications:
+[1] White, NS. et al. Probing tissue microstruction with restriction spectrum imaging: histological and theroretical validation. Human Brain Mapping 34:327-346, 2013. 
